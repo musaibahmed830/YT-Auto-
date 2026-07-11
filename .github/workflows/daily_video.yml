@@ -3,7 +3,32 @@ name: Daily YouTube Video
 on:
   schedule:
     - cron: "0 14 * * *"   # runs daily at 14:00 UTC — change if you want a different time
-  workflow_dispatch:        # adds a manual "Run workflow" button in the Actions tab
+  workflow_dispatch:        # adds a manual "Run workflow" button in the Actions tab, with inputs below
+    inputs:
+      topic_mode:
+        description: "How to pick today's topic"
+        type: choice
+        default: trending
+        options:
+          - trending
+          - category
+          - custom
+      category:
+        description: "Category to pick from (used only if topic_mode = category)"
+        type: choice
+        default: any
+        options:
+          - any
+          - facts
+          - science
+          - history
+          - motivation
+          - finance
+          - animals
+      custom_topic:
+        description: "Exact topic to use (used only if topic_mode = custom)"
+        type: string
+        default: ""
 
 jobs:
   build-and-upload:
@@ -33,4 +58,9 @@ jobs:
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          # Only present on manual "Run workflow" runs; scheduled runs get
+          # the defaults below (i.e. always "trending" on the daily cron).
+          TOPIC_MODE: ${{ github.event.inputs.topic_mode || 'trending' }}
+          TOPIC_CATEGORY: ${{ github.event.inputs.category || 'any' }}
+          CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}
         run: python main.py

@@ -1,7 +1,12 @@
 """
-Fetches a trending topic to base today's video on.
-Uses Google Trends (pytrends) daily trending searches as the primary source,
-with a static fallback list so the pipeline never fails outright.
+Resolves today's video topic. Three modes:
+
+  trending -> Google Trends daily trending searches, with a static fallback
+              list so the pipeline never fails outright (Trends is flaky
+              from cloud IPs / CI runners).
+  category -> a random topic from a curated list for a chosen category.
+  custom   -> exact topic text supplied by the caller (e.g. a manual
+              workflow_dispatch run).
 """
 
 import random
@@ -17,6 +22,51 @@ FALLBACK_TOPICS = [
     "ancient civilizations mysteries",
     "money habits of self-made millionaires",
 ]
+
+CATEGORY_TOPICS = {
+    "facts": [
+        "surprising psychology facts",
+        "weird animal facts",
+        "facts about the human body",
+        "mind-blowing science facts",
+        "facts most people don't know",
+    ],
+    "science": [
+        "space discoveries this year",
+        "future technology predictions",
+        "strange physics phenomena explained simply",
+        "how the human brain actually works",
+        "breakthrough inventions changing the world",
+    ],
+    "history": [
+        "unexplained history mysteries",
+        "ancient civilizations mysteries",
+        "historical events that changed the world",
+        "lost cities and civilizations",
+        "history's biggest unsolved mysteries",
+    ],
+    "motivation": [
+        "productivity habits that actually work",
+        "habits of highly successful people",
+        "morning routines of high achievers",
+        "how to build discipline that lasts",
+        "mindset shifts that change your life",
+    ],
+    "finance": [
+        "money habits of self-made millionaires",
+        "personal finance mistakes to avoid",
+        "how compound interest actually works",
+        "side hustles that actually make money",
+        "investing basics for beginners",
+    ],
+    "animals": [
+        "weird animal facts",
+        "deadliest animals in the world",
+        "smartest animals on earth",
+        "strange deep sea creatures",
+        "animal survival adaptations",
+    ],
+}
 
 
 def get_trending_topic(country="united_states"):
@@ -36,6 +86,29 @@ def get_trending_topic(country="united_states"):
         print(f"[trend_fetch] Google Trends failed ({e}), using fallback topic.")
 
     return random.choice(FALLBACK_TOPICS)
+
+
+def get_topic_by_category(category: str) -> str:
+    """Returns a random topic from a named category. 'any' picks from all categories."""
+    if category == "any" or category not in CATEGORY_TOPICS:
+        pool = [t for topics in CATEGORY_TOPICS.values() for t in topics]
+    else:
+        pool = CATEGORY_TOPICS[category]
+    return random.choice(pool)
+
+
+def resolve_topic(mode: str = "trending", category: str = "any", custom_topic: str = "") -> str:
+    """
+    Single entry point main.py calls. mode is one of:
+      "custom"   -> use custom_topic verbatim (falls back to trending if blank)
+      "category" -> random topic from the given category
+      "trending" -> Google Trends (default)
+    """
+    if mode == "custom" and custom_topic.strip():
+        return custom_topic.strip()
+    if mode == "category":
+        return get_topic_by_category(category)
+    return get_trending_topic()
 
 
 if __name__ == "__main__":

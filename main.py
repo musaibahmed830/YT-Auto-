@@ -10,7 +10,7 @@ import traceback
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-from trend_fetch import get_trending_topic
+from trend_fetch import resolve_topic
 from seo_research import research_keywords
 from generate_script import generate_script
 from generate_voiceover import generate_voiceover
@@ -52,8 +52,13 @@ def run():
     os.makedirs(WORK_DIR, exist_ok=True)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    print("Step 1/7: Finding a trending topic...")
-    topic = get_trending_topic()
+    topic_mode = os.environ.get("TOPIC_MODE", "trending")
+    print(f"Step 1/7: Finding a topic (mode: {topic_mode})...")
+    topic = resolve_topic(
+        mode=topic_mode,
+        category=os.environ.get("TOPIC_CATEGORY", "any"),
+        custom_topic=os.environ.get("CUSTOM_TOPIC", ""),
+    )
     print(f"  -> Topic: {topic}")
 
     print("Step 2/7: Researching real search keywords (SEO)...")
