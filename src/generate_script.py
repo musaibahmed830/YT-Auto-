@@ -7,7 +7,7 @@ import os
 import json
 import anthropic
 
-MODEL = "claude-sonnet-4-6"
+MODEL = "claude-opus-4-8"
 
 SYSTEM_PROMPT = """You write scripts for short, faceless narration-style YouTube videos \
 (60-90 seconds spoken), and you are also an SEO copywriter for YouTube. Style: punchy hook \

@@ -1,0 +1,20 @@
+# secrets — never commit these
+client_secret*.json
+.env
+.env.*
+*.key
+
+# generated at runtime
+work/
+output/
+test_clips/
+test_voice.mp3
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# os
+.DS_Store
