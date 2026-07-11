@@ -51,12 +51,12 @@ def run():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     topic_mode = os.environ.get("TOPIC_MODE", "trending")
-    print(f"Step 1/7: Finding a topic (mode: {topic_mode})...")
-    topic = resolve_topic(
-        mode=topic_mode,
-        category=os.environ.get("TOPIC_CATEGORY", "any"),
-        custom_topic=os.environ.get("CUSTOM_TOPIC", ""),
-    )
+    topic_category = os.environ.get("TOPIC_CATEGORY", "any")
+    custom_topic = os.environ.get("CUSTOM_TOPIC", "")
+    print(f"Step 1/7: Finding a topic (mode={topic_mode!r}, category={topic_category!r}, custom_topic={custom_topic!r})...")
+    if topic_mode == "custom" and not custom_topic.strip():
+        print("  WARNING: mode is 'custom' but custom_topic is blank -- falling back to trending.")
+    topic = resolve_topic(mode=topic_mode, category=topic_category, custom_topic=custom_topic)
     print(f"  -> Topic: {topic}")
 
     video_mode = os.environ.get("VIDEO_MODE", "video")

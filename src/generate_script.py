@@ -40,20 +40,24 @@ def generate_script(topic: str, seo_keywords: list[str] | None = None, api_key: 
         keyword_block = f"""
 
 Here are REAL phrases people are currently searching for around this topic \
-(from YouTube autocomplete and Google Trends related queries):
+(from YouTube autocomplete and Google Trends related queries) -- use them ONLY as
+phrasing hints, never as a replacement for the topic itself:
 {keyword_list}
 
-SEO requirements:
-- The title MUST naturally include the highest-intent phrase from this list (the one \
-that best matches the video's content), placed as early in the title as possible
-- Weave 2-4 more of these phrases naturally into the description's first two sentences \
-(YouTube weights the opening of the description heavily for search)
-- Every tag should either be one of these phrases verbatim, or a close variant of one
+SEO requirements (all secondary to staying on-topic):
+- If one of these phrases fits the video's actual content naturally, work it into the
+  title early. If none of them genuinely fit -- e.g. they're only loosely related,
+  or the topic is niche enough that search data is thin -- ignore this list entirely
+  and write a plain, accurate, SEO-reasonable title from the topic alone. Do NOT bend
+  the video's subject to match a keyword.
+- Same rule for the description and tags: use a phrase only where it's a natural,
+  accurate fit for content actually in the narration
 - Do NOT keyword-stuff - it must still read naturally to a human"""
 
-    user_prompt = f"""Topic: {topic}{keyword_block}
+    user_prompt = f"""Topic (the video MUST be specifically about this -- do not drift to a \
+related but different subject, even if the SEO keywords below point elsewhere): {topic}{keyword_block}
 
-Create a faceless YouTube short-form video package on this topic. Respond with ONLY this JSON structure:
+Create a faceless YouTube short-form video package on this exact topic. Respond with ONLY this JSON structure:
 
 {{
   "title": "catchy, SEO-optimized YouTube title, under 70 characters",
