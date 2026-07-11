@@ -22,8 +22,33 @@ from upload_youtube import upload_video
 WORK_DIR = "work"
 OUTPUT_DIR = "output"
 
+# ELEVENLABS_VOICE_ID is intentionally excluded -- generate_voiceover.py
+# auto-picks a usable voice from the account when it's not set.
+REQUIRED_ENV_VARS = [
+    "GROQ_API_KEY",
+    "ELEVENLABS_API_KEY",
+    "PEXELS_API_KEY",
+    "YT_CLIENT_ID",
+    "YT_CLIENT_SECRET",
+    "YT_REFRESH_TOKEN",
+]
+
+
+def _check_required_env_vars():
+    # Fail fast with one clear message instead of burning steps 1-6 (and
+    # their API usage) only to hit a cryptic error on the last step because
+    # a GitHub secret was never added or is empty.
+    missing = [name for name in REQUIRED_ENV_VARS if not os.environ.get(name, "").strip()]
+    if missing:
+        raise RuntimeError(
+            "Missing required secret(s): " + ", ".join(missing) + ". "
+            "Add them under repo Settings -> Secrets and variables -> Actions "
+            "(or export them locally) before running."
+        )
+
 
 def run():
+    _check_required_env_vars()
     os.makedirs(WORK_DIR, exist_ok=True)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
