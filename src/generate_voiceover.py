@@ -23,9 +23,22 @@ def _sanitize(text: str) -> str:
     )
 
 
+def _sanitize_credential(value: str) -> str:
+    # Credentials go straight into HTTP headers and must never contain any
+    # whitespace or control/format/separator characters at all (unlike
+    # narration text, where an embedded newline is fine).
+    return "".join(c for c in value if c.isprintable() and c not in " \t").strip()
+
+
 def generate_voiceover(text: str, out_path: str, api_key: str | None = None, voice_id: str | None = None):
-    client = ElevenLabs(api_key=api_key or os.environ["ELEVENLABS_API_KEY"])
-    voice_id = voice_id or os.environ.get("ELEVENLABS_VOICE_ID", DEFAULT_VOICE_ID)
+    # API keys/voice IDs go straight into HTTP headers, so a stray invisible
+    # character picked up from a copy-paste (extra whitespace, U+2028, etc.)
+    # in the stored secret will crash the request the same way bad narration
+    # text would. Sanitize these the same as narration text.
+    raw_key = api_key or os.environ["ELEVENLABS_API_KEY"]
+    client = ElevenLabs(api_key=_sanitize_credential(raw_key))
+    raw_voice_id = voice_id or os.environ.get("ELEVENLABS_VOICE_ID", DEFAULT_VOICE_ID)
+    voice_id = _sanitize_credential(raw_voice_id)
 
     audio = client.text_to_speech.convert(
         voice_id=voice_id,
