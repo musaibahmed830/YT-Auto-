@@ -5,9 +5,9 @@ for a faceless YouTube video based on a trending topic.
 
 import os
 import json
-import anthropic
+from groq import Groq
 
-MODEL = "claude-opus-4-8"
+MODEL = "llama-3.3-70b-versatile"
 
 SYSTEM_PROMPT = """You write scripts for short, faceless narration-style YouTube videos \
 (60-90 seconds spoken), and you are also an SEO copywriter for YouTube. Style: punchy hook \
@@ -30,7 +30,7 @@ def generate_script(topic: str, seo_keywords: list[str] | None = None, api_key: 
     related queries) that the title/description/tags should be built around, instead of
     guessing what people search for.
     """
-    client = anthropic.Anthropic(api_key=api_key or os.environ["ANTHROPIC_API_KEY"])
+    client = Groq(api_key=api_key or os.environ["GROQ_API_KEY"])
 
     keyword_block = ""
     if seo_keywords:
@@ -64,14 +64,17 @@ Create a faceless YouTube short-form video package on this topic. Respond with O
 visual_keywords should be 5-8 concrete, filmable nouns/scenes (e.g. "ocean waves", "city traffic at night") \
 that match the narration, suitable for searching stock footage."""
 
-    response = client.messages.create(
+    response = client.chat.completions.create(
         model=MODEL,
         max_tokens=1500,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": user_prompt}],
+        response_format={"type": "json_object"},
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt},
+        ],
     )
 
-    text = response.content[0].text.strip()
+    text = response.choices[0].message.content.strip()
     # Defensive cleanup in case the model wraps in a code fence anyway
     text = text.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
 

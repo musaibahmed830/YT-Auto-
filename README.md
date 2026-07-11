@@ -8,7 +8,7 @@ Runs daily via GitHub Actions.
 
 ```
 trend_fetch.py       -> picks a trending topic (Google Trends, with fallback list)
-generate_script.py    -> Claude writes title/description/tags/narration/keywords
+generate_script.py    -> Groq (Llama 3.3 70B) writes title/description/tags/narration/keywords
 generate_voiceover.py -> ElevenLabs turns narration into an MP3
 fetch_visuals.py      -> Pexels downloads matching stock clips
 assemble_video.py     -> ffmpeg stitches clips + voiceover + title card
@@ -19,8 +19,9 @@ main.py               -> runs all of the above in order
 
 ## One-time setup (about 30-45 minutes)
 
-### 1. Anthropic API key (script writing)
-Get a key at https://console.anthropic.com/ → API Keys.
+### 1. Groq API key (script writing, free)
+Sign up free at https://console.groq.com/ → API Keys → Create API Key. No
+credit card required.
 
 ### 2. ElevenLabs (voiceover)
 Sign up at https://elevenlabs.io/, grab your API key from Settings → API Keys.
@@ -52,7 +53,7 @@ This is the fiddly one:
 In your repo: Settings → Secrets and variables → Actions → New repository secret.
 Add each of:
 
-- `ANTHROPIC_API_KEY`
+- `GROQ_API_KEY`
 - `ELEVENLABS_API_KEY`
 - `ELEVENLABS_VOICE_ID` (optional)
 - `PEXELS_API_KEY`
@@ -70,7 +71,7 @@ every day at 14:00 UTC. You can also trigger it manually from the Actions tab
 ```bash
 pip install -r requirements.txt
 # also install ffmpeg locally (brew install ffmpeg / apt install ffmpeg)
-export ANTHROPIC_API_KEY=...
+export GROQ_API_KEY=...
 export ELEVENLABS_API_KEY=...
 export PEXELS_API_KEY=...
 export YT_CLIENT_ID=...
@@ -91,5 +92,8 @@ python main.py
   Change `YT_PRIVACY_STATUS` to `private` or `unlisted` in the workflow file
   if you'd rather review each video before it goes live.
 - **Costs**: at low volume (1 video/day) you're likely to stay within free
-  tiers for Pexels and Claude API usage; ElevenLabs free tier covers a
+  tiers for Pexels and Groq usage; ElevenLabs free tier covers a
   limited number of characters/month, so check usage if you scale up.
+- **Groq free-tier limits**: rate limits are generous but not unlimited —
+  if you hit a 429 on a run, it's a temporary rate limit, not a billing
+  issue; just re-run later.
