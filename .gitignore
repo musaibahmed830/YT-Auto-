@@ -9,6 +9,8 @@ work/
 output/
 test_clips/
 test_voice.mp3
+test_voice.wav
+voices/
 
 # python
 __pycache__/

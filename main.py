@@ -22,11 +22,9 @@ from upload_youtube import upload_video
 WORK_DIR = "work"
 OUTPUT_DIR = "output"
 
-# ELEVENLABS_VOICE_ID is intentionally excluded -- generate_voiceover.py
-# auto-picks a usable voice from the account when it's not set.
+# Voiceover uses Piper (local, no API key needed) -- not in this list.
 REQUIRED_ENV_VARS = [
     "GROQ_API_KEY",
-    "ELEVENLABS_API_KEY",
     "PEXELS_API_KEY",
     "YT_CLIENT_ID",
     "YT_CLIENT_SECRET",
@@ -73,7 +71,7 @@ def run():
     print(f"  -> Title: {package['title']}")
 
     print("Step 4/7: Generating voiceover...")
-    voiceover_path = os.path.join(WORK_DIR, "voiceover.mp3")
+    voiceover_path = os.path.join(WORK_DIR, "voiceover.wav")
     generate_voiceover(package["narration"], voiceover_path)
 
     print(f"Step 5/7: Fetching stock clips ({'portrait' if is_shorts else 'landscape'})...")
