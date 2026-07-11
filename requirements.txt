@@ -1,0 +1,10 @@
+anthropic>=0.34.0
+pytrends>=4.9.2
+requests>=2.31.0
+elevenlabs>=1.9.0
+google-api-python-client>=2.130.0
+google-auth>=2.29.0
+google-auth-oauthlib>=1.2.0
+google-auth-httplib2>=0.2.0
+Pillow>=10.3.0
+python-dotenv>=1.0.1
