@@ -29,6 +29,13 @@ on:
         description: "Exact topic to use (used only if topic_mode = custom)"
         type: string
         default: ""
+      video_mode:
+        description: "Upload as a regular video or a YouTube Short"
+        type: choice
+        default: video
+        options:
+          - video
+          - shorts
 
 jobs:
   build-and-upload:
@@ -63,4 +70,5 @@ jobs:
           TOPIC_MODE: ${{ github.event.inputs.topic_mode || 'trending' }}
           TOPIC_CATEGORY: ${{ github.event.inputs.category || 'any' }}
           CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}
+          VIDEO_MODE: ${{ github.event.inputs.video_mode || 'video' }}
         run: python main.py

@@ -19,27 +19,35 @@ def _get_duration(path: str) -> float:
     return float(json.loads(result.stdout)["format"]["duration"])
 
 
-def assemble_video(clip_paths: list[str], voiceover_path: str, title_text: str, out_path: str, work_dir: str = "work"):
+def assemble_video(
+    clip_paths: list[str],
+    voiceover_path: str,
+    title_text: str,
+    out_path: str,
+    work_dir: str = "work",
+    vertical: bool = False,
+):
     """
-    - Normalizes each clip to 1920x1080, no audio
+    - Normalizes each clip to 1920x1080 (or 1080x1920 for Shorts), no audio
     - Loops/trims clips to cover the voiceover's total duration
     - Adds a simple title card overlay for the first 3 seconds
     - Muxes the voiceover as the audio track
     """
     os.makedirs(work_dir, exist_ok=True)
     voice_duration = _get_duration(voiceover_path)
+    width, height = (1080, 1920) if vertical else (1920, 1080)
 
     if not clip_paths:
         raise ValueError("No clips provided to assemble_video")
 
-    # Normalize clips first (scale/crop to 1920x1080, strip audio)
+    # Normalize clips first (scale/crop to target resolution, strip audio)
     normalized = []
     for i, clip in enumerate(clip_paths):
         norm_path = os.path.join(work_dir, f"norm_{i:02d}.mp4")
         subprocess.run(
             [
                 "ffmpeg", "-y", "-i", clip,
-                "-vf", "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080",
+                "-vf", f"scale={width}:{height}:force_original_aspect_ratio=increase,crop={width}:{height}",
                 "-an", "-c:v", "libx264", "-preset", "veryfast",
                 norm_path,
             ],

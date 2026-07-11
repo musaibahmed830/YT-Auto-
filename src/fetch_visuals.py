@@ -10,9 +10,16 @@ from _sanitize import sanitize_credential
 PEXELS_SEARCH_URL = "https://api.pexels.com/videos/search"
 
 
-def fetch_clips(keywords: list[str], out_dir: str, api_key: str | None = None, clips_per_keyword: int = 1):
+def fetch_clips(
+    keywords: list[str],
+    out_dir: str,
+    api_key: str | None = None,
+    clips_per_keyword: int = 1,
+    orientation: str = "landscape",
+):
     """
-    Downloads one vertical-friendly clip per keyword into out_dir.
+    Downloads one clip per keyword into out_dir.
+    orientation: "landscape" for regular videos, "portrait" for Shorts.
     Returns a list of local file paths in the same order as keywords.
     """
     api_key = sanitize_credential(api_key or os.environ["PEXELS_API_KEY"])
@@ -21,7 +28,7 @@ def fetch_clips(keywords: list[str], out_dir: str, api_key: str | None = None, c
 
     paths = []
     for i, keyword in enumerate(keywords):
-        params = {"query": keyword, "per_page": clips_per_keyword, "orientation": "landscape"}
+        params = {"query": keyword, "per_page": clips_per_keyword, "orientation": orientation}
         resp = requests.get(PEXELS_SEARCH_URL, headers=headers, params=params, timeout=30)
         resp.raise_for_status()
         data = resp.json()

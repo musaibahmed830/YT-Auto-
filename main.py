@@ -61,6 +61,9 @@ def run():
     )
     print(f"  -> Topic: {topic}")
 
+    video_mode = os.environ.get("VIDEO_MODE", "video")
+    is_shorts = video_mode == "shorts"
+
     print("Step 2/7: Researching real search keywords (SEO)...")
     seo_keywords = research_keywords(topic)
     print(f"  -> Keywords: {seo_keywords[:5]}{'...' if len(seo_keywords) > 5 else ''}")
@@ -73,23 +76,38 @@ def run():
     voiceover_path = os.path.join(WORK_DIR, "voiceover.mp3")
     generate_voiceover(package["narration"], voiceover_path)
 
-    print("Step 5/7: Fetching stock clips...")
-    clip_paths = fetch_clips(package["visual_keywords"], os.path.join(WORK_DIR, "clips"))
+    print(f"Step 5/7: Fetching stock clips ({'portrait' if is_shorts else 'landscape'})...")
+    clip_paths = fetch_clips(
+        package["visual_keywords"],
+        os.path.join(WORK_DIR, "clips"),
+        orientation="portrait" if is_shorts else "landscape",
+    )
     if not clip_paths:
         raise RuntimeError("No stock clips found for any keyword - aborting.")
 
-    print("Step 6/7: Assembling video + thumbnail...")
+    print(f"Step 6/7: Assembling {'Shorts (1080x1920)' if is_shorts else 'video (1920x1080)'} + thumbnail...")
     video_path = os.path.join(OUTPUT_DIR, "video.mp4")
-    assemble_video(clip_paths, voiceover_path, package["title"], video_path, work_dir=WORK_DIR)
+    assemble_video(clip_paths, voiceover_path, package["title"], video_path, work_dir=WORK_DIR, vertical=is_shorts)
 
     thumbnail_path = os.path.join(OUTPUT_DIR, "thumbnail.jpg")
-    generate_thumbnail(video_path, package["title"], thumbnail_path)
+    generate_thumbnail(video_path, package["title"], thumbnail_path, vertical=is_shorts)
 
     print("Step 7/7: Uploading to YouTube...")
+    title = package["title"]
+    description = package["description"]
+    if is_shorts:
+        # #Shorts is the reliable signal YouTube uses to route a video into
+        # the Shorts shelf -- vertical + short duration alone isn't enough.
+        # Reserve room in the 100-char title cap so it never gets truncated off.
+        if "#shorts" not in title.lower():
+            title = title[:92].rstrip() + " #Shorts"
+        if "#shorts" not in description.lower():
+            description = description.rstrip() + "\n\n#Shorts"
+
     video_id = upload_video(
         video_path=video_path,
-        title=package["title"],
-        description=package["description"],
+        title=title,
+        description=description,
         tags=package["tags"],
         thumbnail_path=thumbnail_path,
         privacy_status=os.environ.get("YT_PRIVACY_STATUS", "public"),
