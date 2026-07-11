@@ -5,6 +5,8 @@ Downloads stock video clips from Pexels based on keywords.
 import os
 import requests
 
+from _sanitize import sanitize_credential
+
 PEXELS_SEARCH_URL = "https://api.pexels.com/videos/search"
 
 
@@ -13,7 +15,7 @@ def fetch_clips(keywords: list[str], out_dir: str, api_key: str | None = None, c
     Downloads one vertical-friendly clip per keyword into out_dir.
     Returns a list of local file paths in the same order as keywords.
     """
-    api_key = api_key or os.environ["PEXELS_API_KEY"]
+    api_key = sanitize_credential(api_key or os.environ["PEXELS_API_KEY"])
     headers = {"Authorization": api_key}
     os.makedirs(out_dir, exist_ok=True)
 

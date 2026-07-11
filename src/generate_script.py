@@ -7,6 +7,8 @@ import os
 import json
 from groq import Groq
 
+from _sanitize import sanitize_credential
+
 MODEL = "llama-3.3-70b-versatile"
 
 SYSTEM_PROMPT = """You write scripts for short, faceless narration-style YouTube videos \
@@ -30,7 +32,7 @@ def generate_script(topic: str, seo_keywords: list[str] | None = None, api_key: 
     related queries) that the title/description/tags should be built around, instead of
     guessing what people search for.
     """
-    client = Groq(api_key=api_key or os.environ["GROQ_API_KEY"])
+    client = Groq(api_key=sanitize_credential(api_key or os.environ["GROQ_API_KEY"]))
 
     keyword_block = ""
     if seo_keywords:

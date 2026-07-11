@@ -10,16 +10,18 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
+from _sanitize import sanitize_credential
+
 SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
 
 def _get_credentials():
     return Credentials(
         token=None,
-        refresh_token=os.environ["YT_REFRESH_TOKEN"],
+        refresh_token=sanitize_credential(os.environ["YT_REFRESH_TOKEN"]),
         token_uri="https://oauth2.googleapis.com/token",
-        client_id=os.environ["YT_CLIENT_ID"],
-        client_secret=os.environ["YT_CLIENT_SECRET"],
+        client_id=sanitize_credential(os.environ["YT_CLIENT_ID"]),
+        client_secret=sanitize_credential(os.environ["YT_CLIENT_SECRET"]),
         scopes=SCOPES,
     )
 
