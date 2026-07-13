@@ -66,6 +66,27 @@ CATEGORY_TOPICS = {
         "strange deep sea creatures",
         "animal survival adaptations",
     ],
+    "personality": [
+        "zodiac sign personality traits explained",
+        "MBTI personality types explained",
+        "signs you're secretly an introvert",
+        "dark personality traits to watch for",
+        "what your personality type says about you",
+    ],
+    "sports": [
+        "greatest comebacks in sports history",
+        "weird rules in professional sports",
+        "biggest underdog stories in sports",
+        "biggest sports scandals ever",
+        "sports records that may never be broken",
+    ],
+    "documentary": [
+        "true crime cases that shocked the world",
+        "unsolved mysteries explained",
+        "disasters caught on camera explained",
+        "cults that shocked the world",
+        "conspiracy theories investigated",
+    ],
 }
 
 

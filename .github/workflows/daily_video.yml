@@ -25,6 +25,9 @@ on:
           - motivation
           - finance
           - animals
+          - personality
+          - sports
+          - documentary
       custom_topic:
         description: "Exact topic to use (used only if topic_mode = custom)"
         type: string
