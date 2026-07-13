@@ -82,8 +82,12 @@ def assemble_video(
         check=True, capture_output=True,
     )
 
-    # Escape text for ffmpeg drawtext
-    safe_title = title_text.replace("'", "\\'").replace(":", "\\:")
+    # Escape text for ffmpeg's drawtext filter syntax. ffmpeg's own quoted-string
+    # parser has no backslash-escape for a literal quote -- the documented
+    # workaround is to close the quote, insert a backslash-escaped quote
+    # *outside* it, then reopen the quote (the "'\''" idiom). A colon, on the
+    # other hand, IS valid to backslash-escape directly within the quotes.
+    safe_title = title_text.replace("'", "'\\''").replace(":", "\\:")
 
     # Add title overlay + mux voiceover audio
     subprocess.run(
