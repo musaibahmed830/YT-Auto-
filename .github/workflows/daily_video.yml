@@ -39,6 +39,13 @@ on:
         options:
           - video
           - shorts
+      visual_style:
+        description: "Visuals: real stock footage, or original AI-illustrated clips"
+        type: choice
+        default: stock
+        options:
+          - stock
+          - ai_illustration
 
 jobs:
   build-and-upload:
@@ -85,4 +92,5 @@ jobs:
           TOPIC_CATEGORY: ${{ github.event.inputs.category || 'any' }}
           CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}
           VIDEO_MODE: ${{ github.event.inputs.video_mode || 'video' }}
+          VISUAL_STYLE: ${{ github.event.inputs.visual_style || 'stock' }}
         run: python main.py

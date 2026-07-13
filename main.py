@@ -15,6 +15,7 @@ from seo_research import research_keywords
 from generate_script import generate_script
 from generate_voiceover import generate_voiceover
 from fetch_visuals import fetch_clips
+from generate_illustrations import generate_illustrations
 from assemble_video import assemble_video
 from generate_thumbnail import generate_thumbnail
 from upload_youtube import upload_video
@@ -74,14 +75,24 @@ def run():
     voiceover_path = os.path.join(WORK_DIR, "voiceover.wav")
     generate_voiceover(package["narration"], voiceover_path)
 
-    print(f"Step 5/7: Fetching stock clips ({'portrait' if is_shorts else 'landscape'})...")
-    clip_paths = fetch_clips(
-        package["visual_keywords"],
-        os.path.join(WORK_DIR, "clips"),
-        orientation="portrait" if is_shorts else "landscape",
-    )
+    visual_style = os.environ.get("VISUAL_STYLE", "stock")
+    orientation = "portrait" if is_shorts else "landscape"
+    if visual_style == "ai_illustration":
+        print(f"Step 5/7: Generating AI illustration clips ({orientation})...")
+        clip_paths = generate_illustrations(
+            package["visual_keywords"],
+            os.path.join(WORK_DIR, "clips"),
+            orientation=orientation,
+        )
+    else:
+        print(f"Step 5/7: Fetching stock clips ({orientation})...")
+        clip_paths = fetch_clips(
+            package["visual_keywords"],
+            os.path.join(WORK_DIR, "clips"),
+            orientation=orientation,
+        )
     if not clip_paths:
-        raise RuntimeError("No stock clips found for any keyword - aborting.")
+        raise RuntimeError("No visual clips generated for any keyword - aborting.")
 
     print(f"Step 6/7: Assembling {'Shorts (1080x1920)' if is_shorts else 'video (1920x1080)'} + thumbnail...")
     video_path = os.path.join(OUTPUT_DIR, "video.mp4")
