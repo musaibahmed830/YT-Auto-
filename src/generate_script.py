@@ -68,7 +68,13 @@ Create a faceless YouTube short-form video package on this exact topic. Respond 
 }}
 
 visual_keywords should be 5-8 concrete, filmable nouns/scenes (e.g. "ocean waves", "city traffic at night") \
-that match the narration, suitable for searching stock footage."""
+that match the narration, suitable for searching stock footage. These keywords are used to search a \
+royalty-free STOCK footage library that has no footage of any real, named person, brand, or copyrighted \
+movie/show/game -- so NEVER use a person's name, a show/movie/game title, a team name, or a brand as a \
+keyword, even if the topic is about a specific person or franchise. Instead describe the generic \
+scene/action/mood the narration evokes (e.g. for a video about a footballer, use "soccer player scoring \
+goal" or "stadium crowd cheering", not the player's name; for a fantasy show, use "dragon flying over \
+castle" or "knights sword fight", not the show's name or any character name)."""
 
     response = client.chat.completions.create(
         model=MODEL,

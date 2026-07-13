@@ -9,6 +9,10 @@ from _sanitize import sanitize_credential
 
 PEXELS_SEARCH_URL = "https://api.pexels.com/videos/search"
 
+# Used when a keyword (e.g. a proper noun the script model slipped in) matches
+# nothing on Pexels, so one bad keyword doesn't just shrink the video by a clip.
+FALLBACK_QUERY = "cinematic b-roll"
+
 
 def fetch_clips(
     keywords: list[str],
@@ -31,12 +35,17 @@ def fetch_clips(
         params = {"query": keyword, "per_page": clips_per_keyword, "orientation": orientation}
         resp = requests.get(PEXELS_SEARCH_URL, headers=headers, params=params, timeout=30)
         resp.raise_for_status()
-        data = resp.json()
+        videos = resp.json().get("videos", [])
 
-        videos = data.get("videos", [])
         if not videos:
-            print(f"[fetch_visuals] No clips found for '{keyword}', skipping.")
-            continue
+            print(f"[fetch_visuals] No clips found for '{keyword}', retrying with fallback query.")
+            params["query"] = FALLBACK_QUERY
+            resp = requests.get(PEXELS_SEARCH_URL, headers=headers, params=params, timeout=30)
+            resp.raise_for_status()
+            videos = resp.json().get("videos", [])
+            if not videos:
+                print(f"[fetch_visuals] Fallback query also returned nothing, skipping clip {i}.")
+                continue
 
         # Pick a mid-quality HD file to keep download size reasonable
         video_files = sorted(videos[0]["video_files"], key=lambda v: v.get("width", 0))
