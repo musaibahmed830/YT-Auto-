@@ -87,6 +87,34 @@ CATEGORY_TOPICS = {
         "cults that shocked the world",
         "conspiracy theories investigated",
     ],
+    "islamic": [
+        "amazing facts about Islamic history",
+        "stories of the Prophets explained",
+        "beautiful mosques around the world",
+        "inventions from the Islamic golden age",
+        "Ramadan traditions around the world",
+    ],
+    "music": [
+        "surprising facts about music theory",
+        "history of iconic music genres",
+        "musical instruments from around the world explained",
+        "why songs get stuck in your head explained",
+        "how music production has evolved over time",
+    ],
+    "horror": [
+        "scariest urban legends explained",
+        "unsolved horror mysteries",
+        "creepiest abandoned places in the world",
+        "true ghost stories people still can't explain",
+        "horror myths debunked",
+    ],
+    "cartoons": [
+        "hidden secrets in classic animation explained",
+        "how cartoon animation actually works",
+        "history of Saturday morning cartoons",
+        "banned cartoon episodes explained",
+        "evolution of animation technology",
+    ],
 }
 
 

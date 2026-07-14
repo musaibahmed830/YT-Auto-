@@ -28,6 +28,10 @@ on:
           - personality
           - sports
           - documentary
+          - islamic
+          - music
+          - horror
+          - cartoons
       custom_topic:
         description: "Exact topic to use (used only if topic_mode = custom)"
         type: string
