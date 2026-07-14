@@ -19,6 +19,7 @@ from generate_illustrations import generate_illustrations
 from assemble_video import assemble_video
 from generate_thumbnail import generate_thumbnail
 from upload_youtube import upload_video
+from languages import voice_for_language
 
 WORK_DIR = "work"
 OUTPUT_DIR = "output"
@@ -67,13 +68,14 @@ def run():
     seo_keywords = research_keywords(topic)
     print(f"  -> Keywords: {seo_keywords[:5]}{'...' if len(seo_keywords) > 5 else ''}")
 
-    print("Step 3/7: Generating script + SEO metadata...")
-    package = generate_script(topic, seo_keywords=seo_keywords)
+    language = os.environ.get("LANGUAGE", "english")
+    print(f"Step 3/7: Generating script + SEO metadata (language={language!r})...")
+    package = generate_script(topic, seo_keywords=seo_keywords, language=language)
     print(f"  -> Title: {package['title']}")
 
-    print("Step 4/7: Generating voiceover...")
+    print(f"Step 4/7: Generating voiceover ({language})...")
     voiceover_path = os.path.join(WORK_DIR, "voiceover.wav")
-    generate_voiceover(package["narration"], voiceover_path)
+    generate_voiceover(package["narration"], voiceover_path, voice=voice_for_language(language))
 
     visual_style = os.environ.get("VISUAL_STYLE", "stock")
     orientation = "portrait" if is_shorts else "landscape"

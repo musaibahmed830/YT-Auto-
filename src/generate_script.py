@@ -8,8 +8,19 @@ import json
 from groq import Groq
 
 from _sanitize import sanitize_credential
+from languages import DEFAULT_LANGUAGE, name_for_language
 
 MODEL = "llama-3.3-70b-versatile"
+
+
+def _language_instruction(language: str) -> str:
+    if language == DEFAULT_LANGUAGE:
+        return ""
+    return (
+        f"\n\nWrite your ENTIRE response -- title, description, narration, and tags -- "
+        f"in {name_for_language(language)}. Only the JSON keys themselves stay in English."
+    )
+
 
 SYSTEM_PROMPT = """You write scripts for short, faceless narration-style YouTube videos \
 (60-90 seconds spoken), and you are also an SEO copywriter for YouTube. Style: punchy hook \
@@ -17,7 +28,12 @@ in the first line, clear simple sentences, no fluff, no stage directions, no hea
 spoken narration text. Return ONLY valid JSON, no markdown fences, no preamble."""
 
 
-def generate_script(topic: str, seo_keywords: list[str] | None = None, api_key: str | None = None):
+def generate_script(
+    topic: str,
+    seo_keywords: list[str] | None = None,
+    api_key: str | None = None,
+    language: str = DEFAULT_LANGUAGE,
+):
     """
     Returns a dict:
     {
@@ -65,10 +81,11 @@ Create a faceless YouTube short-form video package on this exact topic. Respond 
   "tags": ["tag1", "tag2", "..."],
   "narration": "the full 60-90 second spoken script, first line is a hook",
   "visual_keywords": ["keyword1", "keyword2", "keyword3", "..."]
-}}
+}}{_language_instruction(language)}
 
-visual_keywords should be 5-8 concrete, filmable nouns/scenes (e.g. "ocean waves", "city traffic at night") \
-that match the narration, suitable for searching stock footage. These keywords are used to search a \
+visual_keywords should always be in English regardless of the response language above -- they're only \
+used to search stock footage, never shown to a viewer. They should be 5-8 concrete, filmable nouns/scenes \
+(e.g. "ocean waves", "city traffic at night") that match the narration. These keywords are used to search a \
 royalty-free STOCK footage library that has no footage of any real, named person, brand, or copyrighted \
 movie/show/game -- so NEVER use a person's name, a show/movie/game title, a team name, or a brand as a \
 keyword, even if the topic is about a specific person or franchise. Instead describe the generic \

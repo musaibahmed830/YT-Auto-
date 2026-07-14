@@ -50,6 +50,21 @@ on:
         options:
           - stock
           - ai_illustration
+      language:
+        description: "Script + voiceover language (Piper has no Urdu voice yet)"
+        type: choice
+        default: english
+        options:
+          - english
+          - spanish
+          - french
+          - german
+          - arabic
+          - hindi
+          - portuguese
+          - russian
+          - turkish
+          - chinese
 
 jobs:
   build-and-upload:
@@ -77,11 +92,19 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      - name: Cache Piper voice model
+      - name: Cache Piper voice models
         uses: actions/cache@v4
         with:
           path: voices
-          key: piper-voice-en_US-lessac-medium-v1
+          # A key that never matches an existing entry (run_id is unique
+          # per run) guarantees this run always saves its (possibly
+          # updated) voices/ dir at the end, while restore-keys still
+          # pulls in the most recent prior snapshot -- lets the cache
+          # accumulate multiple language voices over time instead of
+          # pinning to one exact voice forever.
+          key: piper-voices-${{ github.run_id }}
+          restore-keys: |
+            piper-voices-
 
       - name: Run daily video pipeline
         env:
@@ -97,4 +120,5 @@ jobs:
           CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}
           VIDEO_MODE: ${{ github.event.inputs.video_mode || 'video' }}
           VISUAL_STYLE: ${{ github.event.inputs.visual_style || 'stock' }}
+          LANGUAGE: ${{ github.event.inputs.language || 'english' }}
         run: python main.py
