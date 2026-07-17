@@ -19,8 +19,9 @@ import requests
 POLLINATIONS_URL = "https://image.pollinations.ai/prompt/{prompt}"
 
 STYLE_SUFFIX = (
-    ", vibrant digital illustration, flat cartoon style, bold colors, "
-    "no text, no watermark, no logo, no signature"
+    ", semi-realistic 3D animated movie style, cinematic lighting, detailed "
+    "shading, consistent character design, no text, no watermark, no logo, "
+    "no signature"
 )
 
 
@@ -28,10 +29,17 @@ def _build_prompt(keyword: str) -> str:
     return f"{keyword}{STYLE_SUFFIX}"
 
 
-def _download_image(keyword: str, out_path: str, width: int, height: int, timeout: int = 60) -> bool:
+def _download_image(
+    keyword: str, out_path: str, width: int, height: int, seed: int, timeout: int = 60
+) -> bool:
     prompt = quote(_build_prompt(keyword))
     url = POLLINATIONS_URL.format(prompt=prompt)
-    params = {"width": width, "height": height, "nologo": "true", "seed": random.randint(0, 999_999)}
+    # Reusing the same seed across every clip in a video (instead of a fresh
+    # random one per image) keeps the color palette/rendering style visually
+    # consistent from shot to shot -- the reference look this is styled after
+    # uses one consistent illustration style throughout a video, not a
+    # different random look per scene.
+    params = {"width": width, "height": height, "nologo": "true", "seed": seed}
     try:
         resp = requests.get(url, params=params, timeout=timeout)
         resp.raise_for_status()
@@ -75,11 +83,12 @@ def generate_illustrations(
     """
     width, height = (1080, 1920) if orientation == "portrait" else (1920, 1080)
     os.makedirs(out_dir, exist_ok=True)
+    seed = random.randint(0, 999_999)
 
     paths = []
     for i, keyword in enumerate(keywords):
         img_path = os.path.join(out_dir, f"illustration_{i:02d}.jpg")
-        if not _download_image(keyword, img_path, width, height):
+        if not _download_image(keyword, img_path, width, height, seed):
             print(f"[generate_illustrations] Skipping clip {i} ('{keyword}') -- no image generated.")
             continue
 

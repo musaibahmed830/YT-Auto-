@@ -4,8 +4,11 @@ Requires ffmpeg and ffprobe to be installed and on PATH.
 """
 
 import os
+import re
 import subprocess
 import json
+
+MAX_CAPTION_WORDS = 6
 
 
 def _get_duration(path: str) -> float:
@@ -19,6 +22,38 @@ def _get_duration(path: str) -> float:
     return float(json.loads(result.stdout)["format"]["duration"])
 
 
+def _write_caption_file(text: str, path: str) -> str:
+    # Sidesteps ffmpeg's drawtext filtergraph string-escaping entirely --
+    # apostrophes, colons, and other punctuation in the caption text need no
+    # special handling at all when read from a file via textfile=, unlike an
+    # inline text='...' value (which turned out to mis-parse apostrophes in
+    # this ffmpeg build, silently swallowing the rest of the filter chain as
+    # literal on-screen text).
+    with open(path, "w") as f:
+        f.write(text)
+    return path
+
+
+def _chunk_narration_for_captions(narration: str, max_words: int = MAX_CAPTION_WORDS) -> list[str]:
+    """
+    Splits narration into short, punchy caption chunks (a handful of words
+    each) instead of one long block of text -- mirrors the dramatic
+    on-screen caption style common in this genre (e.g. "THEY CALL IT",
+    "HIS NAME ECHOES ACROSS THE DESERT").
+    """
+    sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", narration.strip()) if s.strip()]
+
+    chunks = []
+    for sentence in sentences:
+        words = sentence.split()
+        for i in range(0, len(words), max_words):
+            chunk = " ".join(words[i : i + max_words]).strip(".,!?")
+            if chunk:
+                chunks.append(chunk.upper())
+
+    return chunks
+
+
 def assemble_video(
     clip_paths: list[str],
     voiceover_path: str,
@@ -26,11 +61,15 @@ def assemble_video(
     out_path: str,
     work_dir: str = "work",
     vertical: bool = False,
+    narration: str | None = None,
 ):
     """
     - Normalizes each clip to 1920x1080 (or 1080x1920 for Shorts), no audio
     - Loops/trims clips to cover the voiceover's total duration
     - Adds a simple title card overlay for the first 3 seconds
+    - If narration is given, burns in short dramatic captions (a handful of
+      words at a time, evenly timed across the rest of the video) --
+      matching the on-screen caption style common in this genre
     - Muxes the voiceover as the audio track
     """
     os.makedirs(work_dir, exist_ok=True)
@@ -82,26 +121,43 @@ def assemble_video(
         check=True, capture_output=True,
     )
 
-    # Escape text for ffmpeg's drawtext filter syntax. ffmpeg's own quoted-string
-    # parser has no backslash-escape for a literal quote -- the documented
-    # workaround is to close the quote, insert a backslash-escaped quote
-    # *outside* it, then reopen the quote (the "'\''" idiom). A colon, on the
-    # other hand, IS valid to backslash-escape directly within the quotes.
-    safe_title = title_text.replace("'", "'\\''").replace(":", "\\:")
+    title_file = _write_caption_file(title_text, os.path.join(work_dir, "title.txt"))
+    title_filter = (
+        f"drawtext=textfile='{title_file}':fontcolor=white:fontsize=54:"
+        "box=1:boxcolor=black@0.5:boxborderw=20:"
+        "x=(w-text_w)/2:y=h*0.08:"
+        "enable='between(t,0,3.5)'"
+    )
+    filters = [title_filter]
 
-    # Add title overlay + mux voiceover audio
+    # Dramatic short captions, timed evenly across the video after the
+    # title fades -- e.g. "THEY CALL IT", "HIS NAME ECHOES ACROSS THE DESERT".
+    if narration:
+        caption_start = 3.5
+        chunks = _chunk_narration_for_captions(narration)
+        remaining = max(voice_duration - caption_start, 0)
+        if chunks and remaining > 0:
+            per_caption = remaining / len(chunks)
+            for i, chunk in enumerate(chunks):
+                start = caption_start + i * per_caption
+                end = start + per_caption
+                caption_file = _write_caption_file(
+                    chunk, os.path.join(work_dir, f"caption_{i:02d}.txt")
+                )
+                filters.append(
+                    f"drawtext=textfile='{caption_file}':fontcolor=white:fontsize=64:"
+                    "box=1:boxcolor=black@0.55:boxborderw=18:"
+                    "x=(w-text_w)/2:y=h*0.78:"
+                    f"enable='between(t,{start:.2f},{end:.2f})'"
+                )
+
+    # Add title + caption overlays, then mux the voiceover audio.
     subprocess.run(
         [
             "ffmpeg", "-y",
             "-i", concat_video_path,
             "-i", voiceover_path,
-            "-vf",
-            (
-                f"drawtext=text='{safe_title}':fontcolor=white:fontsize=54:"
-                "box=1:boxcolor=black@0.5:boxborderw=20:"
-                "x=(w-text_w)/2:y=h*0.08:"
-                "enable='between(t,0,3.5)'"
-            ),
+            "-vf", ",".join(filters),
             "-map", "0:v:0", "-map", "1:a:0",
             "-c:v", "libx264", "-preset", "medium",
             "-c:a", "aac", "-b:a", "192k",

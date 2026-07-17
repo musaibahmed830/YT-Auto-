@@ -98,7 +98,10 @@ def run():
 
     print(f"Step 6/7: Assembling {'Shorts (1080x1920)' if is_shorts else 'video (1920x1080)'} + thumbnail...")
     video_path = os.path.join(OUTPUT_DIR, "video.mp4")
-    assemble_video(clip_paths, voiceover_path, package["title"], video_path, work_dir=WORK_DIR, vertical=is_shorts)
+    assemble_video(
+        clip_paths, voiceover_path, package["title"], video_path,
+        work_dir=WORK_DIR, vertical=is_shorts, narration=package["narration"],
+    )
 
     thumbnail_path = os.path.join(OUTPUT_DIR, "thumbnail.jpg")
     generate_thumbnail(video_path, package["title"], thumbnail_path, vertical=is_shorts)
