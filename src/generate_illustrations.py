@@ -52,12 +52,46 @@ def _download_image(
     return True
 
 
-def _image_to_clip(img_path: str, out_path: str, width: int, height: int, duration: int = 5, fps: int = 25) -> None:
+# Each preset is a (zoom_expr, x_expr, y_expr) triple for ffmpeg's zoompan
+# filter. Cycling through these per clip (instead of always the same
+# zoom-in-center move) makes a video feel less like "the same still image
+# every time" -- pan drift is clamped to min(desired_drift, available_margin)
+# so it can never push the crop window out of bounds regardless of the
+# current zoom level.
+def _motion_presets(frames: int) -> list[tuple[str, str, str]]:
+    zoom_in = "min(zoom+0.0015,1.2)"
+    zoom_out = "if(eq(on,0),1.2,max(zoom-0.0015,1.0))"
+    zoom_fixed = "1.15"
+
+    x_center = "iw/2-(iw/zoom/2)"
+    y_center = "ih/2-(ih/zoom/2)"
+
+    def pan_x(sign: str, scale: float = 0.35) -> str:
+        return f"{x_center}{sign}min((iw-iw/zoom)/2,(on/{frames})*(iw*{scale}))"
+
+    def pan_y(sign: str, scale: float = 0.35) -> str:
+        return f"{y_center}{sign}min((ih-ih/zoom)/2,(on/{frames})*(ih*{scale}))"
+
+    return [
+        (zoom_in, x_center, y_center),
+        (zoom_in, pan_x("+"), y_center),
+        (zoom_in, pan_x("-"), y_center),
+        (zoom_out, x_center, y_center),
+        (zoom_fixed, x_center, pan_y("+")),
+        (zoom_fixed, x_center, pan_y("-")),
+    ]
+
+
+def _image_to_clip(
+    img_path: str, out_path: str, width: int, height: int, duration: int = 5, fps: int = 25, motion_index: int = 0
+) -> None:
     frames = duration * fps
+    presets = _motion_presets(frames)
+    zoom_expr, x_expr, y_expr = presets[motion_index % len(presets)]
     vf = (
         f"scale={width * 2}:{height * 2}:force_original_aspect_ratio=increase,"
         f"crop={width * 2}:{height * 2},"
-        f"zoompan=z='min(zoom+0.0015,1.2)':d={frames}:s={width}x{height}:fps={fps}"
+        f"zoompan=z='{zoom_expr}':x='{x_expr}':y='{y_expr}':d={frames}:s={width}x{height}:fps={fps}"
     )
     subprocess.run(
         [
@@ -103,7 +137,7 @@ def generate_illustrations(
 
         clip_path = os.path.join(out_dir, f"clip_{i:02d}.mp4")
         try:
-            _image_to_clip(img_path, clip_path, width, height, duration=clip_seconds)
+            _image_to_clip(img_path, clip_path, width, height, duration=clip_seconds, motion_index=i)
         except subprocess.CalledProcessError as e:
             print(f"[generate_illustrations] ffmpeg failed to animate '{keyword}': {e}")
             continue

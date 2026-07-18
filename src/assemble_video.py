@@ -3,12 +3,14 @@ Assembles the final video from stock clips + voiceover using ffmpeg.
 Requires ffmpeg and ffprobe to be installed and on PATH.
 """
 
+import math
 import os
 import re
 import subprocess
 import json
 
 MAX_CAPTION_WORDS = 6
+XFADE_DURATION = 0.6  # seconds -- crossfade dissolve length between scenes
 
 
 def _get_duration(path: str) -> float:
@@ -94,32 +96,57 @@ def assemble_video(
         )
         normalized.append(norm_path)
 
-    # Build concat list, repeating clips if needed to cover voice_duration
+    # Cross-dissolve between scenes instead of hard-cutting -- loops through
+    # normalized clips (repeating as needed) to cover voice_duration, same as
+    # before, but joins them with an xfade chain. Each slot is looped/trimmed
+    # to an exact duration via -stream_loop so the xfade offset math is
+    # deterministic regardless of the source clip's real length. +1 slot is
+    # extra slack so the crossfade overlaps never leave the merged sequence
+    # shorter than voice_duration (the final -t trims off any excess).
     per_clip_seconds = max(voice_duration / len(normalized), 3)
-    concat_list_path = os.path.join(work_dir, "concat.txt")
-    with open(concat_list_path, "w") as f:
-        total = 0.0
-        idx = 0
-        while total < voice_duration:
-            clip = normalized[idx % len(normalized)]
-            f.write(f"file '{os.path.abspath(clip)}'\n")
-            f.write(f"duration {per_clip_seconds}\n")
-            total += per_clip_seconds
-            idx += 1
-        # ffmpeg concat demuxer requires the last file repeated without duration
-        f.write(f"file '{os.path.abspath(normalized[(idx - 1) % len(normalized)])}'\n")
+    n_slots = math.ceil(voice_duration / per_clip_seconds) + 1
 
     concat_video_path = os.path.join(work_dir, "concat_video.mp4")
-    subprocess.run(
-        [
-            "ffmpeg", "-y", "-f", "concat", "-safe", "0",
-            "-i", concat_list_path,
-            "-c:v", "libx264", "-preset", "veryfast",
-            "-t", str(voice_duration),
-            concat_video_path,
-        ],
-        check=True, capture_output=True,
-    )
+
+    if n_slots == 1:
+        subprocess.run(
+            [
+                "ffmpeg", "-y", "-stream_loop", "-1", "-t", str(voice_duration), "-i", normalized[0],
+                "-c:v", "libx264", "-preset", "veryfast",
+                concat_video_path,
+            ],
+            check=True, capture_output=True,
+        )
+    else:
+        input_args = []
+        for slot in range(n_slots):
+            clip = normalized[slot % len(normalized)]
+            input_args += ["-stream_loop", "-1", "-t", str(per_clip_seconds), "-i", clip]
+
+        filters = []
+        prev_label = "0:v"
+        cumulative = per_clip_seconds
+        for slot in range(1, n_slots):
+            offset = cumulative - XFADE_DURATION
+            out_label = f"xf{slot}"
+            filters.append(
+                f"[{prev_label}][{slot}:v]xfade=transition=fade:"
+                f"duration={XFADE_DURATION}:offset={offset:.3f}[{out_label}]"
+            )
+            prev_label = out_label
+            cumulative += per_clip_seconds - XFADE_DURATION
+
+        subprocess.run(
+            [
+                "ffmpeg", "-y", *input_args,
+                "-filter_complex", ";".join(filters),
+                "-map", f"[{prev_label}]",
+                "-c:v", "libx264", "-preset", "veryfast",
+                "-t", str(voice_duration),
+                concat_video_path,
+            ],
+            check=True, capture_output=True,
+        )
 
     title_file = _write_caption_file(title_text, os.path.join(work_dir, "title.txt"))
     title_filter = (
