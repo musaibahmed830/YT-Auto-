@@ -80,11 +80,21 @@ def run():
     visual_style = os.environ.get("VISUAL_STYLE", "stock")
     orientation = "portrait" if is_shorts else "landscape"
     if visual_style == "ai_illustration":
-        print(f"Step 5/7: Generating AI illustration clips ({orientation})...")
+        custom_visual_prompt = os.environ.get("CUSTOM_VISUAL_PROMPT", "").strip()
+        if custom_visual_prompt:
+            # An exact scene/image prompt drives the VISUALS only -- the
+            # narration above is unaffected and keeps coming from the topic,
+            # never from this prompt.
+            print(f"Step 5/7: Generating AI illustration clips from a custom prompt ({orientation})...")
+            illustration_prompts = [custom_visual_prompt] * len(package["visual_keywords"])
+        else:
+            print(f"Step 5/7: Generating AI illustration clips ({orientation})...")
+            illustration_prompts = package["visual_keywords"]
         clip_paths = generate_illustrations(
-            package["visual_keywords"],
+            illustration_prompts,
             os.path.join(WORK_DIR, "clips"),
             orientation=orientation,
+            vary_seed_per_clip=bool(custom_visual_prompt),
         )
     else:
         print(f"Step 5/7: Fetching stock clips ({orientation})...")

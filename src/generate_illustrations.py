@@ -74,19 +74,28 @@ def generate_illustrations(
     out_dir: str,
     orientation: str = "landscape",
     clip_seconds: int = 5,
+    vary_seed_per_clip: bool = False,
 ) -> list[str]:
     """
     Downloads one AI-illustrated image per keyword and converts each into a
     short pan/zoom video clip in out_dir. orientation: "landscape" for
     regular videos, "portrait" for Shorts. Returns local clip file paths in
     the same order as keywords (skipping any keyword whose image failed).
+
+    vary_seed_per_clip: normally every clip in a video shares one seed so
+    the rendering style stays visually consistent across different scenes.
+    When the same exact prompt is repeated for every clip (a user-supplied
+    custom visual prompt), reusing one seed would render the literal same
+    image every time -- so each clip instead gets its own random seed,
+    producing different takes on the same described scene.
     """
     width, height = (1080, 1920) if orientation == "portrait" else (1920, 1080)
     os.makedirs(out_dir, exist_ok=True)
-    seed = random.randint(0, 999_999)
+    shared_seed = random.randint(0, 999_999)
 
     paths = []
     for i, keyword in enumerate(keywords):
+        seed = random.randint(0, 999_999) if vary_seed_per_clip else shared_seed
         img_path = os.path.join(out_dir, f"illustration_{i:02d}.jpg")
         if not _download_image(keyword, img_path, width, height, seed):
             print(f"[generate_illustrations] Skipping clip {i} ('{keyword}') -- no image generated.")

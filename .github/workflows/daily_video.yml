@@ -50,6 +50,10 @@ on:
         options:
           - stock
           - ai_illustration
+      custom_visual_prompt:
+        description: "Exact image prompt for AI illustrations (used only if visual_style = ai_illustration). Drives VISUALS only -- never spoken as narration."
+        type: string
+        default: ""
       language:
         description: "Script + voiceover language (Piper has no Urdu voice yet)"
         type: choice
@@ -120,5 +124,6 @@ jobs:
           CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}
           VIDEO_MODE: ${{ github.event.inputs.video_mode || 'video' }}
           VISUAL_STYLE: ${{ github.event.inputs.visual_style || 'stock' }}
+          CUSTOM_VISUAL_PROMPT: ${{ github.event.inputs.custom_visual_prompt || '' }}
           LANGUAGE: ${{ github.event.inputs.language || 'english' }}
         run: python main.py
