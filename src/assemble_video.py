@@ -98,20 +98,39 @@ def assemble_video(
 
     # Cross-dissolve between scenes instead of hard-cutting -- loops through
     # normalized clips (repeating as needed) to cover voice_duration, same as
-    # before, but joins them with an xfade chain. Each slot is looped/trimmed
-    # to an exact duration via -stream_loop so the xfade offset math is
-    # deterministic regardless of the source clip's real length. +1 slot is
-    # extra slack so the crossfade overlaps never leave the merged sequence
-    # shorter than voice_duration (the final -t trims off any excess).
+    # before, but joins them with an xfade chain. +1 slot is extra slack so
+    # the crossfade overlaps never leave the merged sequence shorter than
+    # voice_duration (the final -t trims off any excess).
     per_clip_seconds = max(voice_duration / len(normalized), 3)
     n_slots = math.ceil(voice_duration / per_clip_seconds) + 1
 
     concat_video_path = os.path.join(work_dir, "concat_video.mp4")
 
+    # Pre-render each slot to an exact, finite-duration segment file first --
+    # xfade needs every input to have a known, concrete duration to
+    # negotiate frame timing. Chaining xfade directly over "-stream_loop -1"
+    # (infinite) inputs is unreliable once there are more than a couple of
+    # them: the filtergraph can't cleanly synchronize several simultaneously
+    # open infinite streams and fails outright (observed in production:
+    # ffmpeg exit code 234 with 6 chained inputs).
+    segment_paths = []
+    for slot in range(n_slots):
+        clip = normalized[slot % len(normalized)]
+        seg_path = os.path.join(work_dir, f"seg_{slot:02d}.mp4")
+        subprocess.run(
+            [
+                "ffmpeg", "-y", "-stream_loop", "-1", "-t", str(per_clip_seconds), "-i", clip,
+                "-c:v", "libx264", "-preset", "veryfast",
+                seg_path,
+            ],
+            check=True, capture_output=True,
+        )
+        segment_paths.append(seg_path)
+
     if n_slots == 1:
         subprocess.run(
             [
-                "ffmpeg", "-y", "-stream_loop", "-1", "-t", str(voice_duration), "-i", normalized[0],
+                "ffmpeg", "-y", "-i", segment_paths[0], "-t", str(voice_duration),
                 "-c:v", "libx264", "-preset", "veryfast",
                 concat_video_path,
             ],
@@ -119,9 +138,8 @@ def assemble_video(
         )
     else:
         input_args = []
-        for slot in range(n_slots):
-            clip = normalized[slot % len(normalized)]
-            input_args += ["-stream_loop", "-1", "-t", str(per_clip_seconds), "-i", clip]
+        for seg_path in segment_paths:
+            input_args += ["-i", seg_path]
 
         filters = []
         prev_label = "0:v"
