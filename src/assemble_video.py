@@ -11,6 +11,7 @@ import json
 
 MAX_CAPTION_WORDS = 6
 XFADE_DURATION = 0.6  # seconds -- crossfade dissolve length between scenes
+TARGET_FPS = 25  # every clip must share this exactly, or xfade can fail/crash
 
 
 def _get_duration(path: str) -> float:
@@ -81,14 +82,21 @@ def assemble_video(
     if not clip_paths:
         raise ValueError("No clips provided to assemble_video")
 
-    # Normalize clips first (scale/crop to target resolution, strip audio)
+    # Normalize clips first (scale/crop to target resolution, strip audio).
+    # Source clips (stock footage especially) commonly have different native
+    # frame rates from each other -- forcing a single TARGET_FPS here is
+    # required, not cosmetic: xfade later needs every chained input to share
+    # an identical frame rate or it can fail outright (observed in
+    # production: ffmpeg exit code 234 with mismatched-fps stock clips).
     normalized = []
     for i, clip in enumerate(clip_paths):
         norm_path = os.path.join(work_dir, f"norm_{i:02d}.mp4")
         subprocess.run(
             [
                 "ffmpeg", "-y", "-i", clip,
-                "-vf", f"scale={width}:{height}:force_original_aspect_ratio=increase,crop={width}:{height}",
+                "-vf",
+                f"scale={width}:{height}:force_original_aspect_ratio=increase,"
+                f"crop={width}:{height},fps={TARGET_FPS}",
                 "-an", "-c:v", "libx264", "-preset", "veryfast",
                 norm_path,
             ],
@@ -120,6 +128,7 @@ def assemble_video(
         subprocess.run(
             [
                 "ffmpeg", "-y", "-stream_loop", "-1", "-t", str(per_clip_seconds), "-i", clip,
+                "-r", str(TARGET_FPS),
                 "-c:v", "libx264", "-preset", "veryfast",
                 seg_path,
             ],
