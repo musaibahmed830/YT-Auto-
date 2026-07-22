@@ -14,6 +14,20 @@ XFADE_DURATION = 0.6  # seconds -- crossfade dissolve length between scenes
 TARGET_FPS = 25  # every clip must share this exactly, or xfade can fail/crash
 
 
+def _run_ffmpeg(args: list[str]) -> None:
+    """
+    subprocess.run wrapper that actually prints ffmpeg's stderr when a step
+    fails, instead of just the bare command in a CalledProcessError --
+    capture_output=True was hiding the real reason for every failure here,
+    forcing a guess-and-check loop from the caller's side every single time.
+    """
+    result = subprocess.run(args, capture_output=True)
+    if result.returncode != 0:
+        stderr_tail = result.stderr.decode(errors="replace")[-4000:]
+        print(f"[assemble_video] ffmpeg failed (exit {result.returncode}). Last output:\n{stderr_tail}")
+        raise subprocess.CalledProcessError(result.returncode, args, output=result.stdout, stderr=result.stderr)
+
+
 def _get_duration(path: str) -> float:
     result = subprocess.run(
         [
@@ -91,7 +105,7 @@ def assemble_video(
     normalized = []
     for i, clip in enumerate(clip_paths):
         norm_path = os.path.join(work_dir, f"norm_{i:02d}.mp4")
-        subprocess.run(
+        _run_ffmpeg(
             [
                 "ffmpeg", "-y", "-i", clip,
                 "-vf",
@@ -99,8 +113,7 @@ def assemble_video(
                 f"crop={width}:{height},fps={TARGET_FPS}",
                 "-an", "-c:v", "libx264", "-preset", "veryfast",
                 norm_path,
-            ],
-            check=True, capture_output=True,
+            ]
         )
         normalized.append(norm_path)
 
@@ -125,25 +138,23 @@ def assemble_video(
     for slot in range(n_slots):
         clip = normalized[slot % len(normalized)]
         seg_path = os.path.join(work_dir, f"seg_{slot:02d}.mp4")
-        subprocess.run(
+        _run_ffmpeg(
             [
                 "ffmpeg", "-y", "-stream_loop", "-1", "-t", str(per_clip_seconds), "-i", clip,
                 "-r", str(TARGET_FPS),
                 "-c:v", "libx264", "-preset", "veryfast",
                 seg_path,
-            ],
-            check=True, capture_output=True,
+            ]
         )
         segment_paths.append(seg_path)
 
     if n_slots == 1:
-        subprocess.run(
+        _run_ffmpeg(
             [
                 "ffmpeg", "-y", "-i", segment_paths[0], "-t", str(voice_duration),
                 "-c:v", "libx264", "-preset", "veryfast",
                 concat_video_path,
-            ],
-            check=True, capture_output=True,
+            ]
         )
     else:
         input_args = []
@@ -163,7 +174,7 @@ def assemble_video(
             prev_label = out_label
             cumulative += per_clip_seconds - XFADE_DURATION
 
-        subprocess.run(
+        _run_ffmpeg(
             [
                 "ffmpeg", "-y", *input_args,
                 "-filter_complex", ";".join(filters),
@@ -171,8 +182,7 @@ def assemble_video(
                 "-c:v", "libx264", "-preset", "veryfast",
                 "-t", str(voice_duration),
                 concat_video_path,
-            ],
-            check=True, capture_output=True,
+            ]
         )
 
     title_file = _write_caption_file(title_text, os.path.join(work_dir, "title.txt"))
@@ -206,7 +216,7 @@ def assemble_video(
                 )
 
     # Add title + caption overlays, then mux the voiceover audio.
-    subprocess.run(
+    _run_ffmpeg(
         [
             "ffmpeg", "-y",
             "-i", concat_video_path,
@@ -217,8 +227,7 @@ def assemble_video(
             "-c:a", "aac", "-b:a", "192k",
             "-shortest",
             out_path,
-        ],
-        check=True, capture_output=True,
+        ]
     )
 
     return out_path
