@@ -46,6 +46,22 @@ def check_binary(name: str) -> bool:
         return _report(False, name, str(e))
 
 
+def check_ffmpeg_drawtext() -> bool:
+    path = shutil.which("ffmpeg")
+    if not path:
+        return _report(False, "ffmpeg drawtext filter", "ffmpeg not on PATH")
+    try:
+        result = subprocess.run([path, "-hide_banner", "-filters"], capture_output=True, text=True, timeout=10)
+        available = " drawtext " in result.stdout or result.stdout.rstrip().endswith(" drawtext")
+        detail = "" if available else (
+            "missing -- Homebrew's plain 'ffmpeg' formula excludes libfreetype/fontconfig/libass; "
+            "run: brew install ffmpeg-full && brew unlink ffmpeg && brew link --overwrite ffmpeg-full"
+        )
+        return _report(available, "ffmpeg drawtext filter available", detail)
+    except Exception as e:
+        return _report(False, "ffmpeg drawtext filter available", str(e))
+
+
 def check_comfyui() -> bool:
     try:
         from comfyui_client import ComfyUIClient
@@ -99,6 +115,7 @@ def main() -> int:
         check_python(),
         check_binary("ffmpeg"),
         check_binary("ffprobe"),
+        check_ffmpeg_drawtext(),
         check_groq_key(),
         check_workflow_template(),
         check_comfyui(),

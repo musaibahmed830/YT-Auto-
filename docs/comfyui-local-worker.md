@@ -176,6 +176,22 @@ rather than hand-editing it.
 Install it (e.g. `brew install ffmpeg`) -- `comfyui_doctor.py` will flag
 this explicitly.
 
+**"No such filter: 'drawtext'" during video assembly**
+Homebrew's plain `ffmpeg` formula is built *without* `libfreetype` /
+`fontconfig` / `libass`, so it has no `drawtext` filter -- the title card
+and captions this pipeline burns in both need it. Switch to the fuller
+build (already in homebrew-core, no extra tap needed):
+
+```bash
+brew install ffmpeg-full
+brew unlink ffmpeg
+brew link --overwrite ffmpeg-full
+ffmpeg -filters | grep drawtext   # should now print a line
+```
+
+`comfyui_doctor.py` checks for this explicitly (`ffmpeg drawtext filter
+available`) so it's caught before a full run starts.
+
 **Job seems stuck / very slow**
 SDXL-Lightning at 4 steps is fast on Apple Silicon, but a first run also
 has to load the checkpoint into memory -- watch the ComfyUI terminal/web
