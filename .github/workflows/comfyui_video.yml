@@ -1,0 +1,114 @@
+name: ComfyUI Cinematic Video (self-hosted)
+
+# This workflow ONLY runs on a self-hosted runner registered from your own
+# Mac (Settings -> Actions -> Runners -> New self-hosted runner). It exists
+# separately from daily_video.yml so your existing scheduled cron keeps
+# running on GitHub's free cloud runners, completely unaffected -- only
+# this workflow needs your Mac + ComfyUI to be running.
+#
+# There is no cron trigger here on purpose: a scheduled run would silently
+# fail (or queue forever) any time your Mac is asleep or the runner isn't
+# started, so this is manual-only ("Run workflow" button) until you decide
+# you want a schedule too.
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic_mode:
+        description: "How to pick the topic"
+        type: choice
+        default: trending
+        options:
+          - trending
+          - category
+          - custom
+      category:
+        description: "Category (used only if topic_mode = category)"
+        type: choice
+        default: any
+        options:
+          - any
+          - facts
+          - science
+          - history
+          - motivation
+          - finance
+          - animals
+          - personality
+          - sports
+          - documentary
+          - islamic
+          - music
+          - horror
+          - cartoons
+      custom_topic:
+        description: "Exact topic to use (used only if topic_mode = custom)"
+        type: string
+        default: ""
+      video_mode:
+        description: "Upload as a regular video or a YouTube Short"
+        type: choice
+        default: shorts
+        options:
+          - video
+          - shorts
+      language:
+        description: "Script + voiceover language (Piper has no Urdu voice yet)"
+        type: choice
+        default: english
+        options:
+          - english
+          - spanish
+          - french
+          - german
+          - arabic
+          - hindi
+          - portuguese
+          - russian
+          - turkish
+          - chinese
+
+jobs:
+  build-and-upload:
+    # Requires a self-hosted runner registered on the same Mac that runs
+    # ComfyUI -- see docs/comfyui-local-worker.md for setup. This job will
+    # sit "Queued" forever on GitHub's website if no such runner is online.
+    runs-on: self-hosted
+    timeout-minutes: 60
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Confirm required local tools are present
+        run: |
+          command -v python3 >/dev/null || { echo "python3 not found on this runner"; exit 1; }
+          command -v ffmpeg >/dev/null || { echo "ffmpeg not found -- brew install ffmpeg"; exit 1; }
+          echo "python3: $(python3 --version)"
+          echo "ffmpeg: $(ffmpeg -version | head -1)"
+
+      - name: Install Python dependencies
+        run: pip3 install -r requirements.txt
+
+      - name: Run doctor check (fails fast if ComfyUI isn't reachable)
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          COMFYUI_BASE_URL: ${{ vars.COMFYUI_BASE_URL || 'http://127.0.0.1:8188' }}
+          COMFYUI_CHECKPOINT: ${{ vars.COMFYUI_CHECKPOINT || 'sdxl_lightning_4step.safetensors' }}
+        run: python3 scripts/comfyui_doctor.py
+
+      - name: Run ComfyUI video pipeline
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          COMFYUI_BASE_URL: ${{ vars.COMFYUI_BASE_URL || 'http://127.0.0.1:8188' }}
+          COMFYUI_CHECKPOINT: ${{ vars.COMFYUI_CHECKPOINT || 'sdxl_lightning_4step.safetensors' }}
+          VISUAL_STYLE: comfyui
+          TOPIC_MODE: ${{ github.event.inputs.topic_mode || 'trending' }}
+          TOPIC_CATEGORY: ${{ github.event.inputs.category || 'any' }}
+          CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}
+          VIDEO_MODE: ${{ github.event.inputs.video_mode || 'shorts' }}
+          LANGUAGE: ${{ github.event.inputs.language || 'english' }}
+        run: python3 main.py
