@@ -16,6 +16,9 @@ from generate_script import generate_script
 from generate_voiceover import generate_voiceover
 from fetch_visuals import fetch_clips
 from generate_illustrations import generate_illustrations
+from generate_comfyui_images import generate_comfyui_images
+from comfyui_client import ComfyUIUnavailableError
+from storyboard import generate_storyboard, StoryboardError
 from assemble_video import assemble_video
 from generate_thumbnail import generate_thumbnail
 from upload_youtube import upload_video
@@ -79,7 +82,28 @@ def run():
 
     visual_style = os.environ.get("VISUAL_STYLE", "stock")
     orientation = "portrait" if is_shorts else "landscape"
-    if visual_style == "ai_illustration":
+    if visual_style == "comfyui":
+        # Local-only: requires ComfyUI running on this same machine at
+        # COMFYUI_BASE_URL (default http://127.0.0.1:8188). Never runs on
+        # the GitHub Actions cron/dispatch -- Actions' cloud runners cannot
+        # reach a local Mac. See docs/comfyui-local-worker.md.
+        print("Step 5/7: Generating cinematic storyboard (Groq)...")
+        try:
+            storyboard = generate_storyboard(topic, package["narration"], api_key=os.environ["GROQ_API_KEY"])
+        except StoryboardError as e:
+            raise RuntimeError(f"Storyboard generation failed: {e}") from e
+        print(f"  -> {len(storyboard['scenes'])} scenes planned")
+
+        print(f"Step 5/7: Generating cinematic images with local ComfyUI ({orientation})...")
+        try:
+            clip_paths = generate_comfyui_images(
+                storyboard["scenes"],
+                os.path.join(WORK_DIR, "clips"),
+                orientation=orientation,
+            )
+        except ComfyUIUnavailableError as e:
+            raise RuntimeError(str(e)) from e
+    elif visual_style == "ai_illustration":
         custom_visual_prompt = os.environ.get("CUSTOM_VISUAL_PROMPT", "").strip()
         if custom_visual_prompt:
             # An exact scene/image prompt drives the VISUALS only -- the

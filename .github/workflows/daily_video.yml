@@ -44,12 +44,13 @@ on:
           - video
           - shorts
       visual_style:
-        description: "Visuals: real stock footage, or original AI-illustrated clips"
+        description: "Visuals. NOTE: comfyui only works when main.py is run locally on your own Mac -- GitHub Actions cannot reach your ComfyUI, so picking it here will fail."
         type: choice
         default: stock
         options:
           - stock
           - ai_illustration
+          - comfyui
       custom_visual_prompt:
         description: "Exact image prompt for AI illustrations (used only if visual_style = ai_illustration). Drives VISUALS only -- never spoken as narration."
         type: string

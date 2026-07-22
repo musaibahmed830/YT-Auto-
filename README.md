@@ -72,6 +72,16 @@ The workflow in `.github/workflows/daily_video.yml` will then run automatically
 every day at 14:00 UTC. You can also trigger it manually from the Actions tab
 ("Run workflow") to test before waiting for the schedule.
 
+## Cinematic AI visuals via local ComfyUI (optional)
+
+Besides `stock` (Pexels) and `ai_illustration` (Pollinations), there's a
+third visual provider, `comfyui`, that generates photorealistic cinematic
+scene images with a local ComfyUI (SDXL-Lightning) instance. It only
+works when you run `main.py` yourself on the same machine as ComfyUI --
+GitHub Actions can't reach your local machine, so this never runs on the
+scheduled/cloud workflow. See **[docs/comfyui-local-worker.md](docs/comfyui-local-worker.md)**
+for exact setup steps, and `docs/comfyui-integration-plan.md` for why.
+
 ## Testing locally before relying on the schedule
 
 ```bash
