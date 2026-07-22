@@ -48,6 +48,22 @@ Rules:
 -- never abstract emotions like "a feeling of hope".
 - cameraMotion is one of: slow_push_in, slow_zoom_out, pan_left, pan_right.
 - transition is one of: hard_cut, fade.
+- motionPrompt describes how imagePrompt's still frame should move for a real 3-4 second \
+image-to-video animation of it. It MUST:
+  - describe exactly ONE main physical action (not a sequence of multiple actions)
+  - describe the subject's own movement (body, head, hands, clothing/hair in the wind, etc.)
+  - describe one piece of environmental movement (rain, smoke, leaves, traffic, water, etc.)
+  - describe exactly ONE camera movement (matching cameraMotion: a push-in, pull-back, or pan)
+  - stay within the SAME scene/setting as imagePrompt -- never introduce a scene change, cut, \
+or new location
+  - avoid abstract emotional wording ("a feeling of triumph") -- only physically observable motion
+  - remain physically realistic, not exaggerated or surreal
+  - preserve the exact person/character and clothing already described in imagePrompt/characterBible \
+-- motionPrompt animates that same frame, it does not redescribe or change who/what is in it
+  - end with the phrase "Natural realistic body motion."
+  Example: "The man slowly raises his head and looks toward the approaching car. Rain continues \
+falling and his jacket moves subtly in the wind. The camera performs a gentle push-in. Natural \
+realistic body motion."
 
 Return ONLY valid JSON matching this exact shape, no markdown fences, no preamble:
 {{
@@ -61,6 +77,7 @@ Return ONLY valid JSON matching this exact shape, no markdown fences, no preambl
       "narration": "the portion of the narration this scene covers",
       "imagePrompt": "string",
       "negativePrompt": "string",
+      "motionPrompt": "string, see motionPrompt rules above",
       "cameraMotion": "slow_push_in",
       "transition": "hard_cut"
     }}
@@ -103,7 +120,7 @@ def _validate(data: dict) -> dict:
 
     required_scene_keys = {
         "sceneNumber", "durationSeconds", "narration", "imagePrompt",
-        "negativePrompt", "cameraMotion", "transition",
+        "negativePrompt", "motionPrompt", "cameraMotion", "transition",
     }
     valid_motions = {"slow_push_in", "slow_zoom_out", "pan_left", "pan_right"}
     valid_transitions = {"hard_cut", "fade"}
@@ -116,6 +133,8 @@ def _validate(data: dict) -> dict:
             raise StoryboardError(f"Scene {i} missing keys: {missing}")
         if not isinstance(scene["imagePrompt"], str) or not scene["imagePrompt"].strip():
             raise StoryboardError(f"Scene {i} has an empty imagePrompt")
+        if not isinstance(scene["motionPrompt"], str) or not scene["motionPrompt"].strip():
+            raise StoryboardError(f"Scene {i} has an empty motionPrompt")
         if scene.get("cameraMotion") not in valid_motions:
             scene["cameraMotion"] = "slow_push_in"
         if scene.get("transition") not in valid_transitions:

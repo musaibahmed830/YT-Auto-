@@ -1,16 +1,31 @@
-# Running the ComfyUI visual provider locally
+# Running the ComfyUI visual providers locally
 
-`VISUAL_STYLE=comfyui` generates cinematic scene images with a local
-ComfyUI (SDXL-Lightning) instance instead of Pexels stock footage or
-Pollinations illustrations. **ComfyUI must be running on the same
-machine that executes `main.py`** -- GitHub-hosted cloud runners
-(`runs-on: ubuntu-latest`) can never reach `127.0.0.1:8188` on your Mac,
-so this mode never works via `daily_video.yml`'s cron or "Run workflow"
-button; see `docs/comfyui-integration-plan.md` for why.
+`VISUAL_STYLE` supports two local-ComfyUI providers instead of Pexels
+stock footage or Pollinations illustrations:
+
+- **`image_slideshow`** ("AI Image Slideshow -- faster"): SDXL-Lightning
+  generates one photorealistic still image per scene; ffmpeg pans/zooms
+  over it (Ken Burns). This is the original `comfyui` provider, renamed.
+- **`cinematic_video`** ("AI Cinematic Video -- real movement, slower"):
+  the same SDXL starting image per scene, then a local **Wan2.1 VACE
+  1.3B** image-to-video pass animates it into a real moving 3-4 second
+  clip -- actual subject/environment/camera motion, not a pan over a
+  still frame. Needs extra model downloads -- see below.
+- **`auto`**: tries `cinematic_video` first, falls back to
+  `image_slideshow` if the Wan models/nodes aren't installed or ComfyUI
+  is unreachable, and logs which provider actually ran. If
+  `cinematic_video` is selected explicitly, it never silently falls back
+  -- the job fails with a clear reason instead.
+
+**ComfyUI must be running on the same machine that executes `main.py`**
+for any of these -- GitHub-hosted cloud runners (`runs-on: ubuntu-latest`)
+can never reach `127.0.0.1:8188` on your Mac, so none of these modes ever
+work via `daily_video.yml`'s cron or "Run workflow" button; see
+`docs/comfyui-integration-plan.md` for why.
 
 There are two ways to actually run it:
 
-- **Option A -- your own Terminal** (simplest, described in steps 1-8
+- **Option A -- your own Terminal** (simplest, described in steps 1-9
   below): you type the command yourself, on your Mac.
 - **Option B -- trigger from GitHub's website, still runs on your Mac**
   (see "Running via a self-hosted GitHub Actions runner" further down):
@@ -37,13 +52,18 @@ Copy `.env.example` (or export directly in your shell) with at least:
 
 ```bash
 export GROQ_API_KEY=...
-export PEXELS_API_KEY=...       # not used by comfyui mode, but still required at startup
+export PEXELS_API_KEY=...       # not used by these providers, but still required at startup
 export YT_CLIENT_ID=...
 export YT_CLIENT_SECRET=...
 export YT_REFRESH_TOKEN=...
-export VISUAL_STYLE=comfyui
+export VISUAL_STYLE=image_slideshow   # or cinematic_video, or auto
 export COMFYUI_BASE_URL=http://127.0.0.1:8188   # default, only change if you changed ComfyUI's port
 export COMFYUI_CHECKPOINT=sdxl_lightning_4step.safetensors
+
+# Only needed for VISUAL_STYLE=cinematic_video or auto:
+export COMFYUI_WAN_UNET=wan2.1_vace_1.3B_fp16.safetensors
+export COMFYUI_WAN_CLIP=umt5_xxl_fp8_e4m3fn_scaled.safetensors
+export COMFYUI_WAN_VAE=wan_2.1_vae.safetensors
 ```
 
 ## 4. Install Python dependencies (first time only)
@@ -84,15 +104,51 @@ no Groq call, no video assembly, no YouTube upload. This is the fastest
 way to confirm ComfyUI + your checkpoint actually work end to end before
 running a full video job.
 
-## 8. Run a full video with ComfyUI visuals
+## 8. (Only for `cinematic_video`/`auto`) Download the Wan2.1 VACE models
+
+`cinematic_video` needs three additional model files placed in your
+ComfyUI install (**not** the SDXL-Lightning checkpoint used above):
+
+| File | ComfyUI folder |
+|---|---|
+| `wan2.1_vace_1.3B_fp16.safetensors` | `ComfyUI/models/diffusion_models/` |
+| `wan_2.1_vae.safetensors` | `ComfyUI/models/vae/` |
+| `umt5_xxl_fp8_e4m3fn_scaled.safetensors` | `ComfyUI/models/text_encoders/` |
+
+Download these from the official Wan2.1 VACE 1.3B release, place them in
+the folders above, then restart ComfyUI. This is deliberately the
+**1.3B VACE** model (not Wan2.1-T2V-1.3B, and not any Wan2.2 14B/5B
+variant) -- it's the one sized to actually run image-to-video on a Mac
+M1 with 16GB unified memory. Wan2.2 TI2V 5B is a possible future upgrade
+once you have more headroom, not something to switch to now.
+
+Once the files are in place, confirm everything end to end:
+
+```bash
+python scripts/comfyui_doctor.py --cinematic
+python scripts/comfyui_i2v_test.py
+```
+
+`comfyui_i2v_test.py` uses (or generates) one test image, animates it
+through the real trusted Wan workflow, and verifies via `ffprobe` that
+the result is an actual multi-frame video with non-zero duration --
+saved to `test_output/comfyui_i2v_test.mp4`. **Run this and confirm it
+succeeds before relying on `VISUAL_STYLE=cinematic_video` for a real
+video job** -- it's the fastest way to catch a missing model or an
+incompatible ComfyUI version without burning a full pipeline run.
+
+## 9. Run a full video with ComfyUI visuals
 
 ```bash
 caffeinate -dims python main.py
 ```
 
-(with `VISUAL_STYLE=comfyui` exported as above). Watch the terminal --
-it prints each of the 7 pipeline steps, including scene-by-scene ComfyUI
-generation progress.
+(with `VISUAL_STYLE=image_slideshow`, `cinematic_video`, or `auto`
+exported as above). Watch the terminal -- it prints each of the 7
+pipeline steps, plus `STATE: ...` markers (`generating_storyboard`,
+`generating_scene_images`, `animating_scene_N_of_6`,
+`rendering_final_video`, `uploading`, `completed`) and, for `cinematic_video`
+scenes, which images/videos actually generated.
 
 ## Running via a self-hosted GitHub Actions runner
 
@@ -213,3 +269,30 @@ The smoke test and full pipeline both use a 120-second per-scene timeout.
 If your Mac is under heavy load or a very large checkpoint variant is
 swapped in, generation can occasionally exceed this -- rerun once
 conditions are less loaded.
+
+**`cinematic_video`: "missing required node type(s)"**
+Your ComfyUI version predates native Wan2.1 VACE support (the
+`WanVaceToVideo`/`TrimVideoLatent`/`ModelSamplingSD3`/`CreateVideo`/
+`SaveVideo` node types). Update ComfyUI to a recent release, then
+re-run `python scripts/comfyui_doctor.py --cinematic`.
+
+**`cinematic_video`: "missing required model file(s)"**
+`comfyui_doctor.py --cinematic` and `wan_dependencies.py` print the exact
+filename and destination folder for whatever's missing -- see the table
+in step 8 above. Place the file, restart ComfyUI, and re-run the check.
+
+**`cinematic_video` is very slow / seems stuck**
+Wan2.1 VACE 1.3B image-to-video is much heavier than the SDXL-Lightning
+still-image pass -- expect several minutes per scene on an M1 with 16GB
+unified memory, and longer on the first scene while the model loads.
+Scenes are generated strictly one at a time on purpose (never run
+concurrently) to stay within that memory budget. Watch the ComfyUI
+terminal/web UI queue view for real progress; if it looks genuinely
+hung, check Activity Monitor for memory pressure and avoid running other
+heavy apps during a `cinematic_video` job.
+
+**`cinematic_video` explicitly selected but the job fails instead of falling back**
+This is intentional: unlike `auto`, explicitly selecting `cinematic_video`
+never silently substitutes the image slideshow. Fix the reported
+dependency/availability issue, or switch to `image_slideshow`/`auto` if a
+partial-quality fallback is acceptable for that run.

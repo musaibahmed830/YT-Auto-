@@ -109,7 +109,35 @@ def check_groq_key() -> bool:
     return _report(present, "GROQ_API_KEY set", "" if present else "required for storyboard generation")
 
 
+def check_i2v_workflow_template() -> bool:
+    try:
+        from comfyui_i2v_workflow import _load_template, validate_template
+        validate_template(_load_template())
+        return _report(True, "Wan i2v workflow template valid (workflows/wan21_vace_i2v_api.json)")
+    except Exception as e:
+        return _report(False, "Wan i2v workflow template valid", str(e))
+
+
+def check_wan_dependencies() -> bool:
+    try:
+        from comfyui_client import ComfyUIClient
+        from wan_dependencies import verify_wan_dependencies, WanDependencyError
+    except ImportError as e:
+        return _report(False, "Wan dependency check import", str(e))
+
+    client = ComfyUIClient()
+    unet_name = os.environ.get("COMFYUI_WAN_UNET", "wan2.1_vace_1.3B_fp16.safetensors")
+    clip_name = os.environ.get("COMFYUI_WAN_CLIP", "umt5_xxl_fp8_e4m3fn_scaled.safetensors")
+    vae_name = os.environ.get("COMFYUI_WAN_VAE", "wan_2.1_vae.safetensors")
+    try:
+        verify_wan_dependencies(client, unet_name=unet_name, clip_name=clip_name, vae_name=vae_name)
+        return _report(True, "Wan2.1 VACE nodes + models present (cinematic_video ready)")
+    except WanDependencyError as e:
+        return _report(False, "Wan2.1 VACE nodes + models present", str(e))
+
+
 def main() -> int:
+    cinematic = "--cinematic" in sys.argv
     print("ComfyUI visual provider -- local doctor\n")
     checks = [
         check_python(),
@@ -121,11 +149,16 @@ def main() -> int:
         check_comfyui(),
         check_output_dir(),
     ]
+    if cinematic:
+        checks += [check_i2v_workflow_template(), check_wan_dependencies()]
     print()
+    ready_for = "cinematic_video" if cinematic else "image_slideshow"
     if all(checks):
-        print("All checks passed -- ready for VISUAL_STYLE=comfyui.")
+        print(f"All checks passed -- ready for VISUAL_STYLE={ready_for}.")
         return 0
-    print("One or more checks failed -- fix the items above before running with VISUAL_STYLE=comfyui.")
+    print(f"One or more checks failed -- fix the items above before running with VISUAL_STYLE={ready_for}.")
+    if not cinematic:
+        print("(Run with --cinematic to also check Wan2.1 VACE image-to-video dependencies.)")
     return 1
 
 

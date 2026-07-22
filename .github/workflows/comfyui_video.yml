@@ -14,6 +14,14 @@ name: ComfyUI Cinematic Video (self-hosted)
 on:
   workflow_dispatch:
     inputs:
+      visual_provider:
+        description: "AI Image Slideshow (faster, still images with pan/zoom) or AI Cinematic Video (real movement, slower, needs Wan2.1 VACE models -- see docs/comfyui-local-worker.md)"
+        type: choice
+        default: image_slideshow
+        options:
+          - image_slideshow
+          - cinematic_video
+          - auto
       topic_mode:
         description: "How to pick the topic"
         type: choice
@@ -94,7 +102,15 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           COMFYUI_BASE_URL: ${{ vars.COMFYUI_BASE_URL || 'http://127.0.0.1:8188' }}
           COMFYUI_CHECKPOINT: ${{ vars.COMFYUI_CHECKPOINT || 'sdxl_lightning_4step.safetensors' }}
-        run: python3 scripts/comfyui_doctor.py
+          COMFYUI_WAN_UNET: ${{ vars.COMFYUI_WAN_UNET || 'wan2.1_vace_1.3B_fp16.safetensors' }}
+          COMFYUI_WAN_CLIP: ${{ vars.COMFYUI_WAN_CLIP || 'umt5_xxl_fp8_e4m3fn_scaled.safetensors' }}
+          COMFYUI_WAN_VAE: ${{ vars.COMFYUI_WAN_VAE || 'wan_2.1_vae.safetensors' }}
+        run: |
+          if [ "${{ github.event.inputs.visual_provider || 'image_slideshow' }}" = "image_slideshow" ]; then
+            python3 scripts/comfyui_doctor.py
+          else
+            python3 scripts/comfyui_doctor.py --cinematic
+          fi
 
       - name: Run ComfyUI video pipeline
         env:
@@ -105,7 +121,10 @@ jobs:
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
           COMFYUI_BASE_URL: ${{ vars.COMFYUI_BASE_URL || 'http://127.0.0.1:8188' }}
           COMFYUI_CHECKPOINT: ${{ vars.COMFYUI_CHECKPOINT || 'sdxl_lightning_4step.safetensors' }}
-          VISUAL_STYLE: comfyui
+          COMFYUI_WAN_UNET: ${{ vars.COMFYUI_WAN_UNET || 'wan2.1_vace_1.3B_fp16.safetensors' }}
+          COMFYUI_WAN_CLIP: ${{ vars.COMFYUI_WAN_CLIP || 'umt5_xxl_fp8_e4m3fn_scaled.safetensors' }}
+          COMFYUI_WAN_VAE: ${{ vars.COMFYUI_WAN_VAE || 'wan_2.1_vae.safetensors' }}
+          VISUAL_STYLE: ${{ github.event.inputs.visual_provider || 'image_slideshow' }}
           TOPIC_MODE: ${{ github.event.inputs.topic_mode || 'trending' }}
           TOPIC_CATEGORY: ${{ github.event.inputs.category || 'any' }}
           CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}

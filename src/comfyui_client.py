@@ -137,3 +137,45 @@ class ComfyUIClient:
         with open(out_path, "wb") as f:
             f.write(resp.content)
         return out_path
+
+    # ---- Wan2.1 VACE image-to-video support ----
+
+    def upload_image(self, local_path: str, subfolder: str = "") -> dict:
+        """
+        Uploads a local image into ComfyUI's own input directory so a
+        LoadImage node can reference it by filename. Returns ComfyUI's
+        {name, subfolder, type} response. Reads the file into memory first
+        (rather than streaming an open file handle) so a network retry in
+        _request never resubmits an already-exhausted file object.
+        """
+        with open(local_path, "rb") as f:
+            image_bytes = f.read()
+        files = {"image": (os.path.basename(local_path), image_bytes, "image/png")}
+        data = {"overwrite": "true"}
+        if subfolder:
+            data["subfolder"] = subfolder
+        resp = self._request("POST", "/upload/image", files=files, data=data)
+        return resp.json()
+
+    def extract_video_ref(self, history_entry: dict, save_node_id: str) -> dict:
+        """
+        Pulls the {filename, subfolder, type} ref for a SaveVideo node's
+        output. ComfyUI's exact output key for video nodes has changed
+        across versions ("videos", or the older "gifs" key reused by
+        animated-output nodes), so this checks the plausible keys instead
+        of assuming one -- and surfaces the raw output on a mismatch so the
+        real key is visible instead of a silent KeyError.
+        """
+        outputs = history_entry.get("outputs", {})
+        node_output = outputs.get(save_node_id, {})
+        for key in ("videos", "gifs", "images"):
+            refs = node_output.get(key)
+            if refs:
+                return refs[0]
+        raise ComfyUIError(
+            f"No video output found for save node {save_node_id!r}. Raw node output: {node_output!r}"
+        )
+
+    def download_file(self, file_ref: dict, out_path: str) -> str:
+        """/view serves any output file type, not just images -- reused for video bytes."""
+        return self.download_image(file_ref, out_path)
