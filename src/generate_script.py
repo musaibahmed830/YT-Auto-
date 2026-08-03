@@ -22,10 +22,15 @@ def _language_instruction(language: str) -> str:
     )
 
 
-SYSTEM_PROMPT = """You write scripts for short, faceless narration-style YouTube videos \
-(60-90 seconds spoken), and you are also an SEO copywriter for YouTube. Style: punchy hook \
-in the first line, clear simple sentences, no fluff, no stage directions, no headers - just \
-spoken narration text. Return ONLY valid JSON, no markdown fences, no preamble."""
+SYSTEM_PROMPT = """You write scripts for short, faceless narration-style YouTube Shorts \
+(30-45 seconds spoken -- short and tight, not a full essay), and you are also an SEO \
+copywriter for YouTube. Shorts retention lives or dies in the first 1-2 seconds and on \
+being watchable start to finish (even loopable), so: the FIRST sentence must be a scroll- \
+stopping hook (a bold claim, a question, or a surprising fact -- never a slow intro like \
+"Have you ever wondered..."), every sentence must earn the next one (cut anything that \
+isn't essential), and the ending should land cleanly rather than trailing off, ideally \
+tying back to the opening hook. Clear simple sentences, no fluff, no stage directions, no \
+headers - just spoken narration text. Return ONLY valid JSON, no markdown fences, no preamble."""
 
 
 def generate_script(
@@ -79,7 +84,7 @@ Create a faceless YouTube short-form video package on this exact topic. Respond 
   "title": "catchy, SEO-optimized YouTube title, under 70 characters",
   "description": "4-5 sentence SEO-optimized YouTube description, keyword-rich opening, soft call to action to subscribe at the end",
   "tags": ["tag1", "tag2", "..."],
-  "narration": "the full 60-90 second spoken script, first line is a hook",
+  "narration": "the full 30-45 second spoken script, tight and punchy, first line is a scroll-stopping hook",
   "visual_keywords": ["keyword1", "keyword2", "keyword3", "..."]
 }}{_language_instruction(language)}
 

@@ -8,7 +8,7 @@ on:
       topic_mode:
         description: "How to pick today's topic"
         type: choice
-        default: trending
+        default: category
         options:
           - trending
           - category
@@ -16,7 +16,7 @@ on:
       category:
         description: "Category to pick from (used only if topic_mode = category)"
         type: choice
-        default: any
+        default: motivation
         options:
           - any
           - facts
@@ -39,7 +39,7 @@ on:
       video_mode:
         description: "Upload as a regular video or a YouTube Short"
         type: choice
-        default: video
+        default: shorts
         options:
           - video
           - shorts
@@ -118,11 +118,14 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
           # Only present on manual "Run workflow" runs; scheduled runs get
-          # the defaults below (i.e. always "trending" on the daily cron).
-          TOPIC_MODE: ${{ github.event.inputs.topic_mode || 'trending' }}
-          TOPIC_CATEGORY: ${{ github.event.inputs.category || 'any' }}
+          # the defaults below -- locked to the "motivation" niche + Shorts
+          # so the channel builds one consistent identity instead of a
+          # random-topic grab-bag (see project decision: fresh channel,
+          # fixed niche, for algorithmic discovery).
+          TOPIC_MODE: ${{ github.event.inputs.topic_mode || 'category' }}
+          TOPIC_CATEGORY: ${{ github.event.inputs.category || 'motivation' }}
           CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}
-          VIDEO_MODE: ${{ github.event.inputs.video_mode || 'video' }}
+          VIDEO_MODE: ${{ github.event.inputs.video_mode || 'shorts' }}
           VISUAL_STYLE: ${{ github.event.inputs.visual_style || 'pexels' }}
           CUSTOM_VISUAL_PROMPT: ${{ github.event.inputs.custom_visual_prompt || '' }}
           LANGUAGE: ${{ github.event.inputs.language || 'english' }}
