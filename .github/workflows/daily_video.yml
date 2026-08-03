@@ -44,15 +44,12 @@ on:
           - video
           - shorts
       visual_style:
-        description: "Visuals. NOTE: image_slideshow/cinematic_video/auto only work when main.py is run locally on your own Mac -- GitHub Actions cannot reach your ComfyUI, so picking them here will fail."
+        description: "Visuals: pexels (real stock footage) or illustration (AI-generated images via Pollinations)"
         type: choice
         default: pexels
         options:
           - pexels
           - illustration
-          - image_slideshow
-          - cinematic_video
-          - auto
       custom_visual_prompt:
         description: "Exact image prompt for AI illustrations (used only if visual_style = illustration). Drives VISUALS only -- never spoken as narration."
         type: string

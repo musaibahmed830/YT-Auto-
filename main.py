@@ -16,11 +16,6 @@ from generate_script import generate_script
 from generate_voiceover import generate_voiceover
 from fetch_visuals import fetch_clips
 from generate_illustrations import generate_illustrations
-from generate_comfyui_images import generate_comfyui_images
-from generate_cinematic_video import generate_cinematic_video
-from comfyui_client import ComfyUIUnavailableError
-from wan_dependencies import WanDependencyError
-from storyboard import generate_storyboard, StoryboardError
 from assemble_video import assemble_video
 from generate_thumbnail import generate_thumbnail
 from upload_youtube import upload_video
@@ -82,60 +77,11 @@ def run():
     voiceover_path = os.path.join(WORK_DIR, "voiceover.wav")
     generate_voiceover(package["narration"], voiceover_path, voice=voice_for_language(language))
 
-    # VisualProvider: "pexels" | "illustration" | "image_slideshow" | "cinematic_video" | "auto"
+    # VisualProvider: "pexels" | "illustration"
     visual_style = os.environ.get("VISUAL_STYLE", "pexels")
     orientation = "portrait" if is_shorts else "landscape"
 
-    if visual_style in ("cinematic_video", "image_slideshow", "auto"):
-        # Local-only: requires ComfyUI running on this same machine at
-        # COMFYUI_BASE_URL (default http://127.0.0.1:8188). Never runs on
-        # the GitHub Actions cron/dispatch -- Actions' cloud runners cannot
-        # reach a local Mac. See docs/comfyui-local-worker.md.
-        print("STATE: generating_storyboard")
-        print("Step 5/7: Generating cinematic storyboard (Groq)...")
-        try:
-            storyboard = generate_storyboard(topic, package["narration"], api_key=os.environ["GROQ_API_KEY"])
-        except StoryboardError as e:
-            raise RuntimeError(f"Storyboard generation failed: {e}") from e
-        print(f"  -> {len(storyboard['scenes'])} scenes planned")
-
-        provider_used = visual_style
-        if visual_style == "image_slideshow":
-            print(f"Step 5/7: Generating AI image slideshow clips with local ComfyUI ({orientation})...")
-            try:
-                clip_paths = generate_comfyui_images(
-                    storyboard["scenes"], os.path.join(WORK_DIR, "clips"), orientation=orientation,
-                )
-            except ComfyUIUnavailableError as e:
-                raise RuntimeError(str(e)) from e
-        elif visual_style == "cinematic_video":
-            # Explicitly selected: never silently fall back to the
-            # slideshow -- fail the job with a clear, actionable reason.
-            print(f"Step 5/7: Generating cinematic video clips with local ComfyUI + Wan2.1 VACE ({orientation})...")
-            try:
-                clip_paths = generate_cinematic_video(
-                    storyboard["scenes"], os.path.join(WORK_DIR, "clips"), orientation=orientation,
-                )
-            except (ComfyUIUnavailableError, WanDependencyError) as e:
-                raise RuntimeError(f"cinematic_video was explicitly selected but can't run: {e}") from e
-        else:  # auto: prefer real cinematic video, fall back to the faster image slideshow
-            print(f"Step 5/7: Generating cinematic video clips with local ComfyUI + Wan2.1 VACE ({orientation})...")
-            try:
-                clip_paths = generate_cinematic_video(
-                    storyboard["scenes"], os.path.join(WORK_DIR, "clips"), orientation=orientation,
-                )
-                provider_used = "cinematic_video"
-            except (ComfyUIUnavailableError, WanDependencyError) as e:
-                print(f"  -> cinematic_video unavailable ({e}); falling back to image_slideshow")
-                try:
-                    clip_paths = generate_comfyui_images(
-                        storyboard["scenes"], os.path.join(WORK_DIR, "clips"), orientation=orientation,
-                    )
-                    provider_used = "image_slideshow"
-                except ComfyUIUnavailableError as e2:
-                    raise RuntimeError(f"auto mode: both cinematic_video and image_slideshow failed: {e2}") from e2
-        print(f"  -> Visual provider used: {provider_used}")
-    elif visual_style == "illustration":
+    if visual_style == "illustration":
         custom_visual_prompt = os.environ.get("CUSTOM_VISUAL_PROMPT", "").strip()
         if custom_visual_prompt:
             # An exact scene/image prompt drives the VISUALS only -- the
@@ -162,7 +108,6 @@ def run():
     if not clip_paths:
         raise RuntimeError("No visual clips generated for any keyword - aborting.")
 
-    print("STATE: rendering_final_video")
     print(f"Step 6/7: Assembling {'Shorts (1080x1920)' if is_shorts else 'video (1920x1080)'} + thumbnail...")
     video_path = os.path.join(OUTPUT_DIR, "video.mp4")
     assemble_video(
@@ -173,7 +118,6 @@ def run():
     thumbnail_path = os.path.join(OUTPUT_DIR, "thumbnail.jpg")
     generate_thumbnail(video_path, package["title"], thumbnail_path, vertical=is_shorts)
 
-    print("STATE: uploading")
     print("Step 7/7: Uploading to YouTube...")
     title = package["title"]
     description = package["description"]
@@ -195,7 +139,6 @@ def run():
         privacy_status=os.environ.get("YT_PRIVACY_STATUS", "public"),
     )
 
-    print("STATE: completed")
     print(f"\nDone! https://www.youtube.com/watch?v={video_id}")
 
 

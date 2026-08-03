@@ -72,29 +72,6 @@ The workflow in `.github/workflows/daily_video.yml` will then run automatically
 every day at 14:00 UTC. You can also trigger it manually from the Actions tab
 ("Run workflow") to test before waiting for the schedule.
 
-## Cinematic AI visuals via local ComfyUI (optional)
-
-Besides `pexels` (stock footage) and `illustration` (Pollinations), `VISUAL_STYLE`
-supports two local-ComfyUI providers, plus an `auto` mode that picks between them:
-
-- **`image_slideshow`** -- "AI Image Slideshow (faster)". SDXL-Lightning generates
-  one photorealistic still image per scene; ffmpeg pans/zooms (Ken Burns) over it.
-- **`cinematic_video`** -- "AI Cinematic Video (real movement, slower)". Same SDXL
-  starting image per scene, then a local Wan2.1 VACE 1.3B image-to-video pass
-  animates it into an actual moving 3-4 second clip -- real subject/environment/
-  camera motion, not just a pan over a still frame.
-- **`auto`** -- tries `cinematic_video` first; if the Wan models/nodes aren't
-  installed or ComfyUI is unreachable, falls back to `image_slideshow` and logs
-  which provider actually ran. If `cinematic_video` is selected explicitly instead,
-  it never silently falls back -- the job fails with a clear reason.
-
-All three only work when you run `main.py` yourself on the same machine as
-ComfyUI -- GitHub Actions can't reach your local machine, so none of them ever
-run on the scheduled/cloud workflow. See
-**[docs/comfyui-local-worker.md](docs/comfyui-local-worker.md)** for exact setup
-steps (including the Wan2.1 VACE model downloads `cinematic_video` needs), and
-`docs/comfyui-integration-plan.md` for why.
-
 ## Testing locally before relying on the schedule
 
 ```bash
