@@ -1,0 +1,28 @@
+# ── Secrets / credentials ──────────────────────────────────────────────────
+client_secret.json
+*.json
+!package.json
+
+# ── Self-hosted runner (large binary, should never be committed) ────────────
+actions-runner/
+
+# ── Python ─────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# ── Pipeline artefacts ─────────────────────────────────────────────────────
+work/
+output/
+
+# ── macOS ──────────────────────────────────────────────────────────────────
+.DS_Store
+
+# ── Google Site Verification (keep it local only) ──────────────────────────
+googleda48b47f36f66c9f.html

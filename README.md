@@ -1,0 +1,95 @@
+# Auto YouTube Uploader
+
+Fully automated pipeline: finds a trending topic → writes a script → generates
+a voiceover → pulls stock footage → assembles a video → uploads to YouTube.
+Runs daily via GitHub Actions.
+
+## How it works
+
+```
+trend_fetch.py       -> picks a trending topic (Google Trends, with fallback list)
+generate_script.py    -> Claude writes title/description/tags/narration/keywords
+generate_voiceover.py -> ElevenLabs turns narration into an MP3
+fetch_visuals.py      -> Pexels downloads matching stock clips
+assemble_video.py     -> ffmpeg stitches clips + voiceover + title card
+generate_thumbnail.py -> Pillow makes a 1280x720 thumbnail from a video frame
+upload_youtube.py     -> YouTube Data API v3 uploads the final video
+main.py               -> runs all of the above in order
+```
+
+## One-time setup (about 30-45 minutes)
+
+### 1. Anthropic API key (script writing)
+Get a key at https://console.anthropic.com/ → API Keys.
+
+### 2. ElevenLabs (voiceover)
+Sign up at https://elevenlabs.io/, grab your API key from Settings → API Keys.
+Optional: pick a voice from the Voice Library and copy its Voice ID.
+
+### 3. Pexels (stock footage)
+Sign up free at https://www.pexels.com/api/ and copy your API key.
+
+### 4. YouTube Data API v3 (upload)
+This is the fiddly one:
+
+1. Go to https://console.cloud.google.com/ and create a project
+2. In "APIs & Services" → "Library", enable **YouTube Data API v3**
+3. In "APIs & Services" → "OAuth consent screen": set it up as **External**,
+   add your own Google account as a **Test user** (this avoids Google's
+   verification review, but limits the token to your account only — that's
+   fine here since you're uploading to your own channel)
+4. In "APIs & Services" → "Credentials", create an **OAuth client ID** of
+   type **Desktop app**. Download the JSON.
+5. Save that file as `client_secret.json` in this project folder
+6. Run locally (not in CI): `pip install -r requirements.txt` then
+   `python get_refresh_token.py`
+7. A browser opens — log into the Google account that owns your YouTube
+   channel and approve access
+8. The script prints `YT_CLIENT_ID`, `YT_CLIENT_SECRET`, and
+   `YT_REFRESH_TOKEN` — save all three
+
+### 5. Add everything as GitHub Secrets
+In your repo: Settings → Secrets and variables → Actions → New repository secret.
+Add each of:
+
+- `ANTHROPIC_API_KEY`
+- `ELEVENLABS_API_KEY`
+- `ELEVENLABS_VOICE_ID` (optional)
+- `PEXELS_API_KEY`
+- `YT_CLIENT_ID`
+- `YT_CLIENT_SECRET`
+- `YT_REFRESH_TOKEN`
+
+### 6. Push this repo to GitHub
+The workflow in `.github/workflows/daily_video.yml` will then run automatically
+every day at 14:00 UTC. You can also trigger it manually from the Actions tab
+("Run workflow") to test before waiting for the schedule.
+
+## Testing locally before relying on the schedule
+
+```bash
+pip install -r requirements.txt
+# also install ffmpeg locally (brew install ffmpeg / apt install ffmpeg)
+export ANTHROPIC_API_KEY=...
+export ELEVENLABS_API_KEY=...
+export PEXELS_API_KEY=...
+export YT_CLIENT_ID=...
+export YT_CLIENT_SECRET=...
+export YT_REFRESH_TOKEN=...
+python main.py
+```
+
+## Things worth knowing
+
+- **YouTube upload quota**: the default quota is 10,000 units/day, and one
+  upload costs 1,600 units — so you can comfortably upload several times a
+  day if you ever want to.
+- **Content policy risk**: YouTube can flag heavily templated/reused content
+  as "repetitious" or low-effort, which affects monetization. Varying the
+  script style, voice, and visuals over time reduces this risk.
+- **First privacy status**: the workflow uploads as `public` by default.
+  Change `YT_PRIVACY_STATUS` to `private` or `unlisted` in the workflow file
+  if you'd rather review each video before it goes live.
+- **Costs**: at low volume (1 video/day) you're likely to stay within free
+  tiers for Pexels and Claude API usage; ElevenLabs free tier covers a
+  limited number of characters/month, so check usage if you scale up.
