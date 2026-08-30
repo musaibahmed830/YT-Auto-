@@ -11,10 +11,10 @@ import json
 from openai import OpenAI
 
 # ── Model config ────────────────────────────────────────────────────────────
-GEMINI_MODEL    = "gemini-2.0-flash"
+GEMINI_MODEL    = "gemini-1.5-flash"
 GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
-GROQ_MODEL      = "llama-3.3-70b-versatile"
+GROQ_MODEL      = "llama3-70b-8192"
 GROQ_BASE_URL   = "https://api.groq.com/openai/v1"
 
 SYSTEM_PROMPT = """You write scripts for short, faceless narration-style YouTube videos \
