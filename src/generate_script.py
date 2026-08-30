@@ -5,9 +5,10 @@ for a faceless YouTube video based on a trending topic.
 
 import os
 import json
-import anthropic
+from openai import OpenAI
 
-MODEL = "claude-sonnet-4-6"
+MODEL = "grok-3-mini"
+XAI_BASE_URL = "https://api.x.ai/v1"
 
 SYSTEM_PROMPT = """You write scripts for short, faceless narration-style YouTube videos \
 (60-90 seconds spoken), and you are also an SEO copywriter for YouTube. Style: punchy hook \
@@ -32,7 +33,7 @@ def generate_script(topic: str, seo_keywords: list[str] | None = None, api_key: 
     related queries) that the title/description/tags should be built around, instead of
     guessing what people search for.
     """
-    client = anthropic.Anthropic(api_key=api_key or os.environ["ANTHROPIC_API_KEY"])
+    client = OpenAI(api_key=api_key or os.environ["XAI_API_KEY"], base_url=XAI_BASE_URL)
 
     keyword_block = ""
     if seo_keywords:
@@ -74,14 +75,16 @@ If true, set person_name to that person's full name exactly as it would appear o
 looked up for real photos. If the topic is generic (a trend, a concept, a place, an event with no single \
 central figure), set is_specific_person to false and person_name to null."""
 
-    response = client.messages.create(
+    response = client.chat.completions.create(
         model=MODEL,
         max_tokens=1500,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": user_prompt}],
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt},
+        ],
     )
 
-    text = response.content[0].text.strip()
+    text = response.choices[0].message.content.strip()
     # Defensive cleanup in case the model wraps in a code fence anyway
     text = text.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
 
