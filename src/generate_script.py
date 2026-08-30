@@ -1,19 +1,38 @@
 """
 Generates a short narration script + metadata (title, description, tags)
 for a faceless YouTube video based on a trending topic.
+
+Primary:  Google Gemini  (free via GEMINI_API_KEY)
+Fallback: Groq           (free via GROQ_API_KEY)
 """
 
 import os
 import json
 from openai import OpenAI
 
-MODEL = "grok-3-mini"
-XAI_BASE_URL = "https://api.x.ai/v1"
+# ── Model config ────────────────────────────────────────────────────────────
+GEMINI_MODEL    = "gemini-2.0-flash"
+GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+GROQ_MODEL      = "llama-3.3-70b-versatile"
+GROQ_BASE_URL   = "https://api.groq.com/openai/v1"
 
 SYSTEM_PROMPT = """You write scripts for short, faceless narration-style YouTube videos \
 (60-90 seconds spoken), and you are also an SEO copywriter for YouTube. Style: punchy hook \
 in the first line, clear simple sentences, no fluff, no stage directions, no headers - just \
 spoken narration text. Return ONLY valid JSON, no markdown fences, no preamble."""
+
+
+def _call_llm(client: OpenAI, model: str, system: str, user: str) -> str:
+    response = client.chat.completions.create(
+        model=model,
+        max_tokens=1500,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user",   "content": user},
+        ],
+    )
+    return response.choices[0].message.content.strip()
 
 
 def generate_script(topic: str, seo_keywords: list[str] | None = None, api_key: str | None = None):
@@ -33,8 +52,6 @@ def generate_script(topic: str, seo_keywords: list[str] | None = None, api_key: 
     related queries) that the title/description/tags should be built around, instead of
     guessing what people search for.
     """
-    client = OpenAI(api_key=api_key or os.environ["XAI_API_KEY"], base_url=XAI_BASE_URL)
-
     keyword_block = ""
     if seo_keywords:
         keyword_list = "\n".join(f"- {kw}" for kw in seo_keywords[:15])
@@ -75,16 +92,34 @@ If true, set person_name to that person's full name exactly as it would appear o
 looked up for real photos. If the topic is generic (a trend, a concept, a place, an event with no single \
 central figure), set is_specific_person to false and person_name to null."""
 
-    response = client.chat.completions.create(
-        model=MODEL,
-        max_tokens=1500,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
-    )
+    # ── Try Gemini first, fall back to Groq ─────────────────────────────────
+    gemini_key = os.environ.get("GEMINI_API_KEY", "")
+    groq_key   = os.environ.get("GROQ_API_KEY", "")
 
-    text = response.choices[0].message.content.strip()
+    text = None
+
+    if gemini_key:
+        try:
+            client = OpenAI(api_key=gemini_key, base_url=GEMINI_BASE_URL)
+            text = _call_llm(client, GEMINI_MODEL, SYSTEM_PROMPT, user_prompt)
+            print("[generate_script] Used Gemini.")
+        except Exception as e:
+            print(f"[generate_script] Gemini failed ({e}), trying Groq...")
+
+    if text is None and groq_key:
+        try:
+            client = OpenAI(api_key=groq_key, base_url=GROQ_BASE_URL)
+            text = _call_llm(client, GROQ_MODEL, SYSTEM_PROMPT, user_prompt)
+            print("[generate_script] Used Groq.")
+        except Exception as e:
+            print(f"[generate_script] Groq failed ({e})")
+
+    if text is None:
+        raise RuntimeError(
+            "Both Gemini and Groq failed. "
+            "Ensure GEMINI_API_KEY and/or GROQ_API_KEY are set in GitHub secrets."
+        )
+
     # Defensive cleanup in case the model wraps in a code fence anyway
     text = text.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
 
