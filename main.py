@@ -7,6 +7,9 @@ trending topic -> script -> voiceover -> stock clips -> assembled video
 import os
 import sys
 import traceback
+from dotenv import load_dotenv
+
+load_dotenv()
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 

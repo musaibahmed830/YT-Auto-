@@ -8,14 +8,40 @@ Fallback: Groq           (free via GROQ_API_KEY)
 
 import os
 import json
+import re
 from openai import OpenAI
+from dotenv import load_dotenv
 
-# ── Model config ────────────────────────────────────────────────────────────
-GEMINI_MODEL    = "gemini-2.0-flash"
+load_dotenv()
+
+# ── Model configuration with automatic fallbacks ─────────────────────────────
+# Gemini models: tries in order from newest to stable fallbacks
+GEMINI_MODELS = [
+    m.strip()
+    for m in os.environ.get(
+        "GEMINI_MODELS",
+        os.environ.get(
+            "GEMINI_MODEL",
+            "gemini-3.8-flash,gemini-3.7-flash,gemini-3.5-flash-lite,gemini-2.5-flash,gemini-2.0-flash",
+        ),
+    ).split(",")
+    if m.strip()
+]
 GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
-GROQ_MODEL      = "llama-3.3-70b-versatile"
-GROQ_BASE_URL   = "https://api.groq.com/openai/v1"
+# Groq models: reasoning models first (gpt-oss), then versatile fallback
+GROQ_MODELS = [
+    m.strip()
+    for m in os.environ.get(
+        "GROQ_MODELS",
+        os.environ.get(
+            "GROQ_MODEL",
+            "openai/gpt-oss-120b,openai/gpt-oss-20b,llama-3.3-70b-versatile",
+        ),
+    ).split(",")
+    if m.strip()
+]
+GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 
 SYSTEM_PROMPT = """You write scripts for short, faceless narration-style YouTube videos \
 (60-90 seconds spoken), and you are also an SEO copywriter for YouTube. Style: punchy hook \
@@ -23,16 +49,72 @@ in the first line, clear simple sentences, no fluff, no stage directions, no hea
 spoken narration text. Return ONLY valid JSON, no markdown fences, no preamble."""
 
 
-def _call_llm(client: OpenAI, model: str, system: str, user: str) -> str:
-    response = client.chat.completions.create(
-        model=model,
-        max_tokens=1500,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user",   "content": user},
-        ],
-    )
-    return response.choices[0].message.content.strip()
+def _call_llm(client: OpenAI, model: str, system: str, user: str, max_tokens: int = 4096) -> str:
+    """
+    Invokes the LLM with compatibility handling for standard vs reasoning models
+    (max_tokens vs max_completion_tokens, system prompt support).
+    """
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user",   "content": user},
+    ]
+
+    # Attempt with max_tokens first, fallback to max_completion_tokens if requested
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            max_tokens=max_tokens,
+            messages=messages,
+        )
+        return (response.choices[0].message.content or "").strip()
+    except Exception as e:
+        err_str = str(e).lower()
+
+        # Some newer/reasoning models require max_completion_tokens instead of max_tokens
+        if "max_completion_tokens" in err_str:
+            response = client.chat.completions.create(
+                model=model,
+                max_completion_tokens=max_tokens,
+                messages=messages,
+            )
+            return (response.choices[0].message.content or "").strip()
+
+        # Some reasoning models do not allow system messages
+        if "system" in err_str and ("developer" in err_str or "user" in err_str or "role" in err_str):
+            combined_prompt = f"{system}\n\n{user}"
+            response = client.chat.completions.create(
+                model=model,
+                max_completion_tokens=max_tokens,
+                messages=[{"role": "user", "content": combined_prompt}],
+            )
+            return (response.choices[0].message.content or "").strip()
+
+        raise
+
+
+def _clean_and_parse_json(text: str) -> dict:
+    """
+    Extracts and parses JSON from LLM output, discarding reasoning tags (<think>...</think>),
+    markdown fences, and any leading/trailing commentary.
+    """
+    if not text:
+        raise ValueError("Empty response received from LLM")
+
+    # Remove reasoning/thinking tags (e.g. from gpt-oss or DeepSeek models)
+    cleaned = re.sub(r"<think>[\s\S]*?</think>", "", text).strip()
+
+    # Strip code block fences
+    cleaned = re.sub(r"^```(?:json)?", "", cleaned.strip(), flags=re.IGNORECASE).strip()
+    cleaned = re.sub(r"```$", "", cleaned.strip()).strip()
+
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        # Extract first outermost JSON object if model included extra commentary
+        match = re.search(r"(\{[\s\S]*\})", cleaned)
+        if match:
+            return json.loads(match.group(1))
+        raise
 
 
 def generate_script(topic: str, seo_keywords: list[str] | None = None, api_key: str | None = None):
@@ -96,34 +178,37 @@ central figure), set is_specific_person to false and person_name to null."""
     gemini_key = os.environ.get("GEMINI_API_KEY", "")
     groq_key   = os.environ.get("GROQ_API_KEY", "")
 
-    text = None
-
+    # Try Gemini candidate models
     if gemini_key:
-        try:
-            client = OpenAI(api_key=gemini_key, base_url=GEMINI_BASE_URL)
-            text = _call_llm(client, GEMINI_MODEL, SYSTEM_PROMPT, user_prompt)
-            print("[generate_script] Used Gemini.")
-        except Exception as e:
-            print(f"[generate_script] Gemini failed ({e}), trying Groq...")
+        client = OpenAI(api_key=gemini_key, base_url=GEMINI_BASE_URL)
+        for model in GEMINI_MODELS:
+            try:
+                print(f"[generate_script] Attempting Gemini with model '{model}'...")
+                text = _call_llm(client, model, SYSTEM_PROMPT, user_prompt)
+                parsed = _clean_and_parse_json(text)
+                print(f"[generate_script] Success with Gemini ({model}).")
+                return parsed
+            except Exception as e:
+                print(f"[generate_script] Gemini ({model}) failed ({e})")
 
-    if text is None and groq_key:
-        try:
-            client = OpenAI(api_key=groq_key, base_url=GROQ_BASE_URL)
-            text = _call_llm(client, GROQ_MODEL, SYSTEM_PROMPT, user_prompt)
-            print("[generate_script] Used Groq.")
-        except Exception as e:
-            print(f"[generate_script] Groq failed ({e})")
+    # Fall back to Groq candidate models
+    if groq_key:
+        print("[generate_script] Falling back to Groq...")
+        client = OpenAI(api_key=groq_key, base_url=GROQ_BASE_URL)
+        for model in GROQ_MODELS:
+            try:
+                print(f"[generate_script] Attempting Groq with model '{model}'...")
+                text = _call_llm(client, model, SYSTEM_PROMPT, user_prompt)
+                parsed = _clean_and_parse_json(text)
+                print(f"[generate_script] Success with Groq ({model}).")
+                return parsed
+            except Exception as e:
+                print(f"[generate_script] Groq ({model}) failed ({e})")
 
-    if text is None:
-        raise RuntimeError(
-            "Both Gemini and Groq failed. "
-            "Ensure GEMINI_API_KEY and/or GROQ_API_KEY are set in GitHub secrets."
-        )
-
-    # Defensive cleanup in case the model wraps in a code fence anyway
-    text = text.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
-
-    return json.loads(text)
+    raise RuntimeError(
+        "Both Gemini and Groq failed across all candidate models. "
+        "Check that GEMINI_API_KEY and/or GROQ_API_KEY are valid, or verify enabled models using curl."
+    )
 
 
 if __name__ == "__main__":
