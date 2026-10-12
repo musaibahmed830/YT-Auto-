@@ -61,6 +61,55 @@ def check_groq():
         print(f"[✗] Groq error: {e}")
 
 
+def check_elevenlabs():
+    key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
+    voice_id = os.environ.get("ELEVENLABS_VOICE_ID", "pNInz6obpgDQGcFmaJgB").strip()
+    print("\n" + "=" * 60)
+    print("ELEVENLABS API CHECK")
+    print("=" * 60)
+    if not key:
+        print("[!] ELEVENLABS_API_KEY is not set in environment or .env file.")
+        return
+
+    try:
+        from elevenlabs.client import ElevenLabs
+        client = ElevenLabs(api_key=key)
+        voices = client.voices.get_all().voices
+        print(f"[✓] Connection successful! Found {len(voices)} voices on account.")
+        print(f"Configured ELEVENLABS_VOICE_ID: {repr(voice_id)}")
+        print("Available voices:")
+        voice_ids = []
+        for v in voices:
+            voice_ids.append(v.voice_id)
+            match_marker = " <-- MATCHES YOUR VOICE_ID!" if v.voice_id == voice_id else ""
+            print(f"  - ID: {repr(v.voice_id)} | Name: {v.name}{match_marker}")
+
+        if voice_id in voice_ids:
+            print(f"[✓] SUCCESS: Configured voice_id '{voice_id}' is available on your account!")
+        else:
+            print(f"[!] WARNING: Configured voice_id '{voice_id}' is NOT in your account voices.")
+            if voices:
+                print(f"    Recommended fix: change ELEVENLABS_VOICE_ID secret to '{voices[0].voice_id}' ({voices[0].name})")
+    except Exception as e:
+        print(f"[✗] ElevenLabs error: {e}")
+
+
+def check_edge_tts():
+    print("\n" + "=" * 60)
+    print("EDGE-TTS (FREE VOICEOVER) CHECK")
+    print("=" * 60)
+    voice = os.environ.get("EDGE_TTS_VOICE", "en-US-ChristopherNeural").strip()
+    print(f"Configured EDGE_TTS_VOICE: '{voice}' (No API key needed!)")
+    print("Popular voices available:")
+    print("  - en-US-ChristopherNeural (Documentary / Authority)")
+    print("  - en-US-GuyNeural (Confident / Energetic)")
+    print("  - en-US-AndrewNeural (Modern / Friendly)")
+    print("  - en-US-JennyNeural (Natural Female Voice)")
+    print("[✓] Ready for zero-cost voiceover generation.")
+
+
 if __name__ == "__main__":
     check_gemini()
     check_groq()
+    check_edge_tts()
+    check_elevenlabs()

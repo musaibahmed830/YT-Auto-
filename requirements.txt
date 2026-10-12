@@ -2,6 +2,7 @@ openai>=1.30.0
 pytrends>=4.9.2
 requests>=2.31.0
 elevenlabs>=1.9.0
+edge-tts>=6.1.12
 google-api-python-client>=2.130.0
 google-auth>=2.29.0
 google-auth-oauthlib>=1.2.0
