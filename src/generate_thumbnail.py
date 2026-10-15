@@ -3,6 +3,7 @@ Generates a simple 1280x720 thumbnail: a frame from the video with
 bold title text overlaid. Requires ffmpeg for frame extraction.
 """
 
+import os
 import subprocess
 from PIL import Image, ImageDraw, ImageFont
 
