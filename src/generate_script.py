@@ -29,14 +29,14 @@ GEMINI_MODELS = [
 ]
 GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
-# Groq models: reasoning models first (gpt-oss), then versatile fallback
+# Groq models: reasoning models first (gpt-oss), then 70b/8b versatile fallbacks
 GROQ_MODELS = [
     m.strip()
     for m in os.environ.get(
         "GROQ_MODELS",
         os.environ.get(
             "GROQ_MODEL",
-            "openai/gpt-oss-120b,openai/gpt-oss-20b,llama-3.3-70b-versatile",
+            "openai/gpt-oss-120b,openai/gpt-oss-20b,llama-3.3-70b-versatile,llama-3.1-8b-instant,mixtral-8x7b-32768",
         ),
     ).split(",")
     if m.strip()
