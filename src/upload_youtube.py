@@ -13,13 +13,19 @@ from googleapiclient.http import MediaFileUpload
 SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
 
+def _clean_token(val: str | None) -> str:
+    if not val:
+        return ""
+    return "".join(c for c in val.strip() if 32 < ord(c) < 127)
+
+
 def _get_credentials():
     return Credentials(
         token=None,
-        refresh_token=os.environ["YT_REFRESH_TOKEN"],
+        refresh_token=_clean_token(os.environ.get("YT_REFRESH_TOKEN", "")),
         token_uri="https://oauth2.googleapis.com/token",
-        client_id=os.environ["YT_CLIENT_ID"],
-        client_secret=os.environ["YT_CLIENT_SECRET"],
+        client_id=_clean_token(os.environ.get("YT_CLIENT_ID", "")),
+        client_secret=_clean_token(os.environ.get("YT_CLIENT_SECRET", "")),
         scopes=SCOPES,
     )
 

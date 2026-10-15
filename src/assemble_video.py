@@ -35,17 +35,37 @@ def assemble_video(clip_paths: list[str], voiceover_path: str, title_text: str, 
     # Normalize clips first (scale/crop to 1920x1080, strip audio)
     normalized = []
     for i, clip in enumerate(clip_paths):
+        if not os.path.exists(clip) or os.path.getsize(clip) < 500:
+            continue
         norm_path = os.path.join(work_dir, f"norm_{i:02d}.mp4")
+        try:
+            subprocess.run(
+                [
+                    "ffmpeg", "-y", "-i", clip,
+                    "-vf", "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080",
+                    "-an", "-c:v", "libx264", "-preset", "ultrafast",
+                    norm_path,
+                ],
+                check=True, capture_output=True, text=True,
+            )
+            normalized.append(norm_path)
+        except subprocess.CalledProcessError as e:
+            print(f"[assemble_video] Warning: skipping unreadable clip {clip}: {e.stderr[:200] if e.stderr else e}")
+
+    # If no clips normalized successfully, generate a clean procedural background
+    if not normalized:
+        print("[assemble_video] No valid clips could be normalized. Generating emergency background clip...")
+        emergency_clip = os.path.join(work_dir, "emergency_bg.mp4")
         subprocess.run(
             [
-                "ffmpeg", "-y", "-i", clip,
-                "-vf", "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080",
-                "-an", "-c:v", "libx264", "-preset", "veryfast",
-                norm_path,
+                "ffmpeg", "-y", "-f", "lavfi",
+                "-i", "color=c=0x0f172a:s=1920x1080:d=10",
+                "-vf", "noise=alls=10:allf=t+u",
+                "-c:v", "libx264", "-preset", "ultrafast", emergency_clip,
             ],
             check=True, capture_output=True,
         )
-        normalized.append(norm_path)
+        normalized.append(emergency_clip)
 
     # Build concat list, repeating clips if needed to cover voice_duration
     per_clip_seconds = max(voice_duration / len(normalized), 3)
@@ -75,29 +95,46 @@ def assemble_video(clip_paths: list[str], voiceover_path: str, title_text: str, 
     )
 
     # Escape text for ffmpeg drawtext
-    safe_title = title_text.replace("'", "\\'").replace(":", "\\:")
+    clean_title = "".join(c for c in title_text if 32 <= ord(c) <= 126 and c not in "'%:[]\\")
+    safe_title = clean_title.replace(":", "\\:").strip()
 
-    # Add title overlay + mux voiceover audio
-    subprocess.run(
-        [
-            "ffmpeg", "-y",
-            "-i", concat_video_path,
-            "-i", voiceover_path,
-            "-vf",
-            (
-                f"drawtext=text='{safe_title}':fontcolor=white:fontsize=54:"
-                "box=1:boxcolor=black@0.5:boxborderw=20:"
-                "x=(w-text_w)/2:y=h*0.08:"
-                "enable='between(t,0,3.5)'"
-            ),
-            "-map", "0:v:0", "-map", "1:a:0",
-            "-c:v", "libx264", "-preset", "medium",
-            "-c:a", "aac", "-b:a", "192k",
-            "-shortest",
-            out_path,
-        ],
-        check=True, capture_output=True,
-    )
+    # Attempt to render with title card overlay; fallback cleanly if font/drawtext is unavailable
+    try:
+        subprocess.run(
+            [
+                "ffmpeg", "-y",
+                "-i", concat_video_path,
+                "-i", voiceover_path,
+                "-vf",
+                (
+                    f"drawtext=text='{safe_title}':fontcolor=white:fontsize=54:"
+                    "box=1:boxcolor=black@0.5:boxborderw=20:"
+                    "x=(w-text_w)/2:y=h*0.08:"
+                    "enable='between(t,0,3.5)'"
+                ),
+                "-map", "0:v:0", "-map", "1:a:0",
+                "-c:v", "libx264", "-preset", "medium",
+                "-c:a", "aac", "-b:a", "192k",
+                "-shortest",
+                out_path,
+            ],
+            check=True, capture_output=True, text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"[assemble_video] Drawtext overlay failed ({e.stderr[:200] if e.stderr else e}), assembling without text...")
+        subprocess.run(
+            [
+                "ffmpeg", "-y",
+                "-i", concat_video_path,
+                "-i", voiceover_path,
+                "-map", "0:v:0", "-map", "1:a:0",
+                "-c:v", "libx264", "-preset", "medium",
+                "-c:a", "aac", "-b:a", "192k",
+                "-shortest",
+                out_path,
+            ],
+            check=True, capture_output=True,
+        )
 
     return out_path
 

@@ -20,40 +20,93 @@ _BAD_FILENAME_HINTS = (
 )
 
 
+def _clean_ascii_token(token: str | None) -> str:
+    """Strips whitespace, unicode line/paragraph separators (\u2028, \u2029), and non-printable characters."""
+    if not token:
+        return ""
+    return "".join(c for c in token.strip() if 32 < ord(c) < 127)
+
+
+def _generate_fallback_clip(out_path: str, duration: int = 6, color_hex: str = "0x0f172a") -> str | None:
+    """Generates an aesthetic animated background video clip using ffmpeg if stock footage fails."""
+    try:
+        cmd = [
+            "ffmpeg", "-y",
+            "-f", "lavfi",
+            "-i", f"color=c={color_hex}:s=1920x1080:d={duration}",
+            "-vf", "noise=alls=10:allf=t+u",
+            "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "ultrafast",
+            out_path,
+        ]
+        subprocess.run(cmd, check=True, capture_output=True)
+        return out_path
+    except Exception as e:
+        print(f"[fetch_visuals] Could not generate fallback clip: {e}")
+        return None
+
+
 def fetch_clips(keywords: list[str], out_dir: str, api_key: str | None = None, clips_per_keyword: int = 1):
     """
-    Downloads one vertical-friendly clip per keyword into out_dir.
+    Downloads vertical/horizontal-friendly clips per keyword into out_dir.
     Returns a list of local file paths in the same order as keywords.
     """
-    api_key = api_key or os.environ["PEXELS_API_KEY"]
-    headers = {"Authorization": api_key}
+    raw_key = api_key or os.environ.get("PEXELS_API_KEY", "")
+    clean_key = _clean_ascii_token(raw_key)
+
+    headers = {"Authorization": clean_key} if clean_key else {}
     os.makedirs(out_dir, exist_ok=True)
 
     paths = []
-    for i, keyword in enumerate(keywords):
-        params = {"query": keyword, "per_page": clips_per_keyword, "orientation": "landscape"}
-        resp = requests.get(PEXELS_SEARCH_URL, headers=headers, params=params, timeout=30)
-        resp.raise_for_status()
-        data = resp.json()
 
-        videos = data.get("videos", [])
-        if not videos:
-            print(f"[fetch_visuals] No clips found for '{keyword}', skipping.")
-            continue
+    if clean_key:
+        for i, keyword in enumerate(keywords):
+            safe_kw = "".join(c for c in keyword if c.isalnum() or c in " -_").strip()
+            if not safe_kw:
+                continue
 
-        # Pick a mid-quality HD file to keep download size reasonable
-        video_files = sorted(videos[0]["video_files"], key=lambda v: v.get("width", 0))
-        candidates = [v for v in video_files if 1000 <= v.get("width", 0) <= 1920]
-        chosen = candidates[0] if candidates else video_files[-1]
+            params = {"query": safe_kw, "per_page": clips_per_keyword, "orientation": "landscape"}
+            try:
+                resp = requests.get(PEXELS_SEARCH_URL, headers=headers, params=params, timeout=30)
+                if resp.status_code in (401, 403):
+                    print(f"[fetch_visuals] Pexels auth error ({resp.status_code}): please check PEXELS_API_KEY.")
+                    break
+                resp.raise_for_status()
+                data = resp.json()
 
-        out_path = os.path.join(out_dir, f"clip_{i:02d}.mp4")
-        with requests.get(chosen["link"], stream=True, timeout=60) as r:
-            r.raise_for_status()
-            with open(out_path, "wb") as f:
-                for chunk in r.iter_content(chunk_size=8192):
-                    f.write(chunk)
+                videos = data.get("videos", [])
+                if not videos:
+                    print(f"[fetch_visuals] No clips found for '{safe_kw}', continuing...")
+                    continue
 
-        paths.append(out_path)
+                video_files = sorted(videos[0].get("video_files", []), key=lambda v: v.get("width", 0))
+                candidates = [v for v in video_files if 1000 <= v.get("width", 0) <= 1920]
+                chosen = candidates[0] if candidates else (video_files[-1] if video_files else None)
+                if not chosen or not chosen.get("link"):
+                    continue
+
+                out_path = os.path.join(out_dir, f"clip_{len(paths):02d}.mp4")
+                with requests.get(chosen["link"], stream=True, timeout=60) as r:
+                    r.raise_for_status()
+                    with open(out_path, "wb") as f:
+                        for chunk in r.iter_content(chunk_size=8192):
+                            f.write(chunk)
+
+                if os.path.exists(out_path) and os.path.getsize(out_path) > 1000:
+                    paths.append(out_path)
+
+            except Exception as e:
+                print(f"[fetch_visuals] Error fetching clip for '{safe_kw}': {e}")
+    else:
+        print("[fetch_visuals] Warning: No valid PEXELS_API_KEY found.")
+
+    # Guarantee pipeline never crashes: generate clean fallback clips if Pexels returned nothing
+    if not paths:
+        print("[fetch_visuals] No stock clips available from Pexels. Creating cinematic fallback clips with ffmpeg...")
+        fallback_colors = ["0x0f172a", "0x1e1b4b", "0x172554", "0x1e293b"]
+        for idx, col in enumerate(fallback_colors):
+            fb_path = os.path.join(out_dir, f"fallback_{idx:02d}.mp4")
+            if _generate_fallback_clip(fb_path, duration=6, color_hex=col):
+                paths.append(fb_path)
 
     return paths
 

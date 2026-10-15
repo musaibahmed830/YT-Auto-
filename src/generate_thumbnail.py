@@ -7,18 +7,31 @@ import subprocess
 from PIL import Image, ImageDraw, ImageFont
 
 
-def _extract_frame(video_path: str, out_path: str, timestamp: float = 1.5):
-    subprocess.run(
-        ["ffmpeg", "-y", "-ss", str(timestamp), "-i", video_path, "-frames:v", "1", out_path],
-        check=True, capture_output=True,
-    )
+def _extract_frame(video_path: str, out_path: str, timestamp: float = 1.0):
+    try:
+        subprocess.run(
+            ["ffmpeg", "-y", "-ss", str(timestamp), "-i", video_path, "-frames:v", "1", out_path],
+            check=True, capture_output=True,
+        )
+    except subprocess.CalledProcessError:
+        subprocess.run(
+            ["ffmpeg", "-y", "-ss", "0", "-i", video_path, "-frames:v", "1", out_path],
+            check=True, capture_output=True,
+        )
 
 
 def generate_thumbnail(video_path: str, title_text: str, out_path: str):
     frame_path = out_path.replace(".jpg", "_frame.jpg").replace(".png", "_frame.png")
-    _extract_frame(video_path, frame_path)
+    try:
+        _extract_frame(video_path, frame_path)
+    except Exception as e:
+        print(f"[generate_thumbnail] Frame extraction error: {e}")
 
-    img = Image.open(frame_path).convert("RGB").resize((1280, 720))
+    if os.path.exists(frame_path) and os.path.getsize(frame_path) > 0:
+        img = Image.open(frame_path).convert("RGB").resize((1280, 720))
+    else:
+        img = Image.new("RGB", (1280, 720), (15, 23, 42))
+
     draw = ImageDraw.Draw(img)
 
     # Dark gradient band behind text for readability
