@@ -153,20 +153,33 @@ that best matches the video's content), placed as early in the title as possible
 
     user_prompt = f"""Topic: {topic}{keyword_block}
 
-Create a faceless YouTube short-form video package on this topic. Respond with ONLY this JSON structure:
+Create a faceless YouTube short-form video package on this topic. Break the narration into 6-8 sequential SCENES where each scene has concrete visual search terms matching the exact words spoken.
+
+Respond with ONLY this JSON structure:
 
 {{
   "title": "catchy, SEO-optimized YouTube title, under 70 characters",
   "description": "4-5 sentence SEO-optimized YouTube description, keyword-rich opening, soft call to action to subscribe at the end",
   "tags": ["tag1", "tag2", "..."],
   "narration": "the full 60-90 second spoken script, first line is a hook",
+  "scenes": [
+    {{
+      "scene_num": 1,
+      "text": "Spoken sentence(s) for scene 1.",
+      "visual_search": "concrete filmable stock footage search term for this scene (e.g. vintage airplane cockpit, stormy ocean waves)"
+    }},
+    {{
+      "scene_num": 2,
+      "text": "Spoken sentence(s) for scene 2.",
+      "visual_search": "concrete filmable stock footage search term for this scene"
+    }}
+  ],
   "visual_keywords": ["keyword1", "keyword2", "keyword3", "..."],
   "is_specific_person": true or false,
   "person_name": "full name of the person, or null"
 }}
 
-visual_keywords should be 5-8 concrete, filmable nouns/scenes (e.g. "ocean waves", "city traffic at night") \
-that match the narration, suitable for searching stock footage.
+visual_search terms MUST be 2-4 concrete, searchable English nouns (e.g. 'ocean waves dark', 'city traffic night', 'hospital hallway') that directly illustrate what the narrator is saying at that exact moment.
 
 is_specific_person is true only when the topic centers on one identifiable named real person \
 (a celebrity, politician, athlete, historical figure, etc.) whose actual likeness matters to the video. \

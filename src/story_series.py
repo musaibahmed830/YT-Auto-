@@ -47,19 +47,21 @@ def plan_series(story_prompt: str, total_episodes: int = 5) -> dict:
     client, models = _get_llm_client()
 
     system_prompt = (
-        "You are an expert viral YouTube storyteller and episodic scriptwriter. "
-        "You create gripping, binge-worthy multi-part narrative series (mysteries, sci-fi, "
-        "thrillers, historical drama, true crime). Style: intense curiosity hooks, cinematic pacing, "
-        "dramatic cliffhangers at the end of each episode ('Subscribe for Part X!'). "
+        "You are an expert viral YouTube storyteller and episodic director. "
+        "You write thrilling, scene-by-scene narrative scripts where EACH SCENE'S visual "
+        "directly matches the exact words spoken at that moment. "
+        "Visual search queries MUST be concrete, filmable English stock footage nouns (e.g. 'airplane cockpit', "
+        "'dark stormy ocean', 'old spinning compass', 'foggy forest road'). "
         "Return ONLY pure JSON without markdown code fences."
     )
 
     user_prompt = f"""Story Concept: {story_prompt}
 Total Episodes: {total_episodes}
 
-Plan out a complete {total_episodes}-part YouTube series. For EVERY episode, provide:
-1. "full_script": A complete 60-90 second spoken episode script (16:9 main video) with cliffhanger.
-2. "short_script": A fast-paced, high-intensity 20-second teaser script (9:16 YouTube Shorts) with a cliffhanger hook ('Full episode on channel!').
+Plan out a complete {total_episodes}-part YouTube series.
+For EVERY episode, break the story into SCENES so that the video footage visually matches the exact words being spoken.
+- "full_script" (~60-90s): 6-8 sequential scenes.
+- "short_script" (~20s): 3-4 fast-paced intense hook scenes ending with a cliffhanger.
 
 Respond with ONLY this JSON structure:
 {{
@@ -71,18 +73,45 @@ Respond with ONLY this JSON structure:
       "episode_number": 1,
       "episode_title": "Episode 1 Subtitle",
       "full_script": {{
-        "title": "Episode Title under 70 chars with (Part 1)",
+        "title": "Catchy Episode Title under 70 chars (Part 1)",
         "description": "Engaging description with keywords, episode summary, and subscribe CTA",
         "tags": ["tag1", "tag2", "tag3"],
-        "narration": "Full 60-second spoken script. No stage directions or headers. Just spoken words.",
-        "visual_keywords": ["cinematic ocean storm", "dark laboratory", "glowing artifact", "desert road night"]
+        "narration": "Full combined spoken narration text.",
+        "scenes": [
+          {{
+            "scene_num": 1,
+            "text": "Exact spoken sentence(s) for scene 1.",
+            "visual_search": "concrete stock footage search term (e.g. vintage airplane takeoff runway)"
+          }},
+          {{
+            "scene_num": 2,
+            "text": "Exact spoken sentence(s) for scene 2.",
+            "visual_search": "airplane cockpit compass close up"
+          }}
+        ]
       }},
       "short_script": {{
         "title": "Shocking Hook Title under 55 chars #shorts (Part 1)",
         "description": "Shorts description with hashtags #shorts #mystery",
         "tags": ["shorts", "mystery", "viral"],
-        "narration": "Fast 20-second punchy narration ending with a cliffhanger CTA.",
-        "visual_keywords": ["intense closeup", "lightning flash", "shadowy figure"]
+        "narration": "Full combined 20-second narration text.",
+        "scenes": [
+          {{
+            "scene_num": 1,
+            "text": "Hook sentence (0-7s).",
+            "visual_search": "ocean storm dark waves"
+          }},
+          {{
+            "scene_num": 2,
+            "text": "Escalation sentence (7-14s).",
+            "visual_search": "spinning compass needle"
+          }},
+          {{
+            "scene_num": 3,
+            "text": "Cliffhanger sentence (14-20s).",
+            "visual_search": "military plane dark night sky"
+          }}
+        ]
       }}
     }}
   ]
@@ -135,6 +164,36 @@ Respond with ONLY this JSON structure:
     print(f"[story_planner] Successfully planned series '{plan_data['series_title']}' with {len(plan_data['episodes'])} episodes!")
     print(f"[story_planner] Saved plan to {STATE_FILE}")
     return plan_data
+
+
+def ensure_scenes(script_dict: dict) -> list[dict]:
+    """
+    Ensures a script package has structured scenes with text and visual search queries.
+    If 'scenes' is already provided, returns it.
+    Otherwise, intelligently segments narration sentences and pairs each with visual search terms.
+    """
+    existing = script_dict.get("scenes")
+    if existing and isinstance(existing, list) and len(existing) > 0:
+        return existing
+
+    narration = script_dict.get("narration", "").strip()
+    keywords = script_dict.get("visual_keywords", [])
+    if not isinstance(keywords, list):
+        keywords = []
+
+    sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", narration) if s.strip()]
+    if not sentences:
+        return [{"scene_num": 1, "text": narration, "visual_search": "cinematic mystery background"}]
+
+    scenes = []
+    for idx, s in enumerate(sentences):
+        vk = keywords[idx % len(keywords)] if keywords else "dramatic cinematic background"
+        scenes.append({
+            "scene_num": idx + 1,
+            "text": s,
+            "visual_search": vk,
+        })
+    return scenes
 
 
 def load_series_state() -> dict | None:

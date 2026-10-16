@@ -152,5 +152,132 @@ def assemble_video(
     return out_path
 
 
+def assemble_synced_video(
+    scenes: list[dict],
+    title_text: str,
+    out_path: str,
+    work_dir: str = "work",
+    orientation: str = "horizontal",
+    max_duration: float | None = None,
+) -> str:
+    """
+    Renders a video where every scene's visual clip matches the exact words spoken
+    at that moment in the story.
+    - Each scene provides:
+        - 'text': the spoken narration sentence(s) for that scene
+        - 'visual_search': concrete visual search keywords for Pexels
+    - Generates audio for each scene, downloads matching clip, trims clip to match
+      the exact audio duration, and stitches scenes into a seamless narrative video.
+    """
+    from generate_voiceover import generate_voiceover
+    from fetch_visuals import fetch_scene_clip
+
+    os.makedirs(work_dir, exist_ok=True)
+    is_vertical = orientation in ("vertical", "portrait")
+    res_w, res_h = (1080, 1920) if is_vertical else (1920, 1080)
+    scale_filter = f"scale={res_w}:{res_h}:force_original_aspect_ratio=increase,crop={res_w}:{res_h}"
+
+    rendered_scene_files = []
+    total_elapsed = 0.0
+
+    print(f"[assemble_video] Building synchronized video ({len(scenes)} scenes, {orientation})...")
+
+    for idx, sc in enumerate(scenes):
+        if max_duration and total_elapsed >= max_duration:
+            break
+
+        scene_text = sc.get("text", "").strip()
+        if not scene_text:
+            continue
+        scene_query = sc.get("visual_search") or sc.get("visual_keywords") or "cinematic mystery"
+
+        # 1. Generate Voiceover for this specific scene
+        sc_audio = os.path.join(work_dir, f"sc_{idx:02d}_{orientation}_audio.mp3")
+        generate_voiceover(scene_text, sc_audio)
+        sc_dur = _get_duration(sc_audio)
+
+        if max_duration and (total_elapsed + sc_dur) > max_duration:
+            sc_dur = max(max_duration - total_elapsed, 2.0)
+
+        # 2. Fetch specific matching clip
+        sc_raw_clip = os.path.join(work_dir, f"sc_{idx:02d}_{orientation}_raw.mp4")
+        fetch_scene_clip(scene_query, sc_raw_clip, orientation=orientation, min_duration=sc_dur)
+
+        # 3. Trim / loop clip to exactly match the scene's audio duration and mux together
+        sc_rendered = os.path.join(work_dir, f"sc_{idx:02d}_{orientation}_rendered.mp4")
+        try:
+            subprocess.run(
+                [
+                    "ffmpeg", "-y",
+                    "-stream_loop", "-1", "-i", sc_raw_clip,
+                    "-i", sc_audio,
+                    "-vf", scale_filter,
+                    "-c:v", "libx264", "-preset", "ultrafast",
+                    "-c:a", "aac", "-b:a", "192k",
+                    "-t", str(sc_dur),
+                    sc_rendered,
+                ],
+                check=True, capture_output=True, text=True,
+            )
+            rendered_scene_files.append(sc_rendered)
+            total_elapsed += sc_dur
+            print(f"[assemble_video] Scene {idx+1}/{len(scenes)} rendered: '{scene_query}' ({sc_dur:.1f}s)")
+        except subprocess.CalledProcessError as e:
+            print(f"[assemble_video] Error rendering scene {idx}: {e.stderr[:200] if e.stderr else e}")
+
+    if not rendered_scene_files:
+        raise RuntimeError("No scenes were rendered successfully.")
+
+    # Concat all scene segments together
+    concat_list = os.path.join(work_dir, f"scenes_concat_{orientation}.txt")
+    with open(concat_list, "w") as f:
+        for fpath in rendered_scene_files:
+            f.write(f"file '{os.path.abspath(fpath)}'\n")
+
+    unbranded_video = os.path.join(work_dir, f"unbranded_{orientation}.mp4")
+    subprocess.run(
+        [
+            "ffmpeg", "-y",
+            "-f", "concat", "-safe", "0",
+            "-i", concat_list,
+            "-c:v", "libx264", "-preset", "fast",
+            "-c:a", "aac", "-b:a", "192k",
+            unbranded_video,
+        ],
+        check=True, capture_output=True,
+    )
+
+    # Title card overlay on first 3.5 seconds
+    clean_title = "".join(c for c in title_text if 32 <= ord(c) <= 126 and c not in "'%:[]\\")
+    safe_title = clean_title.replace(":", "\\:").strip()
+    fontsize = 62 if is_vertical else 54
+    y_pos = "h*0.15" if is_vertical else "h*0.08"
+
+    try:
+        subprocess.run(
+            [
+                "ffmpeg", "-y",
+                "-i", unbranded_video,
+                "-vf",
+                (
+                    f"drawtext=text='{safe_title}':fontcolor=white:fontsize={fontsize}:"
+                    "box=1:boxcolor=black@0.6:boxborderw=24:"
+                    f"x=(w-text_w)/2:y={y_pos}:"
+                    "enable='between(t,0,3.5)'"
+                ),
+                "-c:v", "libx264", "-preset", "medium",
+                "-c:a", "copy",
+                out_path,
+            ],
+            check=True, capture_output=True, text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"[assemble_video] Drawtext overlay skipped: {e.stderr[:200] if e.stderr else e}")
+        subprocess.run(["ffmpeg", "-y", "-i", unbranded_video, "-c", "copy", out_path], check=True, capture_output=True)
+
+    print(f"[assemble_video] Perfectly synchronized video created: {out_path} ({total_elapsed:.1f}s)")
+    return out_path
+
+
 if __name__ == "__main__":
     print("Run via main.py with real clip/voiceover paths.")

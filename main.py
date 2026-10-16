@@ -20,7 +20,7 @@ from seo_research import research_keywords
 from generate_script import generate_script
 from generate_voiceover import generate_voiceover
 from fetch_visuals import fetch_clips, fetch_person_photos
-from assemble_video import assemble_video
+from assemble_video import assemble_video, assemble_synced_video
 from generate_thumbnail import generate_thumbnail
 from upload_youtube import upload_video
 from story_series import (
@@ -28,6 +28,7 @@ from story_series import (
     mark_episode_completed,
     plan_series,
     load_series_state,
+    ensure_scenes,
 )
 
 WORK_DIR = "work"
@@ -46,39 +47,24 @@ def _process_video_package(package: dict, is_short: bool = False, episode_num: i
 
     print(f"\n--- Processing {'YouTube SHORT' if is_short else 'MAIN VIDEO'}: '{title}' ---")
 
-    # 1. Voiceover
-    voice_path = os.path.join(WORK_DIR, f"voiceover{suffix}.mp3")
-    print(f"[pipeline] Generating voiceover (Edge-TTS free)...")
-    generate_voiceover(package["narration"], voice_path)
-
-    # 2. Visuals
-    print(f"[pipeline] Fetching visuals...")
-    clips_dir = os.path.join(WORK_DIR, f"clips{suffix}")
-    clip_paths = []
-    if package.get("is_specific_person") and package.get("person_name"):
-        clip_paths = fetch_person_photos(package["person_name"], clips_dir)
-
-    if not clip_paths:
-        keywords = package.get("visual_keywords", ["cinematic background", "dramatic lighting"])
-        clip_paths = fetch_clips(keywords, clips_dir)
-
-    # 3. Assembly
+    # 1. Prepare synchronized scene structure
+    scenes = ensure_scenes(package)
     orientation = "vertical" if is_short else "horizontal"
     max_duration = 22.0 if is_short else 90.0
     video_out = os.path.join(OUTPUT_DIR, f"video{suffix}.mp4")
+    sc_work_dir = os.path.join(WORK_DIR, f"sync{suffix}")
 
-    print(f"[pipeline] Assembling {orientation} video ({'~20s' if is_short else '~60s'})...")
-    assemble_video(
-        clip_paths=clip_paths,
-        voiceover_path=voice_path,
+    print(f"[pipeline] Rendering 1:1 synchronized {orientation} video ({len(scenes)} scenes)...")
+    assemble_synced_video(
+        scenes=scenes,
         title_text=package["title"],
         out_path=video_out,
-        work_dir=WORK_DIR,
+        work_dir=sc_work_dir,
         orientation=orientation,
         max_duration=max_duration,
     )
 
-    # 4. Thumbnail (for main video)
+    # 2. Thumbnail (for main video)
     thumb_path = None
     if not is_short:
         thumb_path = os.path.join(OUTPUT_DIR, f"thumb{suffix}.jpg")

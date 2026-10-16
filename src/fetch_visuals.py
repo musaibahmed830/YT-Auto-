@@ -45,6 +45,83 @@ def _generate_fallback_clip(out_path: str, duration: int = 6, color_hex: str = "
         return None
 
 
+def fetch_scene_clip(
+    query: str,
+    out_path: str,
+    orientation: str = "landscape",
+    min_duration: float = 5.0,
+    api_key: str | None = None,
+) -> str:
+    """
+    Downloads a stock clip specifically matching a scene's action/subject.
+    - orientation: 'landscape' for 16:9 main videos, 'portrait' for 9:16 Shorts
+    - Falls back to simplified search queries if initial search has no matches
+    - Guarantees a valid mp4 at out_path
+    """
+    raw_key = api_key or os.environ.get("PEXELS_API_KEY", "")
+    clean_key = _clean_ascii_token(raw_key)
+    headers = {"Authorization": clean_key} if clean_key else {}
+
+    # Target orientation for Pexels ('landscape' or 'portrait')
+    pexels_orient = "portrait" if orientation in ("vertical", "portrait") else "landscape"
+
+    # Search candidates: primary query, then simplified fallbacks
+    safe_query = "".join(c for c in query if c.isalnum() or c in " -_").strip()
+    words = [w for w in safe_query.split() if len(w) > 2]
+    candidate_queries = [safe_query]
+    if len(words) > 2:
+        candidate_queries.append(" ".join(words[-2:]))
+        candidate_queries.append(words[0])
+    candidate_queries.extend(["cinematic mystery", "dramatic storm nature", "dark background abstract"])
+
+    if clean_key:
+        for q in candidate_queries:
+            if not q.strip():
+                continue
+            params = {"query": q, "per_page": 8, "orientation": pexels_orient}
+            try:
+                resp = requests.get(PEXELS_SEARCH_URL, headers=headers, params=params, timeout=20)
+                if resp.status_code in (401, 403):
+                    print(f"[fetch_visuals] Pexels auth error ({resp.status_code})")
+                    break
+                if resp.status_code != 200:
+                    continue
+                data = resp.json()
+                videos = data.get("videos", [])
+                if not videos:
+                    continue
+
+                # Find a 1080p or 720p file
+                for vid in videos:
+                    files = vid.get("video_files", [])
+                    if not files:
+                        continue
+                    # Pick best quality file matching aspect ratio
+                    files_sorted = sorted(files, key=lambda f: f.get("width", 0) * f.get("height", 0), reverse=True)
+                    chosen_file = files_sorted[0]
+                    link = chosen_file.get("link")
+                    if not link:
+                        continue
+
+                    # Download
+                    with requests.get(link, stream=True, timeout=45) as r:
+                        r.raise_for_status()
+                        with open(out_path, "wb") as f:
+                            for chunk in r.iter_content(chunk_size=16384):
+                                f.write(chunk)
+
+                    if os.path.exists(out_path) and os.path.getsize(out_path) > 5000:
+                        print(f"[fetch_visuals] Found clip for scene query '{q}' ({pexels_orient})")
+                        return out_path
+            except Exception as e:
+                print(f"[fetch_visuals] Error searching Pexels for '{q}': {e}")
+
+    # Fallback if no clip downloaded: generate procedural background
+    print(f"[fetch_visuals] Generating procedural fallback for scene '{query[:30]}'...")
+    _generate_fallback_clip(out_path, duration=int(min_duration + 3), color_hex="0x0f172a")
+    return out_path
+
+
 def fetch_clips(keywords: list[str], out_dir: str, api_key: str | None = None, clips_per_keyword: int = 1):
     """
     Downloads vertical/horizontal-friendly clips per keyword into out_dir.
