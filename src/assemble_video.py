@@ -211,9 +211,9 @@ def assemble_synced_video(
                     "ffmpeg", "-y",
                     "-stream_loop", "-1", "-i", sc_raw_clip,
                     "-i", sc_audio,
-                    "-vf", scale_filter,
-                    "-c:v", "libx264", "-preset", "ultrafast",
-                    "-c:a", "aac", "-b:a", "192k",
+                    "-vf", f"{scale_filter},fps=30,format=yuv420p",
+                    "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p",
+                    "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "192k",
                     "-t", str(sc_dur),
                     sc_rendered,
                 ],
@@ -223,29 +223,47 @@ def assemble_synced_video(
             total_elapsed += sc_dur
             print(f"[assemble_video] Scene {idx+1}/{len(scenes)} rendered: '{scene_query}' ({sc_dur:.1f}s)")
         except subprocess.CalledProcessError as e:
-            print(f"[assemble_video] Error rendering scene {idx}: {e.stderr[:200] if e.stderr else e}")
+            print(f"[assemble_video] Error rendering scene {idx}: {e.stderr[:300] if e.stderr else e}")
 
     if not rendered_scene_files:
         raise RuntimeError("No scenes were rendered successfully.")
 
     # Concat all scene segments together
     concat_list = os.path.join(work_dir, f"scenes_concat_{orientation}.txt")
-    with open(concat_list, "w") as f:
+    with open(concat_list, "w", encoding="utf-8") as f:
         for fpath in rendered_scene_files:
-            f.write(f"file '{os.path.abspath(fpath)}'\n")
+            abs_p = os.path.abspath(fpath).replace("'", "'\\''")
+            f.write(f"file '{abs_p}'\n")
 
     unbranded_video = os.path.join(work_dir, f"unbranded_{orientation}.mp4")
-    subprocess.run(
-        [
-            "ffmpeg", "-y",
-            "-f", "concat", "-safe", "0",
-            "-i", concat_list,
-            "-c:v", "libx264", "-preset", "fast",
-            "-c:a", "aac", "-b:a", "192k",
-            unbranded_video,
-        ],
-        check=True, capture_output=True,
-    )
+    try:
+        subprocess.run(
+            [
+                "ffmpeg", "-y",
+                "-f", "concat", "-safe", "0",
+                "-i", concat_list,
+                "-c", "copy",
+                unbranded_video,
+            ],
+            check=True, capture_output=True, text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"[assemble_video] Direct concat failed ({e.stderr[:300] if e.stderr else e}), using filter_complex fallback...")
+        filter_inputs = []
+        for fpath in rendered_scene_files:
+            filter_inputs.extend(["-i", fpath])
+        n = len(rendered_scene_files)
+        filter_complex = "".join(f"[{i}:v][{i}:a]" for i in range(n)) + f"concat=n={n}:v=1:a=1[v][a]"
+        subprocess.run(
+            ["ffmpeg", "-y"] + filter_inputs + [
+                "-filter_complex", filter_complex,
+                "-map", "[v]", "-map", "[a]",
+                "-c:v", "libx264", "-preset", "veryfast",
+                "-c:a", "aac", "-b:a", "192k",
+                unbranded_video,
+            ],
+            check=True, capture_output=True, text=True,
+        )
 
     # Title card overlay on first 3.5 seconds
     clean_title = "".join(c for c in title_text if 32 <= ord(c) <= 126 and c not in "'%:[]\\")
