@@ -1,95 +1,139 @@
-# Auto YouTube Uploader
+# 🚀 AutoTube AI: 100% Free Autonomous YouTube Video & Shorts Automation Engine
 
-Fully automated pipeline: finds a trending topic → writes a script → generates
-a voiceover → pulls stock footage → assembles a video → uploads to YouTube.
-Runs daily via GitHub Actions.
+[![GitHub Stars](https://img.shields.io/github/stars/musaibahmed830/YT-Auto-?style=for-the-badge&logo=github)](https://github.com/musaibahmed830/YT-Auto-)
+[![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11-blue?style=for-the-badge&logo=python)](https://python.org)
+[![100% Free API](https://img.shields.io/badge/Cost-100%25%20Free-brightgreen?style=for-the-badge)](https://github.com/musaibahmed830/YT-Auto-)
+[![GitHub Actions](https://img.shields.io/badge/Runs%20On-GitHub%20Actions%20(Free)-orange?style=for-the-badge&logo=githubactions)](https://github.com/features/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-## How it works
+**AutoTube AI** is a state-of-the-art, **100% FREE** autonomous YouTube automation bot. It creates and publishes high-retention, faceless **Long-Form Videos (~60s)** and **YouTube Shorts (~20s)** on complete autopilot using **GitHub Actions**.
 
-```
-trend_fetch.py       -> picks a trending topic (Google Trends, with fallback list)
-generate_script.py    -> Claude writes title/description/tags/narration/keywords
-generate_voiceover.py -> ElevenLabs turns narration into an MP3
-fetch_visuals.py      -> Pexels downloads matching stock clips
-assemble_video.py     -> ffmpeg stitches clips + voiceover + title card
-generate_thumbnail.py -> Pillow makes a 1280x720 thumbnail from a video frame
-upload_youtube.py     -> YouTube Data API v3 uploads the final video
-main.py               -> runs all of the above in order
-```
+Built specifically for content creators, faceless YouTube channels, storytellers, and automation builders. **Zero paid APIs. Zero monthly subscriptions.**
 
-## One-time setup (about 30-45 minutes)
+---
 
-### 1. Anthropic API key (script writing)
-Get a key at https://console.anthropic.com/ → API Keys.
+## 🔍 Key SEO Highlights & Target Topics
+> `youtube automation` • `ai video generator` • `youtube shorts automation` • `faceless youtube channel` • `text to video ai python` • `automated youtube uploader` • `free ai video generator` • `github actions youtube bot` • `ai storytelling channel` • `youtube shorts bot` • `tiktok to youtube automation`
 
-### 2. ElevenLabs (voiceover)
-Sign up at https://elevenlabs.io/, grab your API key from Settings → API Keys.
-Optional: pick a voice from the Voice Library and copy its Voice ID.
+---
 
-### 3. Pexels (stock footage)
-Sign up free at https://www.pexels.com/api/ and copy your API key.
+## ✨ Features
 
-### 4. YouTube Data API v3 (upload)
-This is the fiddly one:
+- 🎭 **Story-Series Mode**: Give a single story prompt and the AI plans a multi-episode narrative series (Part 1, Part 2, etc.) with intense cliffhangers.
+- 📱 **Dual Video Output**: Simultaneously generates both a **1-Minute Main Video (16:9 Widescreen)** and a **20-Second YouTube Short (9:16 Vertical)** for every episode.
+- ⏰ **Scheduled 6 AM & 6 PM Auto-Upload**: Runs twice daily on autopilot via GitHub Actions free cron timers.
+- 🗣️ **Ultra-Realistic Neural Voiceover**: Powered by Microsoft Edge-TTS neural engine (`en-US-ChristopherNeural`, `en-US-AndrewNeural`). No robotic voices, no ElevenLabs fees.
+- 🎥 **Realistic Visuals & Motion**: Downloads 1080p real stock clips via Pexels, real biographical photos with Ken Burns zoom from Wikimedia Commons, and procedural cinematic background fallbacks.
+- 📈 **Autonomous YouTube SEO**: Automatically generates high-CTR titles, keyword-optimized descriptions, tags, and custom 1280x720 thumbnails.
+- 🛡️ **Bulletproof CI/CD**: Automatic fallback between Google Gemini and Groq, header sanitization, ffmpeg error recovery, and automatic state saving.
 
-1. Go to https://console.cloud.google.com/ and create a project
-2. In "APIs & Services" → "Library", enable **YouTube Data API v3**
-3. In "APIs & Services" → "OAuth consent screen": set it up as **External**,
-   add your own Google account as a **Test user** (this avoids Google's
-   verification review, but limits the token to your account only — that's
-   fine here since you're uploading to your own channel)
-4. In "APIs & Services" → "Credentials", create an **OAuth client ID** of
-   type **Desktop app**. Download the JSON.
-5. Save that file as `client_secret.json` in this project folder
-6. Run locally (not in CI): `pip install -r requirements.txt` then
-   `python get_refresh_token.py`
-7. A browser opens — log into the Google account that owns your YouTube
-   channel and approve access
-8. The script prints `YT_CLIENT_ID`, `YT_CLIENT_SECRET`, and
-   `YT_REFRESH_TOKEN` — save all three
+---
 
-### 5. Add everything as GitHub Secrets
-In your repo: Settings → Secrets and variables → Actions → New repository secret.
-Add each of:
+## 🛠️ The 100% Free Technology Stack
 
-- `ANTHROPIC_API_KEY`
-- `ELEVENLABS_API_KEY`
-- `ELEVENLABS_VOICE_ID` (optional)
-- `PEXELS_API_KEY`
-- `YT_CLIENT_ID`
-- `YT_CLIENT_SECRET`
-- `YT_REFRESH_TOKEN`
+| Component | Free Provider | Cost |
+|---|---|---|
+| **LLM & Scriptwriting** | Google Gemini (`gemini-3.8-flash` / `gemini-2.5-flash`) & Groq (`llama-3.1-8b-instant`) | **$0.00** |
+| **Voiceover / TTS** | Microsoft Edge-TTS Neural Voices | **$0.00** |
+| **Stock Video Clips** | Pexels API (Free tier) + Wikimedia Commons | **$0.00** |
+| **Video Assembly** | FFmpeg (GPU / CPU hardware accelerated) | **$0.00** |
+| **Thumbnail Generation** | Pillow (PIL) | **$0.00** |
+| **Automation & Hosting** | GitHub Actions (Ubuntu Runners, 2000 free min/mo) | **$0.00** |
+| **YouTube Publishing** | YouTube Data API v3 (10,000 free quota units/day) | **$0.00** |
 
-### 6. Push this repo to GitHub
-The workflow in `.github/workflows/daily_video.yml` will then run automatically
-every day at 14:00 UTC. You can also trigger it manually from the Actions tab
-("Run workflow") to test before waiting for the schedule.
+---
 
-## Testing locally before relying on the schedule
+## 🚀 Quick Start Guide
 
+### 1. Clone & Install Locally
 ```bash
+git clone https://github.com/musaibahmed830/YT-Auto-.git
+cd YT-Auto-
 pip install -r requirements.txt
-# also install ffmpeg locally (brew install ffmpeg / apt install ffmpeg)
-export ANTHROPIC_API_KEY=...
-export ELEVENLABS_API_KEY=...
-export PEXELS_API_KEY=...
-export YT_CLIENT_ID=...
-export YT_CLIENT_SECRET=...
-export YT_REFRESH_TOKEN=...
+```
+
+### 2. Configure Environment (`.env`)
+Create a `.env` file in the project root:
+```env
+# Free LLM Key (Pick either one or both)
+GEMINI_API_KEY=your_gemini_api_key
+GROQ_API_KEY=your_groq_api_key
+
+# Free Stock Visuals
+PEXELS_API_KEY=your_pexels_api_key
+
+# YouTube OAuth (From Google Cloud Console)
+YT_CLIENT_ID=your_client_id.apps.googleusercontent.com
+YT_CLIENT_SECRET=your_client_secret
+YT_REFRESH_TOKEN=your_refresh_token
+```
+
+---
+
+## 📖 How to Use
+
+### Mode A: Story Series (Episodic Generation)
+Want to create a 5-part suspense story, historical mystery, or sci-fi drama?
+
+#### 1. Plan the series:
+```bash
+python src/story_series.py plan "A suspense thriller about a 1940 ghost ship that reappears in 2026" 5
+```
+This generates `series_state.json` containing:
+- 5 full 60s main video scripts with cliffhangers
+- 5 fast-paced 20s YouTube Shorts scripts
+- Concrete cinematic visual keywords for Pexels
+
+#### 2. Check series progress anytime:
+```bash
+python src/story_series.py status
+```
+
+#### 3. Manual Editing:
+You can open `series_state.json` directly in any text editor to customize scripts, edit narration, reorder parts, or tweak keywords.
+
+#### 4. Run next episode:
+```bash
 python main.py
 ```
+This uploads Episode 1 (both Long-Form + Short), marks it as completed, and advances the tracker for the next scheduled run.
 
-## Things worth knowing
+---
 
-- **YouTube upload quota**: the default quota is 10,000 units/day, and one
-  upload costs 1,600 units — so you can comfortably upload several times a
-  day if you ever want to.
-- **Content policy risk**: YouTube can flag heavily templated/reused content
-  as "repetitious" or low-effort, which affects monetization. Varying the
-  script style, voice, and visuals over time reduces this risk.
-- **First privacy status**: the workflow uploads as `public` by default.
-  Change `YT_PRIVACY_STATUS` to `private` or `unlisted` in the workflow file
-  if you'd rather review each video before it goes live.
-- **Costs**: at low volume (1 video/day) you're likely to stay within free
-  tiers for Pexels and Claude API usage; ElevenLabs free tier covers a
-  limited number of characters/month, so check usage if you scale up.
+### Mode B: Daily Trending Topics (Autonomous Fallback)
+If no story series is active in `series_state.json`, the bot automatically:
+1. Fetches real-time breakout trends from the **Google Trends RSS Feed**.
+2. Researches high-intent YouTube search terms.
+3. Produces and uploads the trending long-form video + companion short.
+
+---
+
+## ⏱️ Scheduling via GitHub Actions
+
+The repository includes a pre-configured workflow [`.github/workflows/daily_video.yml`](.github/workflows/daily_video.yml):
+
+- **Schedule**: Twice daily at **6:00 AM** and **6:00 PM PKT** (`0 1,13 * * *` UTC).
+- **Manual Trigger**: Go to the **Actions** tab ➡️ Select **YouTube Automation** ➡️ Click **Run workflow**. You can also enter a new story prompt directly in the modal!
+- **State Persistence**: GitHub Actions automatically commits `series_state.json` after every run to keep track of uploaded episodes.
+
+---
+
+## 🔑 One-Time YouTube API Token Setup
+
+1. Create a project in [Google Cloud Console](https://console.cloud.google.com).
+2. Enable **YouTube Data API v3**.
+3. Create an **OAuth 2.0 Client ID** (Desktop Application) and download `client_secret.json` into this folder.
+4. Run locally:
+   ```bash
+   python get_refresh_token.py
+   ```
+5. Authorize with your channel's Google account to receive your `YT_REFRESH_TOKEN`.
+6. Add all keys to your repository under **Settings ➡️ Secrets and variables ➡️ Actions**.
+
+---
+
+## 🤝 Contributing
+Contributions, stars ⭐, and feature requests are welcome! Feel free to open an issue or pull request.
+
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

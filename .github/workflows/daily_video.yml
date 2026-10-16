@@ -1,32 +1,38 @@
-name: Daily YouTube Video
+name: YouTube Automation (Story Series & Shorts)
 
 on:
   schedule:
-    - cron: "0 14 * * *"   # runs daily at 14:00 UTC — change if you want a different time
-  workflow_dispatch:        # adds a manual "Run workflow" button in the Actions tab
+    - cron: "0 1,13 * * *"   # Runs twice daily at 6:00 AM and 6:00 PM PKT (01:00 & 13:00 UTC)
+  workflow_dispatch:
+    inputs:
+      story_prompt:
+        description: "New Story Prompt (Leave blank to continue active series or daily trending)"
+        required: false
+        type: string
+      story_episodes:
+        description: "Number of episodes to generate"
+        required: false
+        default: "5"
+        type: string
 
 jobs:
   build-and-upload:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: write
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Cache apt packages
-        uses: actions/cache@v4
-        with:
-          path: /var/cache/apt/archives
-          key: apt-ffmpeg-${{ runner.os }}-${{ hashFiles('.github/workflows/daily_video.yml') }}
-          restore-keys: |
-            apt-ffmpeg-${{ runner.os }}-
-
-      - name: Install ffmpeg (skip if already present)
+      - name: Install ffmpeg
         run: |
           if command -v ffmpeg >/dev/null 2>&1; then
             echo "ffmpeg already installed: $(ffmpeg -version | head -1)"
@@ -38,14 +44,21 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      - name: Run daily video pipeline
+      - name: Run automated video & shorts pipeline
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
-          ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          STORY_PROMPT: ${{ github.event.inputs.story_prompt }}
+          STORY_EPISODES: ${{ github.event.inputs.story_episodes }}
         run: python main.py
+
+      - name: Commit and push series progress
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add series_state.json || true
+          git diff --staged --quiet || (git commit -m "Update series state [skip ci]" && git push)
