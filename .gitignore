@@ -1,4 +1,7 @@
 # ── Secrets / credentials ──────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
 client_secret.json
 *.json
 !package.json
