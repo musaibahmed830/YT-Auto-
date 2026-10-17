@@ -1,27 +1,88 @@
 """
-RUN THIS ONCE, LOCALLY ON YOUR OWN COMPUTER (not in CI).
-
-It opens a browser for you to log into the Google account that owns your
-YouTube channel, then prints a refresh token. Save that token as the
-YT_REFRESH_TOKEN secret in your GitHub repo - the daily pipeline reuses it
-forever (until you revoke access), so this step only happens once.
-
-Prerequisites:
-1. Go to https://console.cloud.google.com/ -> create a project
-2. Enable the "YouTube Data API v3"
-3. Create OAuth 2.0 credentials (type: Desktop app)
-4. Download the client secret JSON and save it as client_secret.json
-   in this same folder
+One-click YouTube Refresh Token Generator.
+Reads YT_CLIENT_ID and YT_CLIENT_SECRET from .env, opens your browser to sign in,
+and automatically writes YT_REFRESH_TOKEN back into your .env file!
 """
 
+import os
+import re
+import warnings
+from dotenv import load_dotenv
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+warnings.filterwarnings("ignore", category=FutureWarning)
+load_dotenv()
 
-flow = InstalledAppFlow.from_client_secrets_file("client_secret.json", SCOPES)
-creds = flow.run_local_server(port=0)
+SCOPES = [
+    "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/youtube.readonly",
+]
 
-print("\n=== SAVE THESE AS GITHUB SECRETS ===")
-print(f"YT_CLIENT_ID={creds.client_id}")
-print(f"YT_CLIENT_SECRET={creds.client_secret}")
-print(f"YT_REFRESH_TOKEN={creds.refresh_token}")
+def main():
+    print("=" * 64)
+    print("🔑 YouTube Refresh Token Generator")
+    print("=" * 64)
+
+    client_id = os.environ.get("YT_CLIENT_ID", "").strip()
+    client_secret = os.environ.get("YT_CLIENT_SECRET", "").strip()
+
+    if not client_id or not client_secret:
+        if os.path.exists("client_secret.json"):
+            flow = InstalledAppFlow.from_client_secrets_file("client_secret.json", SCOPES)
+        else:
+            print("\n❌ Error: YT_CLIENT_ID or YT_CLIENT_SECRET not found in .env!")
+            print("Please ensure lines 17 & 18 in .env have your Client ID and Client Secret.\n")
+            return
+    else:
+        # Use credentials directly from .env
+        client_config = {
+            "web": {
+                "client_id": client_id,
+                "client_secret": client_secret,
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "redirect_uris": ["http://localhost:8080/"],
+            }
+        }
+        try:
+            flow = InstalledAppFlow.from_client_config(client_config, SCOPES)
+        except Exception:
+            # Fallback to installed app config
+            client_config["installed"] = client_config.pop("web")
+            flow = InstalledAppFlow.from_client_config(client_config, SCOPES)
+
+    print("\n👉 Opening your browser to authorize your YouTube channel...")
+    print("👉 If prompted, choose your YouTube Google account and allow permissions.\n")
+
+    creds = flow.run_local_server(port=8080, prompt="consent", access_type="offline")
+
+    refresh_token = creds.refresh_token
+    if not refresh_token:
+        print("❌ Warning: No refresh token returned. Did you approve offline access?")
+        return
+
+    print("\n" + "=" * 64)
+    print("🎉 SUCCESS! Got Refresh Token:")
+    print(f"YT_REFRESH_TOKEN={refresh_token}")
+    print("=" * 64)
+
+    # Automatically save it into .env!
+    env_path = os.path.join(os.path.dirname(__file__), ".env")
+    if os.path.exists(env_path):
+        with open(env_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        if "YT_REFRESH_TOKEN=" in content:
+            content = re.sub(r"YT_REFRESH_TOKEN=.*", f"YT_REFRESH_TOKEN={refresh_token}", content)
+        else:
+            content += f"\nYT_REFRESH_TOKEN={refresh_token}\n"
+
+        with open(env_path, "w", encoding="utf-8") as f:
+            f.write(content)
+
+        print(f"\n✅ Automatically saved YT_REFRESH_TOKEN to your .env file!")
+
+    print("You can now connect and upload videos directly!\n")
+
+if __name__ == "__main__":
+    main()
