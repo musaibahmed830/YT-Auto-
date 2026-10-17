@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 One-click YouTube Refresh Token Generator.
 Reads YT_CLIENT_ID and YT_CLIENT_SECRET from .env, opens your browser to sign in,
@@ -5,13 +6,34 @@ and automatically writes YT_REFRESH_TOKEN back into your .env file!
 """
 
 import os
+import sys
+
+# Auto-switch to workspace .venv if running with system python
+venv_python = os.path.join(os.path.dirname(__file__), ".venv", "bin", "python")
+if os.path.exists(venv_python) and os.path.abspath(sys.executable) != os.path.abspath(venv_python):
+    import subprocess
+    sys.exit(subprocess.call([venv_python, __file__] + sys.argv[1:]))
+
 import re
 import warnings
-from dotenv import load_dotenv
-from google_auth_oauthlib.flow import InstalledAppFlow
 
 warnings.filterwarnings("ignore", category=FutureWarning)
-load_dotenv()
+
+# Read .env (with fallback if python-dotenv is absent)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    env_file = os.path.join(os.path.dirname(__file__), ".env")
+    if os.path.exists(env_file):
+        with open(env_file, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    k, v = line.split("=", 1)
+                    os.environ.setdefault(k.strip(), v.strip())
+
+from google_auth_oauthlib.flow import InstalledAppFlow
 
 SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
@@ -31,25 +53,20 @@ def main():
             flow = InstalledAppFlow.from_client_secrets_file("client_secret.json", SCOPES)
         else:
             print("\n❌ Error: YT_CLIENT_ID or YT_CLIENT_SECRET not found in .env!")
-            print("Please ensure lines 17 & 18 in .env have your Client ID and Client Secret.\n")
+            print("Please ensure lines in .env have your Client ID and Client Secret.\n")
             return
     else:
         # Use credentials directly from .env
         client_config = {
-            "web": {
+            "installed": {
                 "client_id": client_id,
                 "client_secret": client_secret,
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
-                "redirect_uris": ["http://localhost:8080/"],
+                "redirect_uris": ["http://localhost:8080/", "http://127.0.0.1:8080/"],
             }
         }
-        try:
-            flow = InstalledAppFlow.from_client_config(client_config, SCOPES)
-        except Exception:
-            # Fallback to installed app config
-            client_config["installed"] = client_config.pop("web")
-            flow = InstalledAppFlow.from_client_config(client_config, SCOPES)
+        flow = InstalledAppFlow.from_client_config(client_config, SCOPES)
 
     print("\n👉 Opening your browser to authorize your YouTube channel...")
     print("👉 If prompted, choose your YouTube Google account and allow permissions.\n")
