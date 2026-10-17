@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoTube AI - Multi-Channel YouTube Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-text">
+        <h2>AutoTube AI</h2>
+        <span>Multi-Channel Studio</span>
+      </div>
+    </div>
+
+    <nav class="nav-menu">
+      <div class="nav-item active" data-tab="tab-channels">
+        <span>📡</span> Connected Channels
+      </div>
+      <div class="nav-item" data-tab="tab-studio">
+        <span>🎬</span> Story Series Studio
+      </div>
+      <div class="nav-item" data-tab="tab-preview">
+        <span>📺</span> Video Previews
+      </div>
+      <div class="nav-item" data-tab="tab-history">
+        <span>📊</span> Upload History
+      </div>
+      <div class="nav-item" data-tab="tab-health">
+        <span>⚙️</span> System & Health
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="health-pill">
+        <span class="dot-pulse"></span>
+        <span id="system-status-indicator">All Engines Ready</span>
+      </div>
+      <p style="margin-top: 6px; color: var(--text-dim);">100% Free Autonomous Stack</p>
+    </div>
+  </aside>
+
+  <!-- Main Content Workspace -->
+  <main class="main-content">
+    
+    <!-- Top Header -->
+    <header class="top-bar">
+      <div class="page-title">
+        <h1 id="page-heading">Connected YouTube Channels</h1>
+        <p id="page-subheading">Manage your channel portfolio, upload schedules, and OAuth tokens.</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="openConnectModal()">
+          <span>➕</span> Connect Channel
+        </button>
+        <button class="btn btn-primary" onclick="triggerEpisodeModal()">
+          <span>🚀</span> Run Video Automation
+        </button>
+      </div>
+    </header>
+
+    <!-- Global Stat Cards -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="color: #6366f1;">📡</div>
+        <div class="stat-info">
+          <p>Connected Channels</p>
+          <h3 id="stat-channels-count">0</h3>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="color: #06b6d4;">🎬</div>
+        <div class="stat-info">
+          <p>Active Series Progress</p>
+          <h3 id="stat-series-progress">0 / 0</h3>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="color: #10b981;">🚀</div>
+        <div class="stat-info">
+          <p>Total Videos Uploaded</p>
+          <h3 id="stat-total-uploads">0</h3>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="color: #f59e0b;">🎙️</div>
+        <div class="stat-info">
+          <p>Voiceover Engine</p>
+          <h3 style="font-size: 16px; margin-top: 8px;">Edge-TTS (Free)</h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 1: Connected Channels -->
+    <div id="tab-channels" class="tab-content active">
+      <div class="glass-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Active Channels</h2>
+          <button class="btn btn-secondary" onclick="loadChannels()">🔄 Refresh</button>
+        </div>
+
+        <div id="channels-container" class="channels-grid">
+          <!-- Dynamically populated by app.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: Story Series Studio -->
+    <div id="tab-studio" class="tab-content">
+      <div class="glass-panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Story Series Generator</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">
+              Give a story concept and let AI plan multi-episode cliffhangers with synced 60s Main Videos and 20s Shorts.
+            </p>
+          </div>
+        </div>
+
+        <div class="prompt-box">
+          <div class="input-group">
+            <label class="input-label">Story Concept / Series Prompt</label>
+            <textarea id="story-prompt-input" class="input-textarea" placeholder="e.g. A 5-part suspense thriller about a military submarine that detected an unknown organic pulse at the bottom of the Mariana Trench..."></textarea>
+          </div>
+
+          <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <div class="input-group" style="flex: 1; min-width: 160px;">
+              <label class="input-label">Number of Episodes</label>
+              <select id="story-episodes-count" class="input-text">
+                <option value="3">3 Episodes</option>
+                <option value="5" selected>5 Episodes (Recommended)</option>
+                <option value="7">7 Episodes</option>
+                <option value="10">10 Episodes</option>
+              </select>
+            </div>
+            <div style="align-self: flex-end;">
+              <button class="btn btn-primary" id="btn-generate-plan" onclick="generateStoryPlan()">
+                <span>✨</span> Plan Multi-Episode Series
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Episodes Viewer & Editor -->
+        <div style="margin-top: 32px;">
+          <h3 style="font-size: 17px; margin-bottom: 12px;" id="current-series-title">Current Planned Episodes</h3>
+          <div id="episodes-container" class="episodes-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Video Previews -->
+    <div id="tab-preview" class="tab-content">
+      <div class="glass-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">In-Browser Video Player</h2>
+          <span style="color: var(--text-muted); font-size: 13px;">Preview rendered output videos and shorts</span>
+        </div>
+
+        <div class="video-preview-wrapper">
+          <div class="player-box">
+            <h4 style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); font-size: 14px;">
+              🎬 Main Video (16:9 Widescreen)
+            </h4>
+            <video id="player-main" controls>
+              <source src="/api/video-stream/video_main.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+
+          <div class="player-box" style="max-width: 320px;">
+            <h4 style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); font-size: 14px;">
+              📱 YouTube Short (9:16 Vertical)
+            </h4>
+            <video id="player-short" controls style="max-height: 540px;">
+              <source src="/api/video-stream/video_short.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: Upload History -->
+    <div id="tab-history" class="tab-content">
+      <div class="glass-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Recent YouTube Uploads</h2>
+          <button class="btn btn-secondary" onclick="loadHistory()">🔄 Refresh</button>
+        </div>
+
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Channel</th>
+              <th>Video Title</th>
+              <th>Format</th>
+              <th>Uploaded At</th>
+              <th>Link</th>
+            </tr>
+          </thead>
+          <tbody id="history-table-body">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 5: System Health -->
+    <div id="tab-health" class="tab-content">
+      <div class="glass-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">System & API Status</h2>
+        </div>
+
+        <div id="health-grid" style="display: flex; flex-direction: column; gap: 14px;">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: Connect Channel -->
+  <div id="modal-connect-channel" class="modal-overlay">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 18px; font-weight: 700;">Connect YouTube Channel</h3>
+        <button onclick="closeConnectModal()" style="background: none; border: none; color: #fff; font-size: 20px; cursor: pointer;">✕</button>
+      </div>
+
+      <!-- Option 1: 1-Click Google OAuth -->
+      <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid var(--border-glow); border-radius: var(--radius-md); padding: 16px;">
+        <h4 style="font-size: 15px; margin-bottom: 6px;">Option A: 1-Click Google Login</h4>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Sign in with your YouTube channel owner account to connect instantly.</p>
+        <button class="btn btn-primary" onclick="redirectToGoogleAuth()" style="width: 100%; justify-content: center;">
+          <span>🌐</span> Connect with Google
+        </button>
+      </div>
+
+      <div style="text-align: center; color: var(--text-dim); font-size: 12px;">— OR ENTER TOKENS MANUALLY —</div>
+
+      <!-- Option 2: Manual Credentials -->
+      <form id="form-manual-channel" onsubmit="handleManualChannelSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="input-group">
+          <label class="input-label">Channel Label / Niche</label>
+          <input type="text" id="manual-channel-title" class="input-text" placeholder="e.g. Crime Stories Channel" required>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Client ID</label>
+          <input type="text" id="manual-client-id" class="input-text" placeholder="From Google Cloud Console" required>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Client Secret</label>
+          <input type="password" id="manual-client-secret" class="input-text" placeholder="Client Secret" required>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Refresh Token</label>
+          <input type="text" id="manual-refresh-token" class="input-text" placeholder="Refresh Token" required>
+        </div>
+        <button type="submit" class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 8px;">
+          Save Channel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Task Runner Log Modal -->
+  <div id="modal-task-runner" class="modal-overlay">
+    <div class="modal-box" style="max-width: 600px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 18px; font-weight: 700;">Running Video Automation</h3>
+        <button onclick="closeTaskModal()" style="background: none; border: none; color: #fff; font-size: 20px; cursor: pointer;">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="input-group">
+          <label class="input-label">Select Target Channel</label>
+          <select id="select-target-channel" class="input-text"></select>
+        </div>
+
+        <button class="btn btn-primary" onclick="startEpisodeExecution()">
+          <span>▶️</span> Start Video Generation & Upload
+        </button>
+
+        <!-- Live Log Terminal -->
+        <div style="background: #000; border-radius: var(--radius-sm); border: 1px solid var(--border-color); padding: 14px; font-family: monospace; font-size: 13px; min-height: 180px; max-height: 250px; overflow-y: auto;" id="live-task-log">
+          [studio] Ready to run next episode.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-# 🚀 AutoTube AI: 100% Free Autonomous YouTube Video & Shorts Automation Engine
+# 🚀 AutoTube AI: 100% Free Autonomous YouTube Video & Shorts Automation Studio
 
 [![GitHub Stars](https://img.shields.io/github/stars/musaibahmed830/YT-Auto-?style=for-the-badge&logo=github)](https://github.com/musaibahmed830/YT-Auto-)
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11-blue?style=for-the-badge&logo=python)](https://python.org)
@@ -6,19 +6,21 @@
 [![GitHub Actions](https://img.shields.io/badge/Runs%20On-GitHub%20Actions%20(Free)-orange?style=for-the-badge&logo=githubactions)](https://github.com/features/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-**AutoTube AI** is a state-of-the-art, **100% FREE** autonomous YouTube automation bot. It creates and publishes high-retention, faceless **Long-Form Videos (~60s)** and **YouTube Shorts (~20s)** on complete autopilot using **GitHub Actions**.
+**AutoTube AI** is a state-of-the-art, **100% FREE** autonomous YouTube automation bot and multi-channel studio. It creates and publishes high-retention, faceless **Long-Form Videos (~60s)** and **YouTube Shorts (~20s)** on complete autopilot using **GitHub Actions** or the built-in **Web Studio Dashboard**.
 
 Built specifically for content creators, faceless YouTube channels, storytellers, and automation builders. **Zero paid APIs. Zero monthly subscriptions.**
 
 ---
 
 ## 🔍 Key SEO Highlights & Target Topics
-> `youtube automation` • `ai video generator` • `youtube shorts automation` • `faceless youtube channel` • `text to video ai python` • `automated youtube uploader` • `free ai video generator` • `github actions youtube bot` • `ai storytelling channel` • `youtube shorts bot` • `tiktok to youtube automation`
+> `youtube automation` • `ai video generator` • `youtube shorts automation` • `faceless youtube channel` • `multi channel youtube automation` • `text to video ai python` • `automated youtube uploader` • `free ai video generator` • `github actions youtube bot` • `ai storytelling channel` • `youtube shorts bot` • `tiktok to youtube automation`
 
 ---
 
 ## ✨ Features
 
+- 🎛️ **Modern Web Studio Dashboard**: Built-in glassmorphic dark-theme studio (`python run_dashboard.py`) to visually connect multiple YouTube channels, plan/edit stories, preview rendered videos in the browser, and monitor upload history.
+- 📡 **Multi-Channel Management**: Connect unlimited YouTube channels via 1-Click Google OAuth or credentials with custom niche tags, privacy settings, and upload schedules.
 - 🎭 **Story-Series Mode**: Give a single story prompt and the AI plans a multi-episode narrative series (Part 1, Part 2, etc.) with intense cliffhangers.
 - 📱 **Dual Video Output**: Simultaneously generates both a **1-Minute Main Video (16:9 Widescreen)** and a **20-Second YouTube Short (9:16 Vertical)** for every episode.
 - ⏰ **Scheduled 6 AM & 6 PM Auto-Upload**: Runs twice daily on autopilot via GitHub Actions free cron timers.
@@ -33,7 +35,9 @@ Built specifically for content creators, faceless YouTube channels, storytellers
 
 | Component | Free Provider | Cost |
 |---|---|---|
-| **LLM & Scriptwriting** | Google Gemini (`gemini-3.8-flash` / `gemini-2.5-flash`) & Groq (`llama-3.1-8b-instant`) | **$0.00** |
+| **Web Studio Dashboard** | FastAPI + Vanilla Modern Dark UI | **$0.00** |
+| **Multi-Channel Vault** | SQLite Database (`data/channels.db`) | **$0.00** |
+| **LLM & Scriptwriting** | Google Gemini (`gemini-2.5-flash` / `gemini-1.5-flash`) & Groq (`llama-3.3-70b-versatile`) | **$0.00** |
 | **Voiceover / TTS** | Microsoft Edge-TTS Neural Voices | **$0.00** |
 | **Stock Video Clips** | Pexels API (Free tier) + Wikimedia Commons | **$0.00** |
 | **Video Assembly** | FFmpeg (GPU / CPU hardware accelerated) | **$0.00** |
@@ -45,12 +49,17 @@ Built specifically for content creators, faceless YouTube channels, storytellers
 
 ## 🚀 Quick Start Guide
 
-### 1. Clone & Install Locally
+### 1. Launch the Web Studio Dashboard (Recommended)
 ```bash
-git clone https://github.com/musaibahmed830/YT-Auto-.git
-cd YT-Auto-
-pip install -r requirements.txt
+python run_dashboard.py
 ```
+Open **`http://localhost:8000`** in your browser. From here you can:
+1. Connect multiple YouTube channels (1-click Google login or OAuth tokens).
+2. Input story ideas and plan 3 to 10 episode narrative arcs.
+3. Preview generated 16:9 main videos and 9:16 vertical Shorts before uploading.
+4. Trigger on-demand generation or let GitHub Actions run on schedule.
+
+---
 
 ### 2. Configure Environment (`.env`)
 Create a `.env` file in the project root:
@@ -90,7 +99,7 @@ python src/story_series.py status
 ```
 
 #### 3. Manual Editing:
-You can open `series_state.json` directly in any text editor to customize scripts, edit narration, reorder parts, or tweak keywords.
+You can open `series_state.json` directly in any text editor or via the Web Studio to customize scripts, edit narration, reorder parts, or tweak keywords.
 
 #### 4. Run next episode:
 ```bash
@@ -122,7 +131,7 @@ The repository includes a pre-configured workflow [`.github/workflows/daily_vide
 
 1. Create a project in [Google Cloud Console](https://console.cloud.google.com).
 2. Enable **YouTube Data API v3**.
-3. Create an **OAuth 2.0 Client ID** (Desktop Application) and download `client_secret.json` into this folder.
+3. Create an **OAuth 2.0 Client ID** (Desktop Application or Web Application) and download `client_secret.json` into this folder.
 4. Run locally:
    ```bash
    python get_refresh_token.py

@@ -38,8 +38,20 @@ def upload_video(
     thumbnail_path: str | None = None,
     privacy_status: str = "public",
     category_id: str = "22",  # "People & Blogs"; change to fit your niche
+    channel_credentials: dict | None = None,
 ):
-    creds = _get_credentials()
+    if channel_credentials:
+        creds = Credentials(
+            token=None,
+            refresh_token=_clean_token(channel_credentials.get("refresh_token", "")),
+            token_uri="https://oauth2.googleapis.com/token",
+            client_id=_clean_token(channel_credentials.get("client_id", "")),
+            client_secret=_clean_token(channel_credentials.get("client_secret", "")),
+            scopes=SCOPES,
+        )
+    else:
+        creds = _get_credentials()
+
     youtube = build("youtube", "v3", credentials=creds)
 
     body = {
