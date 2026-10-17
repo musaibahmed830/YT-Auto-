@@ -5,7 +5,10 @@ Auth uses a long-lived OAuth refresh token (generated once locally via
 get_refresh_token.py) so the pipeline can run unattended in CI.
 """
 
+from __future__ import annotations
+
 import os
+from typing import Optional, List, Dict, Any
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
@@ -13,7 +16,7 @@ from googleapiclient.http import MediaFileUpload
 SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
 
-def _clean_token(val: str | None) -> str:
+def _clean_token(val: Optional[str]) -> str:
     if not val:
         return ""
     return "".join(c for c in val.strip() if 32 < ord(c) < 127)
@@ -34,11 +37,11 @@ def upload_video(
     video_path: str,
     title: str,
     description: str,
-    tags: list[str],
-    thumbnail_path: str | None = None,
+    tags: List[str],
+    thumbnail_path: Optional[str] = None,
     privacy_status: str = "public",
     category_id: str = "22",  # "People & Blogs"; change to fit your niche
-    channel_credentials: dict | None = None,
+    channel_credentials: Optional[Dict[str, Any]] = None,
 ):
     if channel_credentials:
         creds = Credentials(

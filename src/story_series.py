@@ -8,11 +8,14 @@ episodes sequentially until all episodes are completed.
 Uses only 100% free models (Gemini / Groq) with zero cost.
 """
 
+from __future__ import annotations
+
 import os
 import sys
 import json
 import re
 from datetime import datetime
+from typing import Optional, List, Dict, Any
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -39,7 +42,7 @@ def _get_llm_client():
         raise RuntimeError("Neither GEMINI_API_KEY nor GROQ_API_KEY is configured.")
 
 
-def plan_series(story_prompt: str, total_episodes: int = 5) -> dict:
+def plan_series(story_prompt: str, total_episodes: int = 5) -> Dict[str, Any]:
     """
     Plans an entire multi-episode story series from a single user prompt.
     Generates both full 60s narrative and 20s shorts for every episode.
@@ -166,7 +169,7 @@ Respond with ONLY this JSON structure:
     return plan_data
 
 
-def ensure_scenes(script_dict: dict) -> list[dict]:
+def ensure_scenes(script_dict: dict) -> List[Dict[str, Any]]:
     """
     Ensures a script package has structured scenes with text and visual search queries.
     If 'scenes' is already provided, returns it.
@@ -196,7 +199,7 @@ def ensure_scenes(script_dict: dict) -> list[dict]:
     return scenes
 
 
-def load_series_state() -> dict | None:
+def load_series_state() -> Optional[Dict[str, Any]]:
     """Loads the active series state from file, or returns None if no series exists."""
     if not os.path.exists(STATE_FILE):
         return None
@@ -208,7 +211,7 @@ def load_series_state() -> dict | None:
         return None
 
 
-def get_next_pending_episode() -> dict | None:
+def get_next_pending_episode() -> Optional[Dict[str, Any]]:
     """Finds the next unuploaded episode in the series."""
     state = load_series_state()
     if not state or not state.get("episodes"):

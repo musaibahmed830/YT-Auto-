@@ -3,9 +3,12 @@ Assembles the final video from stock clips + voiceover using ffmpeg.
 Requires ffmpeg and ffprobe to be installed and on PATH.
 """
 
+from __future__ import annotations
+
 import os
 import subprocess
 import json
+from typing import Optional, List, Dict, Any
 
 
 def _get_duration(path: str) -> float:
@@ -20,14 +23,14 @@ def _get_duration(path: str) -> float:
 
 
 def assemble_video(
-    clip_paths: list[str],
+    clip_paths: List[str],
     voiceover_path: str,
     title_text: str,
     out_path: str,
     work_dir: str = "work",
     orientation: str = "horizontal",
-    max_duration: float | None = None,
-):
+    max_duration: Optional[float] = None,
+) -> str:
     """
     - Normalizes each clip to target resolution:
         horizontal -> 1920x1080 (16:9)
@@ -153,12 +156,12 @@ def assemble_video(
 
 
 def assemble_synced_video(
-    scenes: list[dict],
+    scenes: List[Dict[str, Any]],
     title_text: str,
     out_path: str,
     work_dir: str = "work",
     orientation: str = "horizontal",
-    max_duration: float | None = None,
+    max_duration: Optional[float] = None,
 ) -> str:
     """
     Renders a video where every scene's visual clip matches the exact words spoken

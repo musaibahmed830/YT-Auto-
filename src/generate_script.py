@@ -6,9 +6,12 @@ Primary:  Google Gemini  (free via GEMINI_API_KEY)
 Fallback: Groq           (free via GROQ_API_KEY)
 """
 
+from __future__ import annotations
+
 import os
 import json
 import re
+from typing import Optional, List, Dict, Any
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -117,7 +120,7 @@ def _clean_and_parse_json(text: str) -> dict:
         raise
 
 
-def generate_script(topic: str, seo_keywords: list[str] | None = None, api_key: str | None = None):
+def generate_script(topic: str, seo_keywords: Optional[List[str]] = None, api_key: Optional[str] = None) -> Dict[str, Any]:
     """
     Returns a dict:
     {
@@ -127,7 +130,7 @@ def generate_script(topic: str, seo_keywords: list[str] | None = None, api_key: 
         "narration": str,      # full voiceover script
         "visual_keywords": [str, ...],  # keywords to search stock footage for
         "is_specific_person": bool,  # true if the topic centers on one named real person
-        "person_name": str | None,  # that person's full name, else None
+        "person_name": Optional[str],  # that person's full name, else None
     }
 
     seo_keywords: real search phrases (e.g. from YouTube autocomplete / Google Trends

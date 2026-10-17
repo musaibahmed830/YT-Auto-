@@ -6,9 +6,12 @@ Supports:
 100% Free Stack: Gemini / Groq + Edge-TTS + Pexels + YouTube API
 """
 
+from __future__ import annotations
+
 import os
 import sys
 import traceback
+from typing import Optional, Dict, Any
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -35,7 +38,7 @@ WORK_DIR = "work"
 OUTPUT_DIR = "output"
 
 
-def _process_video_package(package: dict, is_short: bool = False, episode_num: int | None = None) -> str:
+def _process_video_package(package: dict, is_short: bool = False, episode_num: Optional[int] = None) -> str:
     """
     Renders and uploads a single video (either full 60s main video or 20s Shorts).
     Returns the uploaded YouTube video ID.

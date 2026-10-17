@@ -4,9 +4,12 @@ is about one specific named person - real photos of that person from Wikimedia
 Commons (free, no API key), turned into short Ken Burns-style video clips.
 """
 
+from __future__ import annotations
+
 import os
 import subprocess
 import time
+from typing import Optional, List, Dict, Any
 import requests
 
 PEXELS_SEARCH_URL = "https://api.pexels.com/videos/search"
@@ -20,14 +23,14 @@ _BAD_FILENAME_HINTS = (
 )
 
 
-def _clean_ascii_token(token: str | None) -> str:
+def _clean_ascii_token(token: Optional[str]) -> str:
     """Strips whitespace, unicode line/paragraph separators (\u2028, \u2029), and non-printable characters."""
     if not token:
         return ""
     return "".join(c for c in token.strip() if 32 < ord(c) < 127)
 
 
-def _generate_fallback_clip(out_path: str, duration: int = 6, color_hex: str = "0x0f172a") -> str | None:
+def _generate_fallback_clip(out_path: str, duration: int = 6, color_hex: str = "0x0f172a") -> Optional[str]:
     """Generates an aesthetic animated background video clip using ffmpeg if stock footage fails."""
     try:
         cmd = [
@@ -50,7 +53,7 @@ def fetch_scene_clip(
     out_path: str,
     orientation: str = "landscape",
     min_duration: float = 5.0,
-    api_key: str | None = None,
+    api_key: Optional[str] = None,
 ) -> str:
     """
     Downloads a stock clip specifically matching a scene's action/subject.
@@ -122,7 +125,7 @@ def fetch_scene_clip(
     return out_path
 
 
-def fetch_clips(keywords: list[str], out_dir: str, api_key: str | None = None, clips_per_keyword: int = 1):
+def fetch_clips(keywords: List[str], out_dir: str, api_key: Optional[str] = None, clips_per_keyword: int = 1) -> List[str]:
     """
     Downloads vertical/horizontal-friendly clips per keyword into out_dir.
     Returns a list of local file paths in the same order as keywords.
@@ -231,7 +234,7 @@ def _download_with_retry(url: str, out_path: str, headers: dict, retries: int = 
             raise
 
 
-def fetch_person_photos(person_name: str, out_dir: str, max_photos: int = 6) -> list[str]:
+def fetch_person_photos(person_name: str, out_dir: str, max_photos: int = 6) -> List[str]:
     """
     Finds real, freely-licensed photos of a specific named person by looking at
     the images actually used on their Wikipedia article (free, no API key
@@ -253,8 +256,6 @@ def fetch_person_photos(person_name: str, out_dir: str, max_photos: int = 6) -> 
     title = results[0]["title"]
     last_name = person_name.strip().split()[-1].lower()
 
-    # The infobox lead photo (Wikipedia's canonical "main image" for the
-    # article) is almost always an actual portrait - always take it first.
     candidates = []
     thumb_data = _wikipedia_get(
         {
@@ -268,9 +269,6 @@ def fetch_person_photos(person_name: str, out_dir: str, max_photos: int = 6) -> 
         if thumb:
             candidates.append(thumb)
 
-    # Supplement with other images used on the article, but only ones whose
-    # filename actually names the person - otherwise we pick up unrelated
-    # diagrams/documents/events that merely appear somewhere in the article.
     images_data = _wikipedia_get(
         {
             "action": "query",

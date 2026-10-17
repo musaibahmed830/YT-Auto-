@@ -4,10 +4,13 @@ Stores and manages credentials, niches, schedules, and upload history
 for multiple connected YouTube channels using SQLite.
 """
 
+from __future__ import annotations
+
 import os
 import sqlite3
 import json
 from datetime import datetime
+from typing import Optional, List, Dict, Any
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
@@ -82,7 +85,7 @@ def add_channel(
     niche: str = "General",
     schedule_times: str = "06:00,18:00",
     privacy_status: str = "public",
-) -> dict:
+) -> Dict[str, Any]:
     """
     Validates credentials with YouTube API, pulls channel info/avatar,
     and saves to database.
@@ -145,7 +148,7 @@ def add_channel(
     }
 
 
-def list_channels() -> list[dict]:
+def list_channels() -> List[Dict[str, Any]]:
     """Returns list of all registered channels."""
     init_db()
     conn = _get_connection()
@@ -164,7 +167,7 @@ def list_channels() -> list[dict]:
     return channels
 
 
-def get_channel(channel_id: str) -> dict | None:
+def get_channel(channel_id: str) -> Optional[Dict[str, Any]]:
     """Returns full channel record with credentials for uploading."""
     init_db()
     conn = _get_connection()
@@ -199,7 +202,7 @@ def record_upload(
     video_id: str,
     title: str,
     is_short: bool = False,
-    episode_number: int | None = None,
+    episode_number: Optional[int] = None,
 ):
     """Logs an upload in history and increments channel counter."""
     conn = _get_connection()
@@ -221,7 +224,7 @@ def record_upload(
     conn.close()
 
 
-def get_upload_history(limit: int = 50) -> list[dict]:
+def get_upload_history(limit: int = 50) -> List[Dict[str, Any]]:
     """Retrieves recent upload history."""
     init_db()
     conn = _get_connection()

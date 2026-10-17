@@ -4,8 +4,11 @@ Primary:   Microsoft Edge-TTS (100% free, natural neural AI voice, no API key ne
 Fallback:  ElevenLabs (if ELEVENLABS_API_KEY is configured).
 """
 
+from __future__ import annotations
+
 import os
 import asyncio
+from typing import Optional
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -27,10 +30,10 @@ async def _generate_with_edge_tts(text: str, out_path: str, voice: str):
 def generate_voiceover(
     text: str,
     out_path: str,
-    api_key: str | None = None,
-    voice_id: str | None = None,
-    model_id: str | None = None,
-):
+    api_key: Optional[str] = None,
+    voice_id: Optional[str] = None,
+    model_id: Optional[str] = None,
+) -> str:
     """
     Generates an MP3 voiceover file.
     Uses free Edge-TTS by default without needing any API key or subscription.

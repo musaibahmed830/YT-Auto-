@@ -2,6 +2,9 @@
 client_secret.json
 *.json
 !package.json
+!series_state.json
+data/
+*.db
 
 # ── Self-hosted runner (large binary, should never be committed) ────────────
 actions-runner/
