@@ -7,7 +7,26 @@ Run this script to start the web dashboard:
 
 import os
 import sys
+import socket
+import warnings
 import webbrowser
+
+# Silence deprecation warnings for clean terminal experience
+warnings.filterwarnings("ignore", category=FutureWarning)
+
+
+def find_available_port(preferred_port: int = 8000, max_attempts: int = 50) -> int:
+    """Finds the first available TCP port starting from preferred_port."""
+    for p in range(preferred_port, preferred_port + max_attempts):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                s.bind(("0.0.0.0", p))
+                return p
+        except OSError:
+            continue
+    return preferred_port
+
 
 def main():
     # If current python is not in .venv and .venv exists, automatically re-execute via .venv
@@ -39,14 +58,20 @@ def main():
     from channel_manager import init_db
     init_db()
 
-    port = int(os.environ.get("PORT", 8000))
+    env_port = os.environ.get("PORT")
+    if env_port:
+        port = int(env_port)
+    else:
+        # Automatically find an available port if 8000 is occupied by Docker or other apps
+        port = find_available_port(preferred_port=8000)
+
     url = f"http://localhost:{port}"
 
     print(f"\n🚀 Server starting on: {url}")
-    print("👉 Open this URL in your browser to manage channels & plan series.")
+    print(f"👉 Open this URL in your browser to manage channels & plan series.")
     print("👉 Press Ctrl+C in this terminal to stop the server.\n")
 
-    # Optionally attempt to open browser automatically
+    # Open browser automatically
     try:
         webbrowser.open(url)
     except Exception:
@@ -54,6 +79,7 @@ def main():
 
     import uvicorn
     uvicorn.run("dashboard_app:app", host="0.0.0.0", port=port, reload=True)
+
 
 if __name__ == "__main__":
     main()
