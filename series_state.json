@@ -1,0 +1,101 @@
+{
+  "series_title": "Will Humans Really Live on Mars?",
+  "series_synopsis": "An investigative deep dive into the engineering, biological, and logistical hurdles of colonizing Mars. From super heavy rocket launches to pressurized subterranean habitats, discover the realistic roadmap for humanity's bid to become an interplanetary species.",
+  "total_episodes": 1,
+  "episodes": [
+    {
+      "episode_number": 1,
+      "episode_title": "The Race to Build a New World",
+      "full_script": {
+        "title": "Will Humans Really Live on Mars? The Race to Build a New World",
+        "description": "Could humanity really establish a permanent civilization on the Red Planet? Explore the raw science of interplanetary travel, radiation protection, and life support systems. Subscribe for more deep-dive space documentaries!",
+        "tags": [
+          "mars colonization",
+          "space exploration",
+          "spacex starship",
+          "nasa artemis",
+          "future technology",
+          "documentary"
+        ],
+        "narration": "Imagine waking up on another planet, millions of kilometers from home, surrounded by freezing red deserts and unbreathable air. To get here, massive heavy-lift rockets must first escape Earth's gravity, hurling crews across seven months of deep space radiation. Entering the thin Martian atmosphere demands supersonic retro-propulsion to safely touch down on the jagged dust. Once on the surface, survival requires pressurized biodomes buried under meters of regolith to shield against lethal cosmic rays. Closed-loop life support machines recycle every drop of water while robotic greenhouses cultivate crops in artificial soil. Massive global dust storms will blot out the sun for months, testing the absolute limits of emergency nuclear reactors and battery banks. Transforming this hostile wasteland into a self-sustaining home is the most difficult challenge our species has ever attempted. If you were offered a one-way ticket to colonize the Red Planet, would you go?",
+        "scenes": [
+          {
+            "scene_num": 1,
+            "text": "Imagine waking up on another planet, millions of kilometers from home, surrounded by freezing red deserts and unbreathable air.",
+            "visual_search": "mars planet red surface desert landscape"
+          },
+          {
+            "scene_num": 2,
+            "text": "To get here, massive heavy-lift rockets must first escape Earth's gravity, hurling crews across seven months of deep space radiation.",
+            "visual_search": "heavy rocket launch fire exhaust nighttime"
+          },
+          {
+            "scene_num": 3,
+            "text": "Entering the thin Martian atmosphere demands supersonic retro-propulsion to safely touch down on the jagged dust.",
+            "visual_search": "space capsule heat shield re-entry fire"
+          },
+          {
+            "scene_num": 4,
+            "text": "Once on the surface, survival requires pressurized biodomes buried under meters of regolith to shield against lethal cosmic rays.",
+            "visual_search": "futuristic geodesic dome habitat desert"
+          },
+          {
+            "scene_num": 5,
+            "text": "Closed-loop life support machines recycle every drop of water while robotic greenhouses cultivate crops in artificial soil.",
+            "visual_search": "hydroponic indoor vertical farm glowing purple lights"
+          },
+          {
+            "scene_num": 6,
+            "text": "Massive global dust storms will blot out the sun for months, testing the absolute limits of emergency nuclear reactors and battery banks.",
+            "visual_search": "desert red sandstorm dark wind blowing"
+          },
+          {
+            "scene_num": 7,
+            "text": "Transforming this hostile wasteland into a self-sustaining home is the most difficult challenge our species has ever attempted.",
+            "visual_search": "astronaut in spacesuit walking on rocky terrain"
+          },
+          {
+            "scene_num": 8,
+            "text": "If you were offered a one-way ticket to colonize the Red Planet, would you go?",
+            "visual_search": "lone astronaut looking up at starry night sky"
+          }
+        ]
+      },
+      "short_script": {
+        "title": "Can Humans Actually Survive On Mars? #shorts",
+        "description": "The brutal reality of living on Mars revealed. Would you volunteer to go? #shorts #space #mars #science",
+        "tags": [
+          "shorts",
+          "mars",
+          "space",
+          "astronomy",
+          "survival"
+        ],
+        "narration": "Mars has zero breathable air, sub-zero temperatures, and cosmic radiation that will tear through human DNA. Astronauts will be forced to live inside underground tunnels, drinking recycled sweat just to stay alive. The journey takes seven months, but the harsh truth is: once you land, there may never be a way back.",
+        "scenes": [
+          {
+            "scene_num": 1,
+            "text": "Mars has zero breathable air, sub-zero temperatures, and cosmic radiation that will tear through human DNA.",
+            "visual_search": "planet mars spinning in dark space"
+          },
+          {
+            "scene_num": 2,
+            "text": "Astronauts will be forced to live inside underground tunnels, drinking recycled sweat just to stay alive.",
+            "visual_search": "astronaut helmet visor reflection desert"
+          },
+          {
+            "scene_num": 3,
+            "text": "The journey takes seven months, but the harsh truth is: once you land, there may never be a way back.",
+            "visual_search": "rocket landing on dusty red ground"
+          }
+        ]
+      },
+      "status": "completed",
+      "uploaded_at": "2026-10-18T12:28:36.504747",
+      "main_video_id": "dZ9oJaa3ZqQ",
+      "short_video_id": "Vs_NQMFhnhY"
+    }
+  ],
+  "created_at": "2026-10-18T12:26:15.685680",
+  "current_episode_index": 1
+}
