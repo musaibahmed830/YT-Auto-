@@ -23,23 +23,127 @@ load_dotenv()
 STATE_FILE = "series_state.json"
 
 
-def _get_llm_client():
+def _call_story_llm(system_prompt: str, user_prompt: str) -> str:
+    """
+    Calls LLM with automatic multi-model failover:
+    1. Tries Gemini models (gemini-3.8-flash, 3.7, 3.5, 1.5-flash, 1.5-pro) with 503 retry.
+    2. Automatically falls back to Groq models (llama-3.3-70b, llama-3.1-8b, gpt-oss, mixtral)
+       if Gemini fails or experiences service spikes.
+    """
     from openai import OpenAI
+    import time
+
     gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
     groq_key = os.environ.get("GROQ_API_KEY", "").strip()
 
+    gemini_models = [
+        m.strip()
+        for m in os.environ.get(
+            "GEMINI_MODELS",
+            os.environ.get(
+                "GEMINI_MODEL",
+                "gemini-3.8-flash,gemini-3.7-flash,gemini-3.5-flash-lite,gemini-1.5-flash,gemini-1.5-flash-latest,gemini-1.5-pro",
+            ),
+        ).split(",")
+        if m.strip()
+    ]
+
+    groq_models = [
+        m.strip()
+        for m in os.environ.get(
+            "GROQ_MODELS",
+            os.environ.get(
+                "GROQ_MODEL",
+                "llama-3.3-70b-versatile,llama-3.1-8b-instant,openai/gpt-oss-120b,openai/gpt-oss-20b,mixtral-8x7b-32768",
+            ),
+        ).split(",")
+        if m.strip()
+    ]
+
+    # 1. Try Gemini
     if gemini_key:
-        return OpenAI(
+        client = OpenAI(
             api_key=gemini_key,
             base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-        ), ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-2.5-flash", "gemini-2.0-flash"]
-    elif groq_key:
-        return OpenAI(
+        )
+        for model in gemini_models:
+            for attempt in range(2):
+                try:
+                    print(f"[story_planner] Calling Gemini model '{model}' (attempt {attempt + 1})...")
+                    res = client.chat.completions.create(
+                        model=model,
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt},
+                        ],
+                        max_tokens=6000,
+                    )
+                    content = (res.choices[0].message.content or "").strip()
+                    if content:
+                        print(f"[story_planner] ✓ Success with Gemini ({model})!")
+                        return content
+                except Exception as e:
+                    err_str = str(e)
+                    print(f"[story_planner] Gemini '{model}' error: {err_str}")
+                    # If 503 high demand spike, brief sleep and retry once
+                    if ("503" in err_str or "high demand" in err_str.lower() or "overloaded" in err_str.lower()) and attempt == 0:
+                        print(f"[story_planner] Temporary 503 spike on '{model}'. Retrying in 2 seconds...")
+                        time.sleep(2)
+                        continue
+                    break
+
+    # 2. Fall back to Groq
+    if groq_key:
+        print("[story_planner] Gemini unavailable or exhausted. Falling back to Groq candidate models...")
+        client = OpenAI(
             api_key=groq_key,
             base_url="https://api.groq.com/openai/v1",
-        ), ["llama-3.1-8b-instant", "mixtral-8x7b-32768"]
-    else:
-        raise RuntimeError("Neither GEMINI_API_KEY nor GROQ_API_KEY is configured.")
+        )
+        for model in groq_models:
+            try:
+                print(f"[story_planner] Calling Groq model '{model}'...")
+                try:
+                    res = client.chat.completions.create(
+                        model=model,
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt},
+                        ],
+                        max_tokens=6000,
+                    )
+                except Exception as e:
+                    err_lower = str(e).lower()
+                    if "max_completion_tokens" in err_lower:
+                        res = client.chat.completions.create(
+                            model=model,
+                            messages=[
+                                {"role": "system", "content": system_prompt},
+                                {"role": "user", "content": user_prompt},
+                            ],
+                            max_completion_tokens=6000,
+                        )
+                    elif "system" in err_lower and ("user" in err_lower or "role" in err_lower):
+                        res = client.chat.completions.create(
+                            model=model,
+                            messages=[
+                                {"role": "user", "content": f"{system_prompt}\n\n{user_prompt}"},
+                            ],
+                            max_tokens=6000,
+                        )
+                    else:
+                        raise e
+
+                content = (res.choices[0].message.content or "").strip()
+                if content:
+                    print(f"[story_planner] ✓ Success with Groq ({model})!")
+                    return content
+            except Exception as e:
+                print(f"[story_planner] Groq '{model}' error: {e}")
+
+    raise RuntimeError(
+        "Failed to generate story series plan across both Gemini and Groq candidate models. "
+        "Please check your GEMINI_API_KEY and GROQ_API_KEY."
+    )
 
 
 def plan_series(story_prompt: str, total_episodes: int = 5) -> Dict[str, Any]:
@@ -47,7 +151,6 @@ def plan_series(story_prompt: str, total_episodes: int = 5) -> Dict[str, Any]:
     Plans an entire multi-episode story series from a single user prompt.
     Generates both full 60s narrative and 20s shorts for every episode.
     """
-    client, models = _get_llm_client()
 
     system_prompt = (
         "You are an expert viral YouTube storyteller and episodic director. "
@@ -120,25 +223,7 @@ Respond with ONLY this JSON structure:
   ]
 }}"""
 
-    response_text = None
-    for model in models:
-        try:
-            print(f"[story_planner] Calling LLM with model '{model}'...")
-            res = client.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt},
-                ],
-                max_tokens=6000,
-            )
-            response_text = (res.choices[0].message.content or "").strip()
-            break
-        except Exception as e:
-            print(f"[story_planner] Model '{model}' error: {e}")
-
-    if not response_text:
-        raise RuntimeError("Failed to generate story series plan across all models.")
+    response_text = _call_story_llm(system_prompt, user_prompt)
 
     # Clean JSON
     cleaned = re.sub(r"<think>[\s\S]*?</think>", "", response_text).strip()
