@@ -1,456 +1,140 @@
 {
-  "series_title": "Will Robots Take Your Job? The Future of Work",
-  "series_synopsis": "A cinematic five-part exploration into the rise of artificial intelligence and humanoid robotics in the global workforce. From automated factory lines and corporate cubicles to healthcare and cutting-edge creative studios, discover where machines reign supreme and where human instinct remains irreplaceable.",
-  "total_episodes": 5,
+  "series_title": "The Flying Car Illusion",
+  "series_synopsis": "An in-depth exploration of the futuristic world of eVTOL air taxis, examining the technology, the engineering challenges, and whether everyday flying cars are actually coming.",
+  "total_episodes": 1,
   "episodes": [
     {
       "episode_number": 1,
-      "episode_title": "The Factory Floor Takeover",
+      "episode_title": "The Truth About Flying Cars",
       "full_script": {
-        "title": "Will Robots Take Your Job? Part 1: The Factory Floor",
-        "description": "Could a humanoid robot replace you before you even notice? Discover how robotics and automated warehouses are transforming physical labor. Subscribe for Part 2!",
+        "title": "Why Flying Cars Aren't Actually Cars (Part 1)",
+        "description": "Discover the reality behind electric air taxis and whether the flying car revolution is closer than you think. Subscribe for more tech documentaries!",
         "tags": [
-          "robotics",
-          "ai",
-          "futureofwork",
-          "technology",
-          "automation",
-          "humanoid"
+          "flying cars",
+          "eVTOL",
+          "future technology",
+          "air taxis",
+          "aviation"
         ],
-        "narration": "Could a robot take your job before you even realize it? Inside modern production facilities, mechanical muscles never sleep. Heavy industrial arms assemble cars with microscopic precision. Autonomous transport vehicles glide across warehouse floors, packing orders in seconds. But operating machinery is only half the battle. When a hydraulic line slips or an unprogrammed obstacle blocks the corridor, the machines freeze. Humans still bring real-time problem solving, critical judgment, and safety control. The future isn't pure automation—it's collaboration.",
+        "narration": "Imagine leaving your home in the morning, stepping into a small aircraft, and flying directly above the traffic that would normally make you late. No endless queues. No crowded intersections. Just a quiet journey through the sky. For decades, flying cars were a dream found in science fiction movies. But today, engineers are developing electric aircraft designed to take off vertically, carry passengers across cities, and potentially transform the way we travel. Some prototypes have already flown. Companies are working toward certification, and aviation authorities are developing ways to integrate these aircraft into existing airspace. But there is a much bigger question: are we really approaching a world where everyone can fly to work, or is the flying car revolution more complicated than it looks? First, we need to understand what people mean when they say 'flying car.' The term describes several very different technologies. Some experimental vehicles are designed to operate on roads and fly using wings or propellers. Others are aircraft that look more like futuristic cars but are intended to fly between designated landing sites. One important category is called electric vertical takeoff and landing, or eVTOL. These aircraft use electric motors and multiple propellers or other lifting systems to rise vertically, without needing a conventional runway. Depending on the design, some transition to wing-borne flight for greater efficiency. That means an eVTOL air taxi is not necessarily a car you can drive to the supermarket. It is better understood as a new type of aircraft designed to make short-distance air travel more accessible. And that distinction matters, because flying and driving require very different engineering, safety systems, and regulations.",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "Could a robot take your job before you even realize it?",
-            "visual_search": "humanoid robot standing beside factory worker push in"
+            "text": "Imagine leaving your home in the morning, stepping into a small aircraft, and flying directly above the traffic that would normally make you late.",
+            "visual_search": "busy modern city traffic rush hour"
           },
           {
             "scene_num": 2,
-            "text": "Inside modern production facilities, mechanical muscles never sleep.",
-            "visual_search": "high tech automotive factory floor robotics"
+            "text": "No endless queues. No crowded intersections. Just a quiet journey through the sky.",
+            "visual_search": "crowded pedestrian street crossing city"
           },
           {
             "scene_num": 3,
-            "text": "Heavy industrial arms assemble cars with microscopic precision.",
-            "visual_search": "robotic arm welding automobile chassis spark"
+            "text": "For decades, flying cars were a dream found in science fiction movies.",
+            "visual_search": "futuristic city skyline aerial view"
           },
           {
             "scene_num": 4,
-            "text": "Autonomous transport vehicles glide across warehouse floors, packing orders in seconds.",
-            "visual_search": "automated warehouse robots moving packages"
+            "text": "But today, engineers are developing electric aircraft designed to take off vertically, carry passengers across cities, and potentially transform the way we travel.",
+            "visual_search": "electric air taxi rooftop landing platform"
           },
           {
             "scene_num": 5,
-            "text": "But operating machinery is only half the battle.",
-            "visual_search": "factory floor warning light blinking red"
+            "text": "Some prototypes have already flown.",
+            "visual_search": "experimental flying car test flight"
           },
           {
             "scene_num": 6,
-            "text": "When a hydraulic line slips or an unprogrammed obstacle blocks the corridor, the machines freeze.",
-            "visual_search": "robotic arm error screen malfunction"
+            "text": "Companies are working toward certification, and aviation authorities are developing ways to integrate these aircraft into existing airspace.",
+            "visual_search": "modern airplane hangar aerospace engineers"
           },
           {
             "scene_num": 7,
-            "text": "Humans still bring real-time problem solving, critical judgment, and safety control.",
-            "visual_search": "female engineer inspecting robotic joint tablet"
+            "text": "But there is a much bigger question: are we really approaching a world where everyone can fly to work, or is the flying car revolution more complicated than it looks?",
+            "visual_search": "futuristic traffic jam sky animation"
           },
           {
             "scene_num": 8,
-            "text": "The future isn't pure automation—it's collaboration.",
-            "visual_search": "engineer and humanoid robot walking together factory"
+            "text": "First, we need to understand what people mean when they say 'flying car.'",
+            "visual_search": "roadable aircraft prototype driving"
+          },
+          {
+            "scene_num": 9,
+            "text": "The term describes several very different technologies.",
+            "visual_search": "multicopter electric aircraft prototype"
+          },
+          {
+            "scene_num": 10,
+            "text": "Some experimental vehicles are designed to operate on roads and fly using wings or propellers. Others are aircraft that look more like futuristic cars but are intended to fly between designated landing sites.",
+            "visual_search": "sleek private jet wing propellers"
+          },
+          {
+            "scene_num": 11,
+            "text": "One important category is called electric vertical takeoff and landing, or eVTOL.",
+            "visual_search": "electric vertical takeoff aircraft hovering"
+          },
+          {
+            "scene_num": 12,
+            "text": "These aircraft use electric motors and multiple propellers or other lifting systems to rise vertically, without needing a conventional runway.",
+            "visual_search": "drone propellers spinning close up"
+          },
+          {
+            "scene_num": 13,
+            "text": "Depending on the design, some transition to wing-borne flight for greater efficiency.",
+            "visual_search": "airplane wings flight sky"
+          },
+          {
+            "scene_num": 14,
+            "text": "That means an eVTOL air taxi is not necessarily a car you can drive to the supermarket.",
+            "visual_search": "modern electric car charging station"
+          },
+          {
+            "scene_num": 15,
+            "text": "It is better understood as a new type of aircraft designed to make short-distance air travel more accessible.",
+            "visual_search": "helicopter landing pad city skyscraper"
+          },
+          {
+            "scene_num": 16,
+            "text": "And that distinction matters, because flying and driving require very different engineering, safety systems, and regulations.",
+            "visual_search": "aerospace engineering blueprint laboratory"
           }
         ]
       },
       "short_script": {
-        "title": "Will Robots Steal Your Job Tomorrow? #shorts",
-        "description": "Are humanoid robots about to replace physical labor entirely? #shorts #ai #technology #future",
+        "title": "Are Flying Cars Actually Happening? #shorts (Part 1)",
+        "description": "The truth about flying cars and air taxis in 20 seconds. #shorts #tech #future",
         "tags": [
           "shorts",
-          "technology",
-          "ai",
-          "robots"
+          "tech",
+          "flyingcars",
+          "future"
         ],
-        "narration": "Could a humanoid robot take your shift tomorrow morning? Factory robots lift tons without breaking a sweat, but the second unexpected chaos hits the assembly line, they shut down completely. Are you ready to work beside one?",
+        "narration": "For decades we were promised flying cars in every driveway. But modern engineers built something completely different instead. Are we about to rule the skies, or is it all an illusion?",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "Could a humanoid robot take your shift tomorrow morning?",
-            "visual_search": "humanoid robot looking directly camera factory"
+            "text": "For decades we were promised flying cars in every driveway.",
+            "visual_search": "retro vintage futuristic car concept"
           },
           {
             "scene_num": 2,
-            "text": "Factory robots lift tons without breaking a sweat,",
-            "visual_search": "massive robotic arms lifting metal car frame"
+            "text": "But modern engineers built something completely different instead.",
+            "visual_search": "electric air taxi prototype hangar"
           },
           {
             "scene_num": 3,
-            "text": "but the second unexpected chaos hits the assembly line, they shut down completely.",
-            "visual_search": "industrial robot stopped with flashing yellow warning lights"
-          },
-          {
-            "scene_num": 4,
-            "text": "Are you ready to work beside one?",
-            "visual_search": "human worker fist bumping sleek metallic robot hand"
+            "text": "Are we about to rule the skies, or is it all an illusion?",
+            "visual_search": "futuristic city skyline drone view"
           }
         ]
       },
       "status": "completed",
-      "uploaded_at": "2026-10-17T14:48:32.642173",
-      "main_video_id": "wznILzcFTr4",
-      "short_video_id": "bTvb9u-Zc1Q",
-      "scheduled_at": "2026-10-19T18:00"
-    },
-    {
-      "episode_number": 2,
-      "episode_title": "The White-Collar Reckoning",
-      "full_script": {
-        "title": "Will AI Replace Office Workers? (Part 2)",
-        "description": "Is desk work safe from artificial intelligence? Explore how language models and algorithmic software are shifting white-collar careers. Subscribe for Part 3!",
-        "tags": [
-          "ai",
-          "whitecollar",
-          "futureofwork",
-          "software",
-          "techjobs",
-          "automation"
-        ],
-        "narration": "We once believed automation would only affect manual labor. We were wrong. Neural networks now draft legal contracts in seconds and parse gigabytes of corporate financial records instantly. Software engineers use algorithmic assistants to generate thousands of lines of functional code before lunch. Even customer support counters are shifting to synthetic voices that sound indistinguishable from humans. Yet, writing code is easy compared to understanding client vision. A computer cannot negotiate ethics, navigate office politics, or form genuine business relationships. The desk job isn't dying; it's evolving into strategic oversight.",
-        "scenes": [
-          {
-            "scene_num": 1,
-            "text": "We once believed automation would only affect manual labor. We were wrong.",
-            "visual_search": "empty corporate office cubicles night"
-          },
-          {
-            "scene_num": 2,
-            "text": "Neural networks now draft legal contracts in seconds and parse gigabytes of corporate financial records instantly.",
-            "visual_search": "hands typing keyboard dual computer screens showing code"
-          },
-          {
-            "scene_num": 3,
-            "text": "Software engineers use algorithmic assistants to generate thousands of lines of functional code before lunch.",
-            "visual_search": "programmer wearing headphones looking at glowing code monitor"
-          },
-          {
-            "scene_num": 4,
-            "text": "Even customer support counters are shifting to synthetic voices that sound indistinguishable from humans.",
-            "visual_search": "customer service headset on empty desk glowing screen"
-          },
-          {
-            "scene_num": 5,
-            "text": "Yet, writing code is easy compared to understanding client vision.",
-            "visual_search": "business team in modern boardroom meeting"
-          },
-          {
-            "scene_num": 6,
-            "text": "A computer cannot negotiate ethics, navigate office politics, or form genuine business relationships.",
-            "visual_search": "two business professionals shaking hands window view"
-          },
-          {
-            "scene_num": 7,
-            "text": "The desk job isn't dying; it's evolving into strategic oversight.",
-            "visual_search": "businesswoman looking at holographic business analytics"
-          }
-        ]
-      },
-      "short_script": {
-        "title": "Is Your Office Job Already Obsolete? #shorts",
-        "description": "Desk workers thought they were immune to automation. They were wrong. #shorts #ai #tech #business",
-        "tags": [
-          "shorts",
-          "ai",
-          "business",
-          "coding"
-        ],
-        "narration": "Think your college degree makes your desk job safe? AI writes code and analyzes spreadsheets ten times faster than you. But can an algorithm read the room in a multimillion-dollar pitch meeting? Drop your job title below.",
-        "scenes": [
-          {
-            "scene_num": 1,
-            "text": "Think your college degree makes your desk job safe?",
-            "visual_search": "office worker looking stressed at laptop screen"
-          },
-          {
-            "scene_num": 2,
-            "text": "AI writes code and analyzes spreadsheets ten times faster than you.",
-            "visual_search": "computer monitor scrolling fast data stream matrix"
-          },
-          {
-            "scene_num": 3,
-            "text": "But can an algorithm read the room in a multimillion-dollar pitch meeting?",
-            "visual_search": "executive staring intensely across conference table"
-          },
-          {
-            "scene_num": 4,
-            "text": "Drop your job title below.",
-            "visual_search": "hands typing rapidly on modern keyboard"
-          }
-        ]
-      },
-      "status": "pending",
-      "uploaded_at": null,
-      "scheduled_at": "2026-10-20T18:00"
-    },
-    {
-      "episode_number": 3,
-      "episode_title": "Empathy and Healing Hands",
-      "full_script": {
-        "title": "Can Robots Replace Doctors and Caregivers? (Part 3)",
-        "description": "Medical AI spots tumors with incredible accuracy, but can it offer empathy? Discover the balance between robotic precision and the human touch in medicine. Subscribe for Part 4!",
-        "tags": [
-          "healthcare",
-          "medicalai",
-          "robotics",
-          "doctors",
-          "nursing",
-          "futuretech"
-        ],
-        "narration": "In the sterile halls of modern medicine, synthetic eyes are outperforming human vision. Deep-learning algorithms scan thousands of MRI images, detecting micro-tumors long before standard tests. In surgical suites, robotic arms steady a surgeon's hands, executing millimeter incisions through keyhole openings. Robotic assistants deliver medication down hospital corridors, saving nurses countless hours. But when a diagnosis is devastating, a patient doesn't look to a screen for comfort. Healing demands compassion, emotional reassurance, and heartfelt bedside manner. Technology diagnoses the disease, but human touch heals the patient.",
-        "scenes": [
-          {
-            "scene_num": 1,
-            "text": "In the sterile halls of modern medicine, synthetic eyes are outperforming human vision.",
-            "visual_search": "modern hospital corridor clean fluorescent lights"
-          },
-          {
-            "scene_num": 2,
-            "text": "Deep-learning algorithms scan thousands of MRI images, detecting micro-tumors long before standard tests.",
-            "visual_search": "mri brain scan glowing blue monitor"
-          },
-          {
-            "scene_num": 3,
-            "text": "In surgical suites, robotic arms steady a surgeon's hands, executing millimeter incisions through keyhole openings.",
-            "visual_search": "robotic surgery equipment operating room"
-          },
-          {
-            "scene_num": 4,
-            "text": "Robotic assistants deliver medication down hospital corridors, saving nurses countless hours.",
-            "visual_search": "autonomous hospital transport robot moving medication"
-          },
-          {
-            "scene_num": 5,
-            "text": "But when a diagnosis is devastating, a patient doesn't look to a screen for comfort.",
-            "visual_search": "worried patient sitting on hospital bed"
-          },
-          {
-            "scene_num": 6,
-            "text": "Healing demands compassion, emotional reassurance, and heartfelt bedside manner.",
-            "visual_search": "compassionate female doctor holding patient hand"
-          },
-          {
-            "scene_num": 7,
-            "text": "Technology diagnoses the disease, but human touch heals the patient.",
-            "visual_search": "doctor and nurse smiling together hospital hallway"
-          }
-        ]
-      },
-      "short_script": {
-        "title": "Would You Trust a Robot Surgeon? #shorts",
-        "description": "Robots make no surgical tremors, but would you trust an AI doctor with your life? #shorts #health #medical",
-        "tags": [
-          "shorts",
-          "medical",
-          "doctor",
-          "robotics"
-        ],
-        "narration": "Robotic arms can perform brain surgery with zero human tremor. But if your surgery goes wrong, an algorithm can't feel remorse or hold your family's hands. Would you trust an AI doctor to cut you open?",
-        "scenes": [
-          {
-            "scene_num": 1,
-            "text": "Robotic arms can perform brain surgery with zero human tremor.",
-            "visual_search": "close up precision robotic surgical scalpel"
-          },
-          {
-            "scene_num": 2,
-            "text": "But if your surgery goes wrong,",
-            "visual_search": "heart rate monitor flatline pulse warning"
-          },
-          {
-            "scene_num": 3,
-            "text": "an algorithm can't feel remorse or hold your family's hands.",
-            "visual_search": "sad family member waiting hospital waiting room"
-          },
-          {
-            "scene_num": 4,
-            "text": "Would you trust an AI doctor to cut you open?",
-            "visual_search": "operating room surgical lights glowing bright"
-          }
-        ]
-      },
-      "status": "pending",
-      "uploaded_at": null,
-      "scheduled_at": "2026-10-21T18:00"
-    },
-    {
-      "episode_number": 4,
-      "episode_title": "The Hallucination Glitch",
-      "full_script": {
-        "title": "Why Robots Still Fail Miserably (Part 4)",
-        "description": "What happens when artificial intelligence makes catastrophic mistakes? Learn about hallucinations, logic loops, and why human judgment is indispensable. Subscribe for Part 5!",
-        "tags": [
-          "aifails",
-          "robotics",
-          "automation",
-          "techglitch",
-          "future",
-          "engineering"
-        ],
-        "narration": "Beneath the polished facade of artificial intelligence lies a dangerous blind spot: machines don't actually understand reality. Large language models frequently hallucinate facts, inventing court cases and historical events out of thin air. Vision systems on self-driving vehicles can misinterpret simple lane markings or mistake road glare for open asphalt. When a robot faces a situation not recorded in its training data, logic collapses into chaos. That is why airlines keep human captains in the cockpit, and trading firms place risk managers over financial bots. Real responsibility requires an awareness of consequences.",
-        "scenes": [
-          {
-            "scene_num": 1,
-            "text": "Beneath the polished facade of artificial intelligence lies a dangerous blind spot: machines don't actually understand reality.",
-            "visual_search": "digital human face glitching static distortion"
-          },
-          {
-            "scene_num": 2,
-            "text": "Large language models frequently hallucinate facts, inventing court cases and historical events out of thin air.",
-            "visual_search": "old law books courtroom desk dramatic lighting"
-          },
-          {
-            "scene_num": 3,
-            "text": "Vision systems on self-driving vehicles can misinterpret simple lane markings or mistake road glare for open asphalt.",
-            "visual_search": "autonomous car camera view wet rainy highway asphalt"
-          },
-          {
-            "scene_num": 4,
-            "text": "When a robot faces a situation not recorded in its training data, logic collapses into chaos.",
-            "visual_search": "computer server racks blinking emergency red LEDs"
-          },
-          {
-            "scene_num": 5,
-            "text": "That is why airlines keep human captains in the cockpit,",
-            "visual_search": "commercial airline pilot hands on flight controls"
-          },
-          {
-            "scene_num": 6,
-            "text": "and trading firms place risk managers over financial bots.",
-            "visual_search": "stock market trading floor monitors dropping red graph"
-          },
-          {
-            "scene_num": 7,
-            "text": "Real responsibility requires an awareness of consequences.",
-            "visual_search": "close up determined human eye reflection"
-          }
-        ]
-      },
-      "short_script": {
-        "title": "The Terrifying Blindspot of AI #shorts",
-        "description": "Why artificial intelligence hallucinating data could cost lives. #shorts #ai #technology #cybersecurity",
-        "tags": [
-          "shorts",
-          "technology",
-          "danger",
-          "ai"
-        ],
-        "narration": "Robots don't know the difference between truth and fiction. When an AI model hallucinates, it invents falsehoods with absolute supreme confidence. Would you trust an unthinking machine with your life savings?",
-        "scenes": [
-          {
-            "scene_num": 1,
-            "text": "Robots don't know the difference between truth and fiction.",
-            "visual_search": "glowing humanoid robot eye iris lens focusing"
-          },
-          {
-            "scene_num": 2,
-            "text": "When an AI model hallucinates, it invents falsehoods with absolute supreme confidence.",
-            "visual_search": "computer screen digital glitch error dialog box"
-          },
-          {
-            "scene_num": 3,
-            "text": "Would you trust an unthinking machine with your life savings?",
-            "visual_search": "vault door closing heavy steel bank"
-          }
-        ]
-      },
-      "status": "pending",
-      "uploaded_at": null,
-      "scheduled_at": "2026-10-22T18:00"
-    },
-    {
-      "episode_number": 5,
-      "episode_title": "The Human-Robot Alliance",
-      "full_script": {
-        "title": "How to Survive the AI Revolution (Part 5)",
-        "description": "The finale of our future of work series. Discover why AI won't replace humans, but humans using AI will replace those who don't. Share your thoughts in the comments!",
-        "tags": [
-          "futureofwork",
-          "ai",
-          "humanoid",
-          "careeradvice",
-          "futurism",
-          "technology"
-        ],
-        "narration": "The future of labor is not a war between man and machine. The truth is far more practical: AI won't take your job, but a person utilizing AI will. Across architects' drafting tables, designers orchestrate generative concepts before perfecting them with human craft. In science labs, researchers use neural networks to model molecular compounds in hours rather than decades. Tomorrow's most valuable skill isn't resisting automation—it is mastering prompt engineering, critical verification, and ethical governance. Standing side-by-side with our mechanical creations, we aren't being replaced; we are being amplified. Would you work alongside a robot? Tell us in the comments.",
-        "scenes": [
-          {
-            "scene_num": 1,
-            "text": "The future of labor is not a war between man and machine.",
-            "visual_search": "futuristic skyline sunset glass skyscrapers"
-          },
-          {
-            "scene_num": 2,
-            "text": "The truth is far more practical: AI won't take your job, but a person utilizing AI will.",
-            "visual_search": "confident modern professional walking corporate atrium"
-          },
-          {
-            "scene_num": 3,
-            "text": "Across architects' drafting tables, designers orchestrate generative concepts before perfecting them with human craft.",
-            "visual_search": "architect drawing holographic 3d building model"
-          },
-          {
-            "scene_num": 4,
-            "text": "In science labs, researchers use neural networks to model molecular compounds in hours rather than decades.",
-            "visual_search": "scientist looking at glowing DNA molecule display"
-          },
-          {
-            "scene_num": 5,
-            "text": "Tomorrow's most valuable skill isn't resisting automation—it is mastering prompt engineering, critical verification, and ethical governance.",
-            "visual_search": "human hands manipulating luminous data interface"
-          },
-          {
-            "scene_num": 6,
-            "text": "Standing side-by-side with our mechanical creations, we aren't being replaced; we are being amplified.",
-            "visual_search": "human worker standing beside humanoid robot looking out window"
-          },
-          {
-            "scene_num": 7,
-            "text": "Would you work alongside a robot? Tell us in the comments.",
-            "visual_search": "humanoid robot turning head slightly smiling forward"
-          }
-        ]
-      },
-      "short_script": {
-        "title": "Will You Survive the Robot Revolution? #shorts",
-        "description": "You won't be replaced by a robot—you'll be replaced by someone who uses one. #shorts #future #ai #jobs",
-        "tags": [
-          "shorts",
-          "future",
-          "jobs",
-          "ai"
-        ],
-        "narration": "Robots aren't coming to steal your career; they're coming to upgrade it. The workers who master artificial intelligence will leave everyone else behind. Are you ready to team up with the machine?",
-        "scenes": [
-          {
-            "scene_num": 1,
-            "text": "Robots aren't coming to steal your career; they're coming to upgrade it.",
-            "visual_search": "humanoid robot standing shoulder to shoulder with human"
-          },
-          {
-            "scene_num": 2,
-            "text": "The workers who master artificial intelligence will leave everyone else behind.",
-            "visual_search": "digital network connection lines accelerating fast forward"
-          },
-          {
-            "scene_num": 3,
-            "text": "Are you ready to team up with the machine?",
-            "visual_search": "human hand shaking sleek robotic mechanical hand"
-          }
-        ]
-      },
-      "status": "pending",
-      "uploaded_at": null,
-      "scheduled_at": "2026-10-23T18:00"
+      "uploaded_at": "2026-10-19T15:44:40.050154",
+      "scheduled_at": "2026-10-20T18:00",
+      "main_video_id": "biTvI7bfnEg",
+      "short_video_id": "3HA8NWcEgpg"
     }
   ],
-  "created_at": "2026-10-17T14:32:19.462674",
+  "created_at": "2026-10-19T15:41:04.183105",
   "current_episode_index": 1
 }
