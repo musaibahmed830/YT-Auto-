@@ -1,140 +1,129 @@
 {
   "series_title": "The Flying Car Illusion",
-  "series_synopsis": "An in-depth exploration of the futuristic world of eVTOL air taxis, examining the technology, the engineering challenges, and whether everyday flying cars are actually coming.",
+  "series_synopsis": "An in-depth look at the reality behind futuristic flying cars, exploring modern eVTOL technology and the complex obstacles of urban air mobility.",
   "total_episodes": 1,
   "episodes": [
     {
       "episode_number": 1,
-      "episode_title": "The Truth About Flying Cars",
+      "episode_title": "The Rise of eVTOL",
       "full_script": {
-        "title": "Why Flying Cars Aren't Actually Cars (Part 1)",
-        "description": "Discover the reality behind electric air taxis and whether the flying car revolution is closer than you think. Subscribe for more tech documentaries!",
+        "title": "Are Flying Cars Finally Here? The Truth About eVTOL",
+        "description": "Discover the reality behind flying cars and electric vertical takeoff aircraft. Are we about to commute in the skies? Subscribe for more future tech insights!",
         "tags": [
           "flying cars",
           "eVTOL",
           "future technology",
-          "air taxis",
-          "aviation"
+          "air taxis"
         ],
         "narration": "Imagine leaving your home in the morning, stepping into a small aircraft, and flying directly above the traffic that would normally make you late. No endless queues. No crowded intersections. Just a quiet journey through the sky. For decades, flying cars were a dream found in science fiction movies. But today, engineers are developing electric aircraft designed to take off vertically, carry passengers across cities, and potentially transform the way we travel. Some prototypes have already flown. Companies are working toward certification, and aviation authorities are developing ways to integrate these aircraft into existing airspace. But there is a much bigger question: are we really approaching a world where everyone can fly to work, or is the flying car revolution more complicated than it looks? First, we need to understand what people mean when they say 'flying car.' The term describes several very different technologies. Some experimental vehicles are designed to operate on roads and fly using wings or propellers. Others are aircraft that look more like futuristic cars but are intended to fly between designated landing sites. One important category is called electric vertical takeoff and landing, or eVTOL. These aircraft use electric motors and multiple propellers or other lifting systems to rise vertically, without needing a conventional runway. Depending on the design, some transition to wing-borne flight for greater efficiency. That means an eVTOL air taxi is not necessarily a car you can drive to the supermarket. It is better understood as a new type of aircraft designed to make short-distance air travel more accessible. And that distinction matters, because flying and driving require very different engineering, safety systems, and regulations.",
         "scenes": [
           {
             "scene_num": 1,
             "text": "Imagine leaving your home in the morning, stepping into a small aircraft, and flying directly above the traffic that would normally make you late.",
-            "visual_search": "busy modern city traffic rush hour"
+            "visual_search": "busy modern city traffic rush hour cars"
           },
           {
             "scene_num": 2,
             "text": "No endless queues. No crowded intersections. Just a quiet journey through the sky.",
-            "visual_search": "crowded pedestrian street crossing city"
+            "visual_search": "pedestrians walking crowded city street intersection"
           },
           {
             "scene_num": 3,
             "text": "For decades, flying cars were a dream found in science fiction movies.",
-            "visual_search": "futuristic city skyline aerial view"
+            "visual_search": "vintage science fiction movie projector retro futuristic car"
           },
           {
             "scene_num": 4,
             "text": "But today, engineers are developing electric aircraft designed to take off vertically, carry passengers across cities, and potentially transform the way we travel.",
-            "visual_search": "electric air taxi rooftop landing platform"
+            "visual_search": "electric air taxi hovering above modern skyscraper rooftop"
           },
           {
             "scene_num": 5,
-            "text": "Some prototypes have already flown.",
-            "visual_search": "experimental flying car test flight"
+            "text": "Some prototypes have already flown. Companies are working toward certification, and aviation authorities are developing ways to integrate these aircraft into existing airspace.",
+            "visual_search": "experimental electric aircraft flying test flight"
           },
           {
             "scene_num": 6,
-            "text": "Companies are working toward certification, and aviation authorities are developing ways to integrate these aircraft into existing airspace.",
-            "visual_search": "modern airplane hangar aerospace engineers"
+            "text": "But there is a much bigger question: are we really approaching a world where everyone can fly to work, or is the flying car revolution more complicated than it looks?",
+            "visual_search": "futuristic city skyline aerial view sunset"
           },
           {
             "scene_num": 7,
-            "text": "But there is a much bigger question: are we really approaching a world where everyone can fly to work, or is the flying car revolution more complicated than it looks?",
-            "visual_search": "futuristic traffic jam sky animation"
+            "text": "First, we need to understand what people mean when they say 'flying car.'",
+            "visual_search": "futuristic car concept design studio"
           },
           {
             "scene_num": 8,
-            "text": "First, we need to understand what people mean when they say 'flying car.'",
-            "visual_search": "roadable aircraft prototype driving"
+            "text": "The term describes several very different technologies. Some experimental vehicles are designed to operate on roads and fly using wings or propellers.",
+            "visual_search": "roadable aircraft car with wings driving on highway"
           },
           {
             "scene_num": 9,
-            "text": "The term describes several very different technologies.",
-            "visual_search": "multicopter electric aircraft prototype"
+            "text": "Others are aircraft that look more like futuristic cars but are intended to fly between designated landing sites.",
+            "visual_search": "sleek electric vertical aircraft landing pad"
           },
           {
             "scene_num": 10,
-            "text": "Some experimental vehicles are designed to operate on roads and fly using wings or propellers. Others are aircraft that look more like futuristic cars but are intended to fly between designated landing sites.",
-            "visual_search": "sleek private jet wing propellers"
+            "text": "One important category is called electric vertical takeoff and landing, or eVTOL.",
+            "visual_search": "multicopter electric aircraft propellers spinning"
           },
           {
             "scene_num": 11,
-            "text": "One important category is called electric vertical takeoff and landing, or eVTOL.",
-            "visual_search": "electric vertical takeoff aircraft hovering"
+            "text": "These aircraft use electric motors and multiple propellers or other lifting systems to rise vertically, without needing a conventional runway.",
+            "visual_search": "electric aircraft taking off vertically from helipad"
           },
           {
             "scene_num": 12,
-            "text": "These aircraft use electric motors and multiple propellers or other lifting systems to rise vertically, without needing a conventional runway.",
-            "visual_search": "drone propellers spinning close up"
+            "text": "Depending on the design, some transition to wing-borne flight for greater efficiency.",
+            "visual_search": "airplane flying with wings in sky clouds"
           },
           {
             "scene_num": 13,
-            "text": "Depending on the design, some transition to wing-borne flight for greater efficiency.",
-            "visual_search": "airplane wings flight sky"
+            "text": "That means an eVTOL air taxi is not necessarily a car you can drive to the supermarket. It is better understood as a new type of aircraft designed to make short-distance air travel more accessible.",
+            "visual_search": "modern grocery store parking lot crowded cars"
           },
           {
             "scene_num": 14,
-            "text": "That means an eVTOL air taxi is not necessarily a car you can drive to the supermarket.",
-            "visual_search": "modern electric car charging station"
-          },
-          {
-            "scene_num": 15,
-            "text": "It is better understood as a new type of aircraft designed to make short-distance air travel more accessible.",
-            "visual_search": "helicopter landing pad city skyscraper"
-          },
-          {
-            "scene_num": 16,
             "text": "And that distinction matters, because flying and driving require very different engineering, safety systems, and regulations.",
-            "visual_search": "aerospace engineering blueprint laboratory"
+            "visual_search": "aerospace engineer blueprint technical drawing"
           }
         ]
       },
       "short_script": {
-        "title": "Are Flying Cars Actually Happening? #shorts (Part 1)",
-        "description": "The truth about flying cars and air taxis in 20 seconds. #shorts #tech #future",
+        "title": "Are Flying Cars Actually Here? #shorts",
+        "description": "Will we ever fly to work? The shocking truth about flying cars and air taxis #shorts #future #tech",
         "tags": [
           "shorts",
+          "future",
           "tech",
-          "flyingcars",
-          "future"
+          "flyingcar"
         ],
-        "narration": "For decades we were promised flying cars in every driveway. But modern engineers built something completely different instead. Are we about to rule the skies, or is it all an illusion?",
+        "narration": "Forget traffic jams. Flying cars are finally real. But you will never drive one to the grocery store. Here is why everything you know is wrong.",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "For decades we were promised flying cars in every driveway.",
-            "visual_search": "retro vintage futuristic car concept"
+            "text": "Forget traffic jams. Flying cars are finally real.",
+            "visual_search": "busy highway traffic jam aerial view"
           },
           {
             "scene_num": 2,
-            "text": "But modern engineers built something completely different instead.",
-            "visual_search": "electric air taxi prototype hangar"
+            "text": "But you will never drive one to the grocery store.",
+            "visual_search": "electric air taxi hovering over city"
           },
           {
             "scene_num": 3,
-            "text": "Are we about to rule the skies, or is it all an illusion?",
-            "visual_search": "futuristic city skyline drone view"
+            "text": "Here is why everything you know is wrong.",
+            "visual_search": "aerospace engineer looking at futuristic aircraft blueprint"
           }
         ]
       },
       "status": "completed",
-      "uploaded_at": "2026-10-19T15:44:40.050154",
+      "uploaded_at": "2026-10-19T16:00:07.000241",
       "scheduled_at": "2026-10-20T18:00",
-      "main_video_id": "biTvI7bfnEg",
-      "short_video_id": "3HA8NWcEgpg"
+      "main_video_id": "_BRNmE8iU4o",
+      "short_video_id": "krayu2w236I"
     }
   ],
-  "created_at": "2026-10-19T15:41:04.183105",
+  "created_at": "2026-10-19T15:57:12.942584",
   "current_episode_index": 1
 }
