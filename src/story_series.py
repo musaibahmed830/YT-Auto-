@@ -14,7 +14,7 @@ import os
 import sys
 import json
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 from dotenv import load_dotenv
 
@@ -157,9 +157,13 @@ Respond with ONLY this JSON structure:
     # Initialize tracking metadata
     plan_data["created_at"] = datetime.utcnow().isoformat()
     plan_data["current_episode_index"] = 0
-    for ep in plan_data.get("episodes", []):
+    now = datetime.now()
+    for idx, ep in enumerate(plan_data.get("episodes", [])):
         ep["status"] = "pending"
         ep["uploaded_at"] = None
+        # Default schedule: tomorrow at 18:00, then +1 day for subsequent episodes
+        default_sched = (now + timedelta(days=idx + 1)).replace(hour=18, minute=0, second=0, microsecond=0)
+        ep["scheduled_at"] = default_sched.strftime("%Y-%m-%dT%H:%M")
 
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(plan_data, f, indent=2, ensure_ascii=False)
@@ -205,7 +209,24 @@ def load_series_state() -> Optional[Dict[str, Any]]:
         return None
     try:
         with open(STATE_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+
+        # Backfill scheduled_at for any episodes that don't have it yet
+        modified = False
+        now = datetime.now()
+        for idx, ep in enumerate(data.get("episodes", [])):
+            if not ep.get("scheduled_at"):
+                default_sched = (now + timedelta(days=idx + 1)).replace(hour=18, minute=0, second=0, microsecond=0)
+                ep["scheduled_at"] = default_sched.strftime("%Y-%m-%dT%H:%M")
+                modified = True
+        if modified:
+            try:
+                with open(STATE_FILE, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=2, ensure_ascii=False)
+            except Exception:
+                pass
+
+        return data
     except Exception as e:
         print(f"[story_planner] Error reading {STATE_FILE}: {e}")
         return None

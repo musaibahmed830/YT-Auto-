@@ -117,46 +117,141 @@
     <!-- TAB 2: Story Series Studio -->
     <div id="tab-studio" class="tab-content">
       <div class="glass-panel">
-        <div class="panel-header">
-          <div>
-            <h2 class="panel-title">Story Series Generator</h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">
-              Give a story concept and let AI plan multi-episode cliffhangers with synced 60s Main Videos and 20s Shorts.
-            </p>
+
+        <!-- Mode Switcher -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+          <div class="mode-toggle-group">
+            <button class="mode-toggle-btn active" id="btn-mode-series" onclick="switchStudioMode('series')">
+              <span>🎬</span> Multi-Episode Series
+            </button>
+            <button class="mode-toggle-btn" id="btn-mode-individual" onclick="switchStudioMode('individual')">
+              <span>⚡</span> Individual Video / Short
+            </button>
+          </div>
+          <div id="series-auto-schedule-badge" class="badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); font-size: 12px; text-transform: none; display: flex; align-items: center; gap: 6px;">
+            <span class="dot-pulse"></span> ⏰ Auto-Publish Active on Schedule
           </div>
         </div>
 
-        <div class="prompt-box">
-          <div class="input-group">
-            <label class="input-label">Story Concept / Series Prompt</label>
-            <textarea id="story-prompt-input" class="input-textarea" placeholder="e.g. A 5-part suspense thriller about a military submarine that detected an unknown organic pulse at the bottom of the Mariana Trench..."></textarea>
-          </div>
-
-          <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-            <div class="input-group" style="flex: 1; min-width: 160px;">
-              <label class="input-label">Number of Episodes</label>
-              <select id="story-episodes-count" class="input-text">
-                <option value="3">3 Episodes</option>
-                <option value="5" selected>5 Episodes (Recommended)</option>
-                <option value="7">7 Episodes</option>
-                <option value="10">10 Episodes</option>
-              </select>
-            </div>
-            <div style="align-self: flex-end;">
-              <button class="btn btn-primary" id="btn-generate-plan" onclick="generateStoryPlan()">
-                <span>✨</span> Plan Multi-Episode Series
-              </button>
+        <!-- VIEW 1: Series Generator -->
+        <div id="view-mode-series">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Multi-Episode Series Studio</h2>
+              <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">
+                Enter a story concept and let AI generate multi-episode cliffhangers with synced 60s Main Videos and 20s Shorts. Each episode publishes automatically at its scheduled date/time!
+              </p>
             </div>
           </div>
-        </div>
 
-        <!-- Episodes Viewer & Editor -->
-        <div style="margin-top: 32px;">
-          <h3 style="font-size: 17px; margin-bottom: 12px;" id="current-series-title">Current Planned Episodes</h3>
-          <div id="episodes-container" class="episodes-list">
-            <!-- Dynamically populated -->
+          <div class="prompt-box">
+            <div class="input-group">
+              <label class="input-label">Story Concept / Series Prompt</label>
+              <textarea id="story-prompt-input" class="input-textarea" placeholder="e.g. A 5-part suspense thriller about a military submarine that detected an unknown organic pulse at the bottom of the Mariana Trench..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+              <div class="input-group" style="flex: 1; min-width: 160px;">
+                <label class="input-label">Number of Episodes</label>
+                <select id="story-episodes-count" class="input-text">
+                  <option value="3">3 Episodes</option>
+                  <option value="5" selected>5 Episodes (Recommended)</option>
+                  <option value="7">7 Episodes</option>
+                  <option value="10">10 Episodes</option>
+                </select>
+              </div>
+              <div style="align-self: flex-end;">
+                <button class="btn btn-primary" id="btn-generate-plan" onclick="generateStoryPlan()">
+                  <span>✨</span> Plan Multi-Episode Series
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Episodes Viewer & Editor -->
+          <div style="margin-top: 32px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+              <h3 style="font-size: 17px;" id="current-series-title">Current Planned Episodes</h3>
+              <span id="series-progress-pill" style="font-size: 13px; color: var(--accent); font-weight: 600;"></span>
+            </div>
+            <div id="episodes-container" class="episodes-list">
+              <!-- Dynamically populated with editable schedule dates and per-episode real-time progress -->
+            </div>
           </div>
         </div>
+
+        <!-- VIEW 2: Individual Video Generator -->
+        <div id="view-mode-individual" style="display: none;">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Individual Video Creator</h2>
+              <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">
+                Generate a standalone viral video or YouTube Short on any topic. Automatically researches visuals, generates voiceover, syncs scenes, and uploads directly.
+              </p>
+            </div>
+          </div>
+
+          <div class="prompt-box">
+            <div class="input-group">
+              <label class="input-label">Video Topic or Script Concept</label>
+              <textarea id="single-topic-input" class="input-textarea" style="min-height: 80px;" placeholder="e.g. 5 Bizarre Mysteries of the Deep Ocean That Scientists Still Can't Explain..."></textarea>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label">Video Format</label>
+              <div class="format-pill-grid">
+                <label class="format-pill">
+                  <input type="radio" name="single-format" value="both" checked>
+                  <div>
+                    <strong style="display: block; font-size: 13px;">⚡ Both Formats (Best)</strong>
+                    <span style="font-size: 11px; color: var(--text-muted);">16:9 Main Video + 9:16 Short</span>
+                  </div>
+                </label>
+                <label class="format-pill">
+                  <input type="radio" name="single-format" value="short">
+                  <div>
+                    <strong style="display: block; font-size: 13px;">📱 YouTube Short Only</strong>
+                    <span style="font-size: 11px; color: var(--text-muted);">9:16 Vertical (20-30s)</span>
+                  </div>
+                </label>
+                <label class="format-pill">
+                  <input type="radio" name="single-format" value="main">
+                  <div>
+                    <strong style="display: block; font-size: 13px;">🎬 Widescreen Only</strong>
+                    <span style="font-size: 11px; color: var(--text-muted);">16:9 Main Video (60-90s)</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 14px;">
+              <div class="input-group" style="flex: 1; min-width: 200px;">
+                <label class="input-label">Target YouTube Channel</label>
+                <select id="single-channel-select" class="input-text"></select>
+              </div>
+              <div style="align-self: flex-end;">
+                <button class="btn btn-primary" id="btn-generate-single" onclick="startSingleVideoGeneration()">
+                  <span>🚀</span> Generate & Publish Video
+                </button>
+              </div>
+            </div>
+
+            <!-- Real-time Progress Bar for Individual Video -->
+            <div id="single-progress-section" class="card-progress-box" style="display: none; margin-top: 20px;">
+              <div class="card-progress-header">
+                <span class="card-progress-label">
+                  <span class="dot-pulse"></span>
+                  <span id="single-progress-step">Creating script and scenes...</span>
+                </span>
+                <span id="single-progress-pct" class="card-progress-pct">0%</span>
+              </div>
+              <div class="card-progress-bar-track">
+                <div id="single-progress-bar-fill" class="card-progress-bar-fill"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -164,8 +259,21 @@
     <div id="tab-preview" class="tab-content">
       <div class="glass-panel">
         <div class="panel-header">
-          <h2 class="panel-title">In-Browser Video Player</h2>
-          <span style="color: var(--text-muted); font-size: 13px;">Preview rendered output videos and shorts</span>
+          <div>
+            <h2 class="panel-title">In-Browser Video Player</h2>
+            <span style="color: var(--text-muted); font-size: 13px;">Preview rendered output videos and shorts</span>
+          </div>
+          <button class="btn btn-secondary" onclick="refreshVideoPlayerList()">🔄 Refresh Videos</button>
+        </div>
+
+        <div class="video-select-bar">
+          <label style="font-size: 13px; font-weight: 600; color: #fff;">🎬 Select Rendered Video:</label>
+          <select id="rendered-videos-dropdown" class="input-text" style="flex: 1; max-width: 400px;" onchange="handleVideoSelect(this.value)">
+            <option value="">Loading rendered videos...</option>
+          </select>
+          <a id="btn-download-video" class="btn btn-secondary" href="#" download style="display: none;">
+            ⬇️ Download MP4
+          </a>
         </div>
 
         <div class="video-preview-wrapper">
@@ -174,7 +282,7 @@
               🎬 Main Video (16:9 Widescreen)
             </h4>
             <video id="player-main" controls>
-              <source src="/api/video-stream/video_main.mp4" type="video/mp4">
+              <source src="/api/video-stream/single_main.mp4" type="video/mp4">
               Your browser does not support the video tag.
             </video>
           </div>
@@ -184,7 +292,7 @@
               📱 YouTube Short (9:16 Vertical)
             </h4>
             <video id="player-short" controls style="max-height: 540px;">
-              <source src="/api/video-stream/video_short.mp4" type="video/mp4">
+              <source src="/api/video-stream/single_short.mp4" type="video/mp4">
               Your browser does not support the video tag.
             </video>
           </div>
@@ -293,6 +401,17 @@
         <button class="btn btn-primary" onclick="startEpisodeExecution()">
           <span>▶️</span> Start Video Generation & Upload
         </button>
+
+        <!-- Live Progress Bar -->
+        <div id="progress-section" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span id="progress-step-label" style="font-size: 13px; color: var(--text-muted);">Initializing...</span>
+            <span id="progress-percent-label" style="font-size: 14px; font-weight: 700; color: var(--accent); font-family: monospace;">0%</span>
+          </div>
+          <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; border: 1px solid var(--border-color);">
+            <div id="progress-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #6366f1, #06b6d4, #10b981); border-radius: 99px; transition: width 0.5s ease;"></div>
+          </div>
+        </div>
 
         <!-- Live Log Terminal -->
         <div style="background: #000; border-radius: var(--radius-sm); border: 1px solid var(--border-color); padding: 14px; font-family: monospace; font-size: 13px; min-height: 180px; max-height: 250px; overflow-y: auto;" id="live-task-log">

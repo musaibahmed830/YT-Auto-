@@ -91,20 +91,22 @@ async function loadChannels() {
 
     document.getElementById("stat-channels-count").innerText = channels.length;
 
-    // Update target select in task modal
-    if (selectChannel) {
-      selectChannel.innerHTML = "";
+    // Update target select in task modal & single generator
+    const selectSingle = document.getElementById("single-channel-select");
+    [selectChannel, selectSingle].forEach(sel => {
+      if (!sel) return;
+      sel.innerHTML = "";
       if (channels.length === 0) {
-        selectChannel.innerHTML = `<option value="">No connected channel (Local Render Only)</option>`;
+        sel.innerHTML = `<option value="">No connected channel (Local Render Only)</option>`;
       } else {
         channels.forEach(ch => {
           const opt = document.createElement("option");
           opt.value = ch.id;
           opt.innerText = `${ch.channel_title} (${ch.is_active ? 'Active' : 'Paused'})`;
-          selectChannel.appendChild(opt);
+          sel.appendChild(opt);
         });
       }
-    }
+    });
 
     if (channels.length === 0) {
       container.innerHTML = `
@@ -231,6 +233,44 @@ async function handleManualChannelSubmit(e) {
 }
 
 // ── Story Series Studio ────────────────────────────────────────────────────────
+// ── Studio Mode Switching (Series vs Individual) ──────────────────────────────
+function switchStudioMode(mode) {
+  const btnSeries = document.getElementById("btn-mode-series");
+  const btnIndiv = document.getElementById("btn-mode-individual");
+  const viewSeries = document.getElementById("view-mode-series");
+  const viewIndiv = document.getElementById("view-mode-individual");
+
+  if (mode === "series") {
+    btnSeries.classList.add("active");
+    btnIndiv.classList.remove("active");
+    viewSeries.style.display = "block";
+    viewIndiv.style.display = "none";
+  } else {
+    btnIndiv.classList.add("active");
+    btnSeries.classList.remove("active");
+    viewIndiv.style.display = "block";
+    viewSeries.style.display = "none";
+  }
+}
+
+function formatDisplayDate(dateStr) {
+  if (!dateStr) return "Not Scheduled";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  } catch (e) {
+    return dateStr;
+  }
+}
+
+// ── Story Series Studio ────────────────────────────────────────────────────────
 async function loadSeries() {
   const container = document.getElementById("episodes-container");
   const seriesTitleEl = document.getElementById("current-series-title");
@@ -244,67 +284,108 @@ async function loadSeries() {
       document.getElementById("stat-series-progress").innerText = "0 / 0";
       container.innerHTML = `
         <div style="text-align: center; padding: 40px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed var(--border-color);">
-          <p style="color: var(--text-muted); font-size: 14px;">Enter a story prompt above and click "Plan Multi-Episode Series" to get started.</p>
+          <p style="color: var(--text-muted); font-size: 14px;">Enter a story concept above and click "Plan Multi-Episode Series" to get started.</p>
         </div>
       `;
       return;
     }
 
     const total = currentSeriesState.total_episodes || currentSeriesState.episodes.length;
-    const completed = currentSeriesState.completed_episodes || 0;
+    const completed = currentSeriesState.episodes.filter(e => e.status === "completed" || e.completed).length;
     document.getElementById("stat-series-progress").innerText = `${completed} / ${total} Eps`;
-    seriesTitleEl.innerText = `Active Series: "${currentSeriesState.topic || 'Custom Story'}"`;
+    seriesTitleEl.innerText = `Active Series: "${currentSeriesState.series_title || currentSeriesState.topic || 'Custom Story'}"`;
+
+    const pillEl = document.getElementById("series-progress-pill");
+    if (pillEl) pillEl.innerText = `${completed} of ${total} Published`;
 
     container.innerHTML = currentSeriesState.episodes.map(ep => {
-      const isDone = ep.completed;
+      const isDone = ep.status === "completed" || ep.completed;
       const scenesCount = ep.full_script && ep.full_script.scenes ? ep.full_script.scenes.length : 0;
+      const rawSched = ep.scheduled_at ? ep.scheduled_at.slice(0, 16) : "";
+
       return `
-        <div class="episode-card ${isDone ? 'episode-completed' : ''}">
+        <div class="episode-card ${isDone ? 'episode-completed' : ''}" id="episode-card-${ep.episode_number}">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
             <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="background: var(--accent); color: #fff; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 99px;">
+              <span style="background: var(--accent-primary); color: #fff; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 99px;">
                 Episode ${ep.episode_number}
               </span>
               <h4 style="font-size: 16px; font-weight: 600; color: #fff;">${escapeHtml(ep.episode_title)}</h4>
             </div>
             <span class="badge ${isDone ? 'badge-success' : 'badge-warning'}">
-              ${isDone ? '✓ Uploaded / Ready' : '⏳ Pending'}
+              ${isDone ? '✓ Published / Ready' : '⏳ Pending Schedule'}
             </span>
           </div>
 
-          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;">
-            <strong>Hook / Cliffhanger:</strong> ${escapeHtml(ep.cliffhanger_hook || 'Dramatic suspense ending')}
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.5;">
+            <strong>Hook / Cliffhanger:</strong> ${escapeHtml(ep.cliffhanger_hook || (ep.full_script && ep.full_script.title) || 'Dramatic suspense episode')}
           </p>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); padding: 8px 14px; border-radius: 8px; font-size: 12px; color: var(--text-dim);">
+          <!-- Scheduled Publish Date & Time (Editable) -->
+          <div class="schedule-box">
+            <div class="schedule-display">
+              <span style="font-size: 16px;">📅</span>
+              <div>
+                <span style="color: var(--text-muted); font-size: 12px;">Scheduled Publish Date & Time:</span>
+                <div style="font-weight: 600; color: #fff;">${formatDisplayDate(ep.scheduled_at)}</div>
+              </div>
+            </div>
+            <div class="sched-editor">
+              <input type="datetime-local" id="sched-ep-${ep.episode_number}" class="sched-input" value="${rawSched}">
+              <button class="sched-btn" onclick="saveEpisodeSchedule(${ep.episode_number})">
+                💾 Save Date
+              </button>
+            </div>
+          </div>
+
+          <!-- Real-time Progress Bar Next to This Video -->
+          <div id="card-prog-${ep.episode_number}" class="card-progress-box" style="display: none;">
+            <div class="card-progress-header">
+              <span class="card-progress-label">
+                <span class="dot-pulse"></span>
+                <span id="card-step-${ep.episode_number}">Rendering video & audio...</span>
+              </span>
+              <span id="card-pct-${ep.episode_number}" class="card-progress-pct">0%</span>
+            </div>
+            <div class="card-progress-bar-track">
+              <div id="card-fill-${ep.episode_number}" class="card-progress-bar-fill"></div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); padding: 8px 14px; border-radius: 8px; font-size: 12px; color: var(--text-dim); margin-top: 10px;">
             <div>🎬 <strong>${scenesCount} Synced Scenes</strong> (60s Main + 20s Short)</div>
-            <div style="display: flex; gap: 8px;">
+            <div style="display: flex; gap: 8px; align-items: center;">
               <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px;" onclick="toggleSceneViewer(${ep.episode_number})">
                 👁️ View Scenes
               </button>
               ${!isDone ? `
                 <button class="btn btn-primary" style="padding: 4px 12px; font-size: 12px;" onclick="runSingleEpisode(${ep.episode_number})">
-                  ▶ Render & Upload
+                  ▶ Render & Upload Now
                 </button>
               ` : `
                 <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 12px;" onclick="previewEpisodeVideos(${ep.episode_number})">
                   📺 Watch Preview
                 </button>
+                ${ep.main_video_id && !ep.main_video_id.startsWith('local') ? `
+                  <a href="https://youtu.be/${ep.main_video_id}" target="_blank" style="color: var(--accent-secondary); font-weight: 600; text-decoration: none; font-size: 12px; margin-left: 6px;">
+                    YouTube ↗
+                  </a>
+                ` : ''}
               `}
             </div>
           </div>
 
           <!-- Collapsible Scenes List -->
           <div id="scenes-detail-${ep.episode_number}" style="display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-color);">
-            <h5 style="font-size: 13px; margin-bottom: 8px; color: var(--accent);">Synchronized Scenes Breakdown:</h5>
+            <h5 style="font-size: 13px; margin-bottom: 8px; color: var(--accent-primary);">Synchronized Scenes Breakdown:</h5>
             <div style="display: flex; flex-direction: column; gap: 8px;">
               ${(ep.full_script && ep.full_script.scenes ? ep.full_script.scenes : []).map((sc, sIdx) => `
                 <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; font-size: 12px;">
                   <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
                     <strong style="color: #fff;">Scene ${sIdx + 1}</strong>
-                    <span style="color: var(--accent); font-family: monospace;">🔎 Pexels query: "${escapeHtml(sc.visual_search_query || '')}"</span>
+                    <span style="color: var(--accent-secondary); font-family: monospace;">🔎 Query: "${escapeHtml(sc.visual_search || sc.visual_search_query || '')}"</span>
                   </div>
-                  <div style="color: var(--text-muted);">🗣️ Narration: "${escapeHtml(sc.narration || '')}"</div>
+                  <div style="color: var(--text-muted);">🗣️ Narration: "${escapeHtml(sc.text || sc.narration || '')}"</div>
                 </div>
               `).join("")}
             </div>
@@ -315,6 +396,27 @@ async function loadSeries() {
 
   } catch (err) {
     console.error("Error loading series:", err);
+  }
+}
+
+async function saveEpisodeSchedule(epNum) {
+  const inputEl = document.getElementById(`sched-ep-${epNum}`);
+  if (!inputEl || !inputEl.value) {
+    showToast("Please choose a valid date and time first", "error");
+    return;
+  }
+  try {
+    const res = await fetch("/api/series/schedule-episode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ episode_number: epNum, scheduled_at: inputEl.value })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Failed to update schedule");
+    showToast(`Episode ${epNum} scheduled for ${formatDisplayDate(inputEl.value)}!`, "success");
+    loadSeries();
+  } catch (err) {
+    showToast(err.message, "error");
   }
 }
 
@@ -359,6 +461,52 @@ async function generateStoryPlan() {
   }
 }
 
+// ── Individual Video Generation ───────────────────────────────────────────────
+async function startSingleVideoGeneration() {
+  const topicInput = document.getElementById("single-topic-input");
+  const formatInput = document.querySelector('input[name="single-format"]:checked');
+  const channelSelect = document.getElementById("single-channel-select");
+  const btn = document.getElementById("btn-generate-single");
+
+  const topic = topicInput ? topicInput.value.trim() : "";
+  if (!topic) {
+    showToast("Please enter a video topic or concept first!", "error");
+    return;
+  }
+
+  const format = formatInput ? formatInput.value : "both";
+  const channelId = channelSelect ? channelSelect.value : null;
+
+  btn.disabled = true;
+  btn.innerText = "⏳ Generating...";
+
+  const progSec = document.getElementById("single-progress-section");
+  if (progSec) progSec.style.display = "flex";
+
+  try {
+    const res = await fetch("/api/generate-single", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        topic: topic,
+        format: format,
+        channel_id: channelId || null,
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Failed to start video generation");
+
+    showToast("Video creation started! Watching progress...", "success");
+    startLiveLogPolling();
+  } catch (err) {
+    showToast(err.message, "error");
+    if (progSec) progSec.style.display = "none";
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<span>🚀</span> Generate & Publish Video`;
+  }
+}
+
 // ── Video Execution & Task Runner ──────────────────────────────────────────────
 function triggerEpisodeModal() {
   openTaskModal();
@@ -374,7 +522,19 @@ function closeTaskModal() {
 }
 
 async function runSingleEpisode(epNum) {
-  openTaskModal();
+  // Show real-time progress right on the episode card immediately!
+  const cardProg = document.getElementById(`card-prog-${epNum}`);
+  const cardStep = document.getElementById(`card-step-${epNum}`);
+  const cardPct = document.getElementById(`card-pct-${epNum}`);
+  const cardFill = document.getElementById(`card-fill-${epNum}`);
+
+  if (cardProg) {
+    cardProg.style.display = "flex";
+    if (cardStep) cardStep.innerText = "Starting video generation...";
+    if (cardPct) cardPct.innerText = "5%";
+    if (cardFill) cardFill.style.width = "5%";
+  }
+
   const selectCh = document.getElementById("select-target-channel");
   const chId = selectCh ? selectCh.value : null;
 
@@ -386,10 +546,11 @@ async function runSingleEpisode(epNum) {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || "Failed to start episode");
-    showToast(`Episode ${epNum} execution started!`, "success");
+    showToast(`Episode ${epNum} execution launched!`, "success");
     startLiveLogPolling();
   } catch (err) {
     showToast(err.message, "error");
+    if (cardProg) cardProg.style.display = "none";
   }
 }
 
@@ -420,12 +581,78 @@ function startLiveLogPolling() {
 
 async function pollTaskStatus() {
   try {
-    const res = await fetch("/api/task-status");
-    const data = await res.json();
+    const [resStatus, resEpTasks] = await Promise.all([
+      fetch("/api/task-status"),
+      fetch("/api/episode-tasks")
+    ]);
+    const data = await resStatus.json();
+    const episodeTasks = await resEpTasks.json();
 
     const indicator = document.getElementById("system-status-indicator");
     if (indicator) {
-      indicator.innerText = data.is_running ? `Busy: ${data.current_action.slice(0, 24)}...` : "All Engines Ready";
+      indicator.innerText = data.is_running ? `Busy: ${(data.current_action || '').slice(0, 24)}...` : "All Engines Ready";
+    }
+
+    // ── Global Modal Progress Bar ──
+    const progressSection = document.getElementById("progress-section");
+    const progressBar = document.getElementById("progress-bar-fill");
+    const progressLabel = document.getElementById("progress-percent-label");
+    const stepLabel = document.getElementById("progress-step-label");
+
+    if (progressSection) {
+      if (data.is_running || data.progress_percent > 0) {
+        progressSection.style.display = "block";
+        const pct = Math.min(data.progress_percent || 0, 100);
+        if (progressBar) progressBar.style.width = pct + "%";
+        if (progressLabel) progressLabel.innerText = pct + "%";
+        if (stepLabel) stepLabel.innerText = data.current_action || "Working...";
+
+        if (pct >= 100 && progressBar) {
+          progressBar.style.background = "linear-gradient(90deg, #10b981, #34d399)";
+        } else if (progressBar) {
+          progressBar.style.background = "linear-gradient(90deg, #6366f1, #06b6d4, #10b981)";
+        }
+      }
+    }
+
+    // ── Individual Video Progress Bar ──
+    const singleProg = document.getElementById("single-progress-section");
+    const singlePct = document.getElementById("single-progress-pct");
+    const singleStep = document.getElementById("single-progress-step");
+    const singleFill = document.getElementById("single-progress-bar-fill");
+
+    if (data.active_episode === "single" || (episodeTasks["single"] && episodeTasks["single"].status === "running")) {
+      if (singleProg) singleProg.style.display = "flex";
+      const pct = Math.min(data.progress_percent || 0, 100);
+      if (singlePct) singlePct.innerText = pct + "%";
+      if (singleStep) singleStep.innerText = data.current_action || "Working...";
+      if (singleFill) singleFill.style.width = pct + "%";
+    }
+
+    // ── Per-Episode Real-Time Progress Bars (Directly on each Episode card) ──
+    if (currentSeriesState && currentSeriesState.episodes) {
+      currentSeriesState.episodes.forEach(ep => {
+        const epNum = ep.episode_number;
+        const cardProg = document.getElementById(`card-prog-${epNum}`);
+        const cardStep = document.getElementById(`card-step-${epNum}`);
+        const cardPct = document.getElementById(`card-pct-${epNum}`);
+        const cardFill = document.getElementById(`card-fill-${epNum}`);
+
+        const epTask = episodeTasks[epNum];
+        const isCurrentActive = data.active_episode === epNum;
+
+        if (isCurrentActive || (epTask && epTask.status === "running")) {
+          if (cardProg) cardProg.style.display = "flex";
+          const pct = Math.min(data.progress_percent || (epTask ? epTask.progress : 0) || 0, 100);
+          if (cardPct) cardPct.innerText = pct + "%";
+          if (cardStep) cardStep.innerText = data.current_action || (epTask ? epTask.action : "Rendering...");
+          if (cardFill) cardFill.style.width = pct + "%";
+        } else if (!data.is_running && epTask && epTask.status === "done") {
+          if (cardPct) cardPct.innerText = "100%";
+          if (cardFill) cardFill.style.width = "100%";
+          if (cardStep) cardStep.innerText = "Completed ✓";
+        }
+      });
     }
 
     const logBox = document.getElementById("live-task-log");
@@ -440,15 +667,23 @@ async function pollTaskStatus() {
       loadSeries();
       loadHistory();
       refreshVideoPlayerList();
+
+      if (progressSection && data.progress_percent >= 100) {
+        setTimeout(() => {
+          if (progressBar) progressBar.style.width = "0%";
+          if (progressLabel) progressLabel.innerText = "0%";
+          if (stepLabel) stepLabel.innerText = "Done!";
+          progressSection.style.display = "none";
+        }, 4000);
+      }
     }
   } catch (err) {
     console.error("Status poll error:", err);
   }
 }
 
-// ── Video Previews ─────────────────────────────────────────────────────────────
+// ── Video Previews & Available Videos ─────────────────────────────────────────
 function previewEpisodeVideos(epNum) {
-  // Switch to preview tab
   const previewTab = document.querySelector('[data-tab="tab-preview"]');
   if (previewTab) previewTab.click();
 
@@ -465,12 +700,59 @@ function previewEpisodeVideos(epNum) {
   }
 }
 
-function refreshVideoPlayerList() {
-  if (!currentSeriesState || !currentSeriesState.episodes) return;
-  const completed = currentSeriesState.episodes.filter(e => e.completed);
-  if (completed.length > 0) {
-    const latest = completed[completed.length - 1];
-    previewEpisodeVideos(latest.episode_number);
+async function refreshVideoPlayerList() {
+  const dropdown = document.getElementById("rendered-videos-dropdown");
+  if (!dropdown) return;
+
+  try {
+    const res = await fetch("/api/videos-list");
+    const data = await res.json();
+    const videos = data.videos || [];
+
+    if (videos.length === 0) {
+      dropdown.innerHTML = `<option value="">No rendered videos found yet</option>`;
+      return;
+    }
+
+    dropdown.innerHTML = videos.map(v => `
+      <option value="${v.filename}">
+        ${v.is_short ? '📱 Short: ' : '🎬 Main: '} ${v.filename} (${v.size_mb} MB - ${v.modified})
+      </option>
+    `).join("");
+
+    // Load first video into preview
+    handleVideoSelect(videos[0].filename);
+
+  } catch (err) {
+    console.error("Error loading video list:", err);
+  }
+}
+
+function handleVideoSelect(filename) {
+  if (!filename) return;
+
+  const mainVideo = document.getElementById("player-main");
+  const shortVideo = document.getElementById("player-short");
+  const dlBtn = document.getElementById("btn-download-video");
+
+  const streamUrl = `/api/video-stream/${filename}`;
+
+  if (filename.toLowerCase().includes("short")) {
+    if (shortVideo) {
+      shortVideo.src = streamUrl;
+      shortVideo.load();
+    }
+  } else {
+    if (mainVideo) {
+      mainVideo.src = streamUrl;
+      mainVideo.load();
+    }
+  }
+
+  if (dlBtn) {
+    dlBtn.style.display = "inline-flex";
+    dlBtn.href = streamUrl;
+    dlBtn.download = filename;
   }
 }
 

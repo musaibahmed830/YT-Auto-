@@ -58,22 +58,36 @@ def init_db():
             uploaded_at TEXT NOT NULL
         )
     """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS meta (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        )
+    """)
     conn.commit()
 
-    # If environment variables have a default channel and database is empty, auto-import it!
-    cursor.execute("SELECT COUNT(*) as count FROM channels")
-    if cursor.fetchone()["count"] == 0:
-        def_rt = os.environ.get("YT_REFRESH_TOKEN", "").strip()
-        def_cid = os.environ.get("YT_CLIENT_ID", "").strip()
-        def_cs = os.environ.get("YT_CLIENT_SECRET", "").strip()
-        if def_rt and def_cid and def_cs:
-            add_channel(
-                channel_title="Primary Channel",
-                client_id=def_cid,
-                client_secret=def_cs,
-                refresh_token=def_rt,
-                niche="Automation Series",
-            )
+    # Only auto-import from .env on the very first run (never re-import after user deletes)
+    cursor.execute("SELECT value FROM meta WHERE key = 'env_imported'")
+    row = cursor.fetchone()
+    already_imported = row and row["value"] == "1"
+
+    if not already_imported:
+        cursor.execute("SELECT COUNT(*) as count FROM channels")
+        if cursor.fetchone()["count"] == 0:
+            def_rt = os.environ.get("YT_REFRESH_TOKEN", "").strip()
+            def_cid = os.environ.get("YT_CLIENT_ID", "").strip()
+            def_cs = os.environ.get("YT_CLIENT_SECRET", "").strip()
+            if def_rt and def_cid and def_cs:
+                add_channel(
+                    channel_title="Primary Channel",
+                    client_id=def_cid,
+                    client_secret=def_cs,
+                    refresh_token=def_rt,
+                    niche="Automation Series",
+                )
+        # Mark as imported so we never auto-add again
+        cursor.execute("INSERT OR REPLACE INTO meta (key, value) VALUES ('env_imported', '1')")
+        conn.commit()
     conn.close()
 
 
@@ -182,7 +196,7 @@ def toggle_channel_status(channel_id: str, is_active: bool):
     """Activates or pauses automation for a specific channel."""
     conn = _get_connection()
     cursor = conn.cursor()
-    cursor.execute("UPDATE channels SET is_active = ? WHERE id = ?", (1 if is_active else 0, channel_id))
+    cursor.execute("UPDATE channels SET is_active = ? WHERE id = ? OR channel_id = ?", (1 if is_active else 0, channel_id, channel_id))
     conn.commit()
     conn.close()
 
@@ -191,7 +205,7 @@ def delete_channel(channel_id: str):
     """Removes a channel from the database."""
     conn = _get_connection()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM channels WHERE id = ?", (channel_id,))
+    cursor.execute("DELETE FROM channels WHERE id = ? OR channel_id = ?", (channel_id, channel_id))
     conn.commit()
     conn.close()
 
