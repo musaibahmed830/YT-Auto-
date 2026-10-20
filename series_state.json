@@ -1,129 +1,100 @@
 {
-  "series_title": "The Flying Car Illusion",
-  "series_synopsis": "An in-depth look at the reality behind futuristic flying cars, exploring modern eVTOL technology and the complex obstacles of urban air mobility.",
+  "series_title": "The Flying Car Revolution: Inside eVTOL Engineering",
+  "series_synopsis": "Explore the breakthrough engineering powering electric air taxis, from multi-rotor propulsion to real-time flight computers. Witness the intense aerospace race to certify these next-generation aircraft for urban skies.",
   "total_episodes": 1,
   "episodes": [
     {
       "episode_number": 1,
-      "episode_title": "The Rise of eVTOL",
+      "episode_title": "How Flying Cars Actually Work",
       "full_script": {
-        "title": "Are Flying Cars Finally Here? The Truth About eVTOL",
-        "description": "Discover the reality behind flying cars and electric vertical takeoff aircraft. Are we about to commute in the skies? Subscribe for more future tech insights!",
+        "title": "How Electric Air Taxis Actually Fly (And Why It's Hard)",
+        "description": "Ever wonder how electric vertical takeoff aircraft stay in the air? Explore the battery packs, tilt-rotors, and safety certifications powering the future of flight. Subscribe for more deep dives into next-gen tech!",
         "tags": [
+          "aviation",
           "flying cars",
-          "eVTOL",
-          "future technology",
-          "air taxis"
+          "evtol",
+          "aerospace engineering",
+          "future tech"
         ],
-        "narration": "Imagine leaving your home in the morning, stepping into a small aircraft, and flying directly above the traffic that would normally make you late. No endless queues. No crowded intersections. Just a quiet journey through the sky. For decades, flying cars were a dream found in science fiction movies. But today, engineers are developing electric aircraft designed to take off vertically, carry passengers across cities, and potentially transform the way we travel. Some prototypes have already flown. Companies are working toward certification, and aviation authorities are developing ways to integrate these aircraft into existing airspace. But there is a much bigger question: are we really approaching a world where everyone can fly to work, or is the flying car revolution more complicated than it looks? First, we need to understand what people mean when they say 'flying car.' The term describes several very different technologies. Some experimental vehicles are designed to operate on roads and fly using wings or propellers. Others are aircraft that look more like futuristic cars but are intended to fly between designated landing sites. One important category is called electric vertical takeoff and landing, or eVTOL. These aircraft use electric motors and multiple propellers or other lifting systems to rise vertically, without needing a conventional runway. Depending on the design, some transition to wing-borne flight for greater efficiency. That means an eVTOL air taxi is not necessarily a car you can drive to the supermarket. It is better understood as a new type of aircraft designed to make short-distance air travel more accessible. And that distinction matters, because flying and driving require very different engineering, safety systems, and regulations.",
+        "narration": "In an electric aircraft, a high-voltage battery supplies energy to electric motors that spin the propellers, generating the vertical thrust needed to lift the vehicle off the ground. Sensors and flight-control computers continuously monitor the aircraft's orientation, automatically adjusting motor speeds to maintain balance. Some designs use separate propellers for vertical lift and fixed wings for forward flight, while others rely on tilting rotors that rotate forward to cruise through the air. But flying cars are not simply road vehicles with wings attached—they are complex aircraft packed with redundant systems to ensure safety. Across the aerospace industry, engineers and technicians are testing high-power electric motors and analyzing prototype airframes in advanced facilities. Test pilots are taking these experimental craft into controlled airspace to validate aerodynamic performance under real-world conditions. Aviation authorities are developing strict regulatory frameworks, ensuring these vehicles meet the exact safety standards of commercial aviation. The ultimate race is not just building a machine that flies, but proving it can operate safely inside a crowded urban transportation network.",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "Imagine leaving your home in the morning, stepping into a small aircraft, and flying directly above the traffic that would normally make you late.",
-            "visual_search": "busy modern city traffic rush hour cars"
+            "text": "In an electric aircraft, a high-voltage battery supplies energy to electric motors that spin the propellers, generating the vertical thrust needed to lift the vehicle off the ground.",
+            "visual_search": "electric aircraft propeller motor spinning takeoff"
           },
           {
             "scene_num": 2,
-            "text": "No endless queues. No crowded intersections. Just a quiet journey through the sky.",
-            "visual_search": "pedestrians walking crowded city street intersection"
+            "text": "Sensors and flight-control computers continuously monitor the aircraft's orientation, automatically adjusting motor speeds to maintain balance.",
+            "visual_search": "digital airplane cockpit avionics display interface"
           },
           {
             "scene_num": 3,
-            "text": "For decades, flying cars were a dream found in science fiction movies.",
-            "visual_search": "vintage science fiction movie projector retro futuristic car"
+            "text": "Some designs use separate propellers for vertical lift and fixed wings for forward flight, while others rely on tilting rotors that rotate forward to cruise through the air.",
+            "visual_search": "tiltrotor aircraft hovering transitioning forward flight"
           },
           {
             "scene_num": 4,
-            "text": "But today, engineers are developing electric aircraft designed to take off vertically, carry passengers across cities, and potentially transform the way we travel.",
-            "visual_search": "electric air taxi hovering above modern skyscraper rooftop"
+            "text": "But flying cars are not simply road vehicles with wings attached—they are complex aircraft packed with redundant systems to ensure safety.",
+            "visual_search": "aerospace engineers inspecting prototype airframe in hangar"
           },
           {
             "scene_num": 5,
-            "text": "Some prototypes have already flown. Companies are working toward certification, and aviation authorities are developing ways to integrate these aircraft into existing airspace.",
-            "visual_search": "experimental electric aircraft flying test flight"
+            "text": "Across the aerospace industry, engineers and technicians are testing high-power electric motors and analyzing prototype airframes in advanced facilities.",
+            "visual_search": "technicians testing electric motor in engineering laboratory"
           },
           {
             "scene_num": 6,
-            "text": "But there is a much bigger question: are we really approaching a world where everyone can fly to work, or is the flying car revolution more complicated than it looks?",
-            "visual_search": "futuristic city skyline aerial view sunset"
+            "text": "Test pilots are taking these experimental craft into controlled airspace to validate aerodynamic performance under real-world conditions.",
+            "visual_search": "test pilot in aircraft cockpit looking out over runway"
           },
           {
             "scene_num": 7,
-            "text": "First, we need to understand what people mean when they say 'flying car.'",
-            "visual_search": "futuristic car concept design studio"
+            "text": "Aviation authorities are developing strict regulatory frameworks, ensuring these vehicles meet the exact safety standards of commercial aviation.",
+            "visual_search": "air traffic control room radar screens"
           },
           {
             "scene_num": 8,
-            "text": "The term describes several very different technologies. Some experimental vehicles are designed to operate on roads and fly using wings or propellers.",
-            "visual_search": "roadable aircraft car with wings driving on highway"
-          },
-          {
-            "scene_num": 9,
-            "text": "Others are aircraft that look more like futuristic cars but are intended to fly between designated landing sites.",
-            "visual_search": "sleek electric vertical aircraft landing pad"
-          },
-          {
-            "scene_num": 10,
-            "text": "One important category is called electric vertical takeoff and landing, or eVTOL.",
-            "visual_search": "multicopter electric aircraft propellers spinning"
-          },
-          {
-            "scene_num": 11,
-            "text": "These aircraft use electric motors and multiple propellers or other lifting systems to rise vertically, without needing a conventional runway.",
-            "visual_search": "electric aircraft taking off vertically from helipad"
-          },
-          {
-            "scene_num": 12,
-            "text": "Depending on the design, some transition to wing-borne flight for greater efficiency.",
-            "visual_search": "airplane flying with wings in sky clouds"
-          },
-          {
-            "scene_num": 13,
-            "text": "That means an eVTOL air taxi is not necessarily a car you can drive to the supermarket. It is better understood as a new type of aircraft designed to make short-distance air travel more accessible.",
-            "visual_search": "modern grocery store parking lot crowded cars"
-          },
-          {
-            "scene_num": 14,
-            "text": "And that distinction matters, because flying and driving require very different engineering, safety systems, and regulations.",
-            "visual_search": "aerospace engineer blueprint technical drawing"
+            "text": "The ultimate race is not just building a machine that flies, but proving it can operate safely inside a crowded urban transportation network.",
+            "visual_search": "futuristic modern city skyline aerial view traffic"
           }
         ]
       },
       "short_script": {
-        "title": "Are Flying Cars Actually Here? #shorts",
-        "description": "Will we ever fly to work? The shocking truth about flying cars and air taxis #shorts #future #tech",
+        "title": "How Flying Cars Actually Work #shorts",
+        "description": "The physics and tech behind electric air taxis! #shorts #aviation #engineering #futuretech",
         "tags": [
           "shorts",
-          "future",
-          "tech",
-          "flyingcar"
+          "aviation",
+          "technology",
+          "engineering"
         ],
-        "narration": "Forget traffic jams. Flying cars are finally real. But you will never drive one to the grocery store. Here is why everything you know is wrong.",
+        "narration": "Flying cars aren't science fiction anymore, but they aren't just cars with propellers either. High-density batteries feed electric motors that tilt mid-flight while automated computers make thousands of stability adjustments every second. But before anyone hails an air taxi, engineers face the ultimate challenge: proving these craft can never fail in mid-air.",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "Forget traffic jams. Flying cars are finally real.",
-            "visual_search": "busy highway traffic jam aerial view"
+            "text": "Flying cars aren't science fiction anymore, but they aren't just cars with propellers either.",
+            "visual_search": "modern futuristic electric air taxi lifting off ground"
           },
           {
             "scene_num": 2,
-            "text": "But you will never drive one to the grocery store.",
-            "visual_search": "electric air taxi hovering over city"
+            "text": "High-density batteries feed electric motors that tilt mid-flight while automated computers make thousands of stability adjustments every second.",
+            "visual_search": "aerospace mechanic assembling electric motor prototype"
           },
           {
             "scene_num": 3,
-            "text": "Here is why everything you know is wrong.",
-            "visual_search": "aerospace engineer looking at futuristic aircraft blueprint"
+            "text": "But before anyone hails an air taxi, engineers face the ultimate challenge: proving these craft can never fail in mid-air.",
+            "visual_search": "commercial aircraft flying into dramatic storm clouds"
           }
         ]
       },
       "status": "completed",
-      "uploaded_at": "2026-10-19T16:00:07.000241",
-      "scheduled_at": "2026-10-20T18:00",
-      "main_video_id": "_BRNmE8iU4o",
-      "short_video_id": "krayu2w236I"
+      "uploaded_at": "2026-10-20T15:19:39.545416",
+      "scheduled_at": "2026-10-21T18:00",
+      "main_video_id": "H_oGX8IjcSM",
+      "short_video_id": "zmlNDbDPLZ0"
     }
   ],
-  "created_at": "2026-10-19T15:57:12.942584",
+  "created_at": "2026-10-20T15:17:01.568056",
   "current_episode_index": 1
 }
