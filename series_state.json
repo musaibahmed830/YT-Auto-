@@ -1,100 +1,93 @@
 {
-  "series_title": "The Flying Car Revolution: Inside eVTOL Engineering",
-  "series_synopsis": "Explore the breakthrough engineering powering electric air taxis, from multi-rotor propulsion to real-time flight computers. Witness the intense aerospace race to certify these next-generation aircraft for urban skies.",
+  "series_title": "AI Hacker Ka Khatra",
+  "series_synopsis": "Ek investigation ke mutabiq, hacker ne sirf paanch hazaar dollar me so se zyada websites hack kar li hain. Microsoft aur doosri companies is naye khatre se kaise nipat rahi hain?",
   "total_episodes": 1,
   "episodes": [
     {
       "episode_number": 1,
-      "episode_title": "How Flying Cars Actually Work",
+      "episode_title": "AI Agent Attack",
       "full_script": {
-        "title": "How Electric Air Taxis Actually Fly (And Why It's Hard)",
-        "description": "Ever wonder how electric vertical takeoff aircraft stay in the air? Explore the battery packs, tilt-rotors, and safety certifications powering the future of flight. Subscribe for more deep dives into next-gen tech!",
+        "title": "AI Hacker Ne 100 Websites Kaise Urayin? #tech",
+        "description": "Reportedly, ek hacker ne sirf $5,000 me 100 se zyada websites hack kar lin. Janiye Microsoft aur aap isse kaise bach sakte hain.",
         "tags": [
-          "aviation",
-          "flying cars",
-          "evtol",
-          "aerospace engineering",
-          "future tech"
+          "ai hacker",
+          "cyber security",
+          "urdu tech",
+          "microsoft"
         ],
-        "narration": "In an electric aircraft, a high-voltage battery supplies energy to electric motors that spin the propellers, generating the vertical thrust needed to lift the vehicle off the ground. Sensors and flight-control computers continuously monitor the aircraft's orientation, automatically adjusting motor speeds to maintain balance. Some designs use separate propellers for vertical lift and fixed wings for forward flight, while others rely on tilting rotors that rotate forward to cruise through the air. But flying cars are not simply road vehicles with wings attached—they are complex aircraft packed with redundant systems to ensure safety. Across the aerospace industry, engineers and technicians are testing high-power electric motors and analyzing prototype airframes in advanced facilities. Test pilots are taking these experimental craft into controlled airspace to validate aerodynamic performance under real-world conditions. Aviation authorities are developing strict regulatory frameworks, ensuring these vehicles meet the exact safety standards of commercial aviation. The ultimate race is not just building a machine that flies, but proving it can operate safely inside a crowded urban transportation network.",
+        "narration": "Ek recent investigation ke mutabiq, ek hacker ne sirf paanch hazaar dollar ke computer resources use karke aik sau se zyada websites ko compromise kar liya. Lekin ye AI agent hota kya hai? Ye aik aisi software technology hai jo khud se faisle leti hai aur bina insani madad ke bade tasks poore karti hai. Reportedly, hacker ne ishi autonomous AI agent ka use kiya jo itna tez aur sasta tha ke palak jhapte hi kaam ho gaya. Ab is baat par Microsoft aur doosri badi tech companies bohot fikrmand hain, aur wo aisi controls la rahi hain jo aisi risky AI agents ko detect aur restrict kar saken. Lekin sawal ye hai ke kya ye hamare liye bhi khatra hai? Aapke accounts, data aur passwords par iska kya asar pad sakta hai? Isse bachne ke liye do aasan tareeqay hain: aik toh hamesha two-factor authentication on rakhen, aur doosra har jagah unique password use karen. Ab sochiye aur batayiye, kya AI aage chal kar aur khatarnak ho jayega?",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "In an electric aircraft, a high-voltage battery supplies energy to electric motors that spin the propellers, generating the vertical thrust needed to lift the vehicle off the ground.",
-            "visual_search": "electric aircraft propeller motor spinning takeoff"
+            "text": "Ek recent investigation ke mutabiq, ek hacker ne sirf paanch hazaar dollar ke computer resources use karke aik sau se zyada websites ko compromise kar liya.",
+            "visual_search": "digital computer hacker code dark room"
           },
           {
             "scene_num": 2,
-            "text": "Sensors and flight-control computers continuously monitor the aircraft's orientation, automatically adjusting motor speeds to maintain balance.",
-            "visual_search": "digital airplane cockpit avionics display interface"
+            "text": "Lekin ye AI agent hota kya hai? Ye aik aisi software technology hai jo khud se faisle leti hai aur bina insani madad ke bade tasks poore karti hai.",
+            "visual_search": "futuristic glowing artificial intelligence brain graphic"
           },
           {
             "scene_num": 3,
-            "text": "Some designs use separate propellers for vertical lift and fixed wings for forward flight, while others rely on tilting rotors that rotate forward to cruise through the air.",
-            "visual_search": "tiltrotor aircraft hovering transitioning forward flight"
+            "text": "Reportedly, hacker ne ishi autonomous AI agent ka use kiya jo itna tez aur sasta tha ke palak jhapte hi kaam ho gaya.",
+            "visual_search": "fast typing hands on glowing laptop keyboard"
           },
           {
             "scene_num": 4,
-            "text": "But flying cars are not simply road vehicles with wings attached—they are complex aircraft packed with redundant systems to ensure safety.",
-            "visual_search": "aerospace engineers inspecting prototype airframe in hangar"
+            "text": "Ab is baat par Microsoft aur doosri badi tech companies bohot fikrmand hain, aur wo aisi controls la rahi hain jo aisi risky AI agents ko detect aur restrict kar saken.",
+            "visual_search": "modern tech corporate office building exterior"
           },
           {
             "scene_num": 5,
-            "text": "Across the aerospace industry, engineers and technicians are testing high-power electric motors and analyzing prototype airframes in advanced facilities.",
-            "visual_search": "technicians testing electric motor in engineering laboratory"
+            "text": "Lekin sawal ye hai ke kya ye hamare liye bhi khatra hai? Aapke accounts, data aur passwords par iska kya asar pad sakta hai?",
+            "visual_search": "padlock security icon glowing digital screen"
           },
           {
             "scene_num": 6,
-            "text": "Test pilots are taking these experimental craft into controlled airspace to validate aerodynamic performance under real-world conditions.",
-            "visual_search": "test pilot in aircraft cockpit looking out over runway"
+            "text": "Isse bachne ke liye do aasan tareeqay hain: aik toh hamesha two-factor authentication on rakhen, aur doosra har jagah unique password use karen.",
+            "visual_search": "mobile phone lock screen verification code"
           },
           {
             "scene_num": 7,
-            "text": "Aviation authorities are developing strict regulatory frameworks, ensuring these vehicles meet the exact safety standards of commercial aviation.",
-            "visual_search": "air traffic control room radar screens"
-          },
-          {
-            "scene_num": 8,
-            "text": "The ultimate race is not just building a machine that flies, but proving it can operate safely inside a crowded urban transportation network.",
-            "visual_search": "futuristic modern city skyline aerial view traffic"
+            "text": "Ab sochiye aur batayiye, kya AI aage chal kar aur khatarnak ho jayega?",
+            "visual_search": "question mark glowing futuristic hologram"
           }
         ]
       },
       "short_script": {
-        "title": "How Flying Cars Actually Work #shorts",
-        "description": "The physics and tech behind electric air taxis! #shorts #aviation #engineering #futuretech",
+        "title": "Sirf $5000 Me 100 Websites Hack? #shorts",
+        "description": "Kya AI agent itna khatarnak ho gaya hai? Dekhiye ye short video.",
         "tags": [
           "shorts",
-          "aviation",
-          "technology",
-          "engineering"
+          "tech",
+          "hacker"
         ],
-        "narration": "Flying cars aren't science fiction anymore, but they aren't just cars with propellers either. High-density batteries feed electric motors that tilt mid-flight while automated computers make thousands of stability adjustments every second. But before anyone hails an air taxi, engineers face the ultimate challenge: proving these craft can never fail in mid-air.",
+        "narration": "Aik investigation ke mutabiq, hacker ne sirf paanch hazaar dollar me aik sau se zyada websites hack kar lin! Ye sab hua autonomous AI agents ki madad se jo bina insani madad ke kaam karte hain. Ab Microsoft isko rokne ki race me hai, lekin kya aapka data mehfooz hai?",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "Flying cars aren't science fiction anymore, but they aren't just cars with propellers either.",
-            "visual_search": "modern futuristic electric air taxi lifting off ground"
+            "text": "Aik investigation ke mutabiq, hacker ne sirf paanch hazaar dollar me aik sau se zyada websites hack kar lin!",
+            "visual_search": "hacker typing glowing computer monitor"
           },
           {
             "scene_num": 2,
-            "text": "High-density batteries feed electric motors that tilt mid-flight while automated computers make thousands of stability adjustments every second.",
-            "visual_search": "aerospace mechanic assembling electric motor prototype"
+            "text": "Ye sab hua autonomous AI agents ki madad se jo bina insani madad ke kaam karte hain.",
+            "visual_search": "artificial intelligence glowing code matrix"
           },
           {
             "scene_num": 3,
-            "text": "But before anyone hails an air taxi, engineers face the ultimate challenge: proving these craft can never fail in mid-air.",
-            "visual_search": "commercial aircraft flying into dramatic storm clouds"
+            "text": "Ab Microsoft isko rokne ki race me hai, lekin kya aapka data mehfooz hai?",
+            "visual_search": "cyber security shield warning red"
           }
         ]
       },
       "status": "completed",
-      "uploaded_at": "2026-10-20T15:19:39.545416",
-      "scheduled_at": "2026-10-21T18:00",
-      "main_video_id": "H_oGX8IjcSM",
-      "short_video_id": "zmlNDbDPLZ0"
+      "uploaded_at": "2026-10-22T19:46:25.220929",
+      "scheduled_at": "2026-10-23T18:00",
+      "main_video_id": "xivu-4IAZnU",
+      "short_video_id": "mDCa1Nn5lK0"
     }
   ],
-  "created_at": "2026-10-20T15:17:01.568056",
+  "created_at": "2026-10-22T19:44:29.940321",
   "current_episode_index": 1
 }
