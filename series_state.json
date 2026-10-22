@@ -1,93 +1,105 @@
 {
-  "series_title": "AI Hacker Ka Khatra",
-  "series_synopsis": "Ek investigation ke mutabiq, hacker ne sirf paanch hazaar dollar me so se zyada websites hack kar li hain. Microsoft aur doosri companies is naye khatre se kaise nipat rahi hain?",
+  "series_title": "Tesla aur SpaceX ka $3 Trillion Merger",
+  "series_synopsis": "Elon Musk ki do sab se bari companies ke merger aur AI ke barhte hue role ki kahani.",
   "total_episodes": 1,
   "episodes": [
     {
       "episode_number": 1,
-      "episode_title": "AI Agent Attack",
+      "episode_title": "Tesla aur SpaceX ka 3 Trillion Dollar Merger",
       "full_script": {
-        "title": "AI Hacker Ne 100 Websites Kaise Urayin? #tech",
-        "description": "Reportedly, ek hacker ne sirf $5,000 me 100 se zyada websites hack kar lin. Janiye Microsoft aur aap isse kaise bach sakte hain.",
+        "title": "Tesla aur SpaceX ka $3 Trillion Merger?",
+        "description": "Kya Elon Musk ki Tesla aur SpaceX milne ja rahi hain? Janiye is reported 3 trillion dollar deal ki mukammal tafseelaat.",
         "tags": [
-          "ai hacker",
-          "cyber security",
-          "urdu tech",
-          "microsoft"
+          "tesla",
+          "spacex",
+          "elon musk",
+          "ai",
+          "business"
         ],
-        "narration": "Ek recent investigation ke mutabiq, ek hacker ne sirf paanch hazaar dollar ke computer resources use karke aik sau se zyada websites ko compromise kar liya. Lekin ye AI agent hota kya hai? Ye aik aisi software technology hai jo khud se faisle leti hai aur bina insani madad ke bade tasks poore karti hai. Reportedly, hacker ne ishi autonomous AI agent ka use kiya jo itna tez aur sasta tha ke palak jhapte hi kaam ho gaya. Ab is baat par Microsoft aur doosri badi tech companies bohot fikrmand hain, aur wo aisi controls la rahi hain jo aisi risky AI agents ko detect aur restrict kar saken. Lekin sawal ye hai ke kya ye hamare liye bhi khatra hai? Aapke accounts, data aur passwords par iska kya asar pad sakta hai? Isse bachne ke liye do aasan tareeqay hain: aik toh hamesha two-factor authentication on rakhen, aur doosra har jagah unique password use karen. Ab sochiye aur batayiye, kya AI aage chal kar aur khatarnak ho jayega?",
+        "narration": "Kya aap ne socha hai ke 3 trillion dollar ki company kaisi dikhegi? Reports ke mutabiq, Elon Musk Tesla aur SpaceX ko aapas mein milane ki exploration kar rahe hain. Tesla electric cars banati hai aur SpaceX rockets aur space travel par kaam karti hai. Agar yeh merger ho gaya, toh ek aisi technology giant ban sakti hai jis ki value 3 trillion dollars se bhi zyada hogi. Is ke ilawa, ek aur hairan kun baat samne aayi hai. Reports ke mutabiq, AI ab SpaceX ko satellite connectivity division se bhi zyada sales de raha hai. Lekin sochiye, is tarah ka merger investors aur mukabla karne wali companies ke liye kya maikhne rakhta hai? Is ke kuch risks bhi hain aur abhi tak yeh sirf reports hain, koi confirm deal nahi hui. Toh aap batayein, kya Tesla aur SpaceX ka merger sahi faisla hoga?",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "Ek recent investigation ke mutabiq, ek hacker ne sirf paanch hazaar dollar ke computer resources use karke aik sau se zyada websites ko compromise kar liya.",
-            "visual_search": "digital computer hacker code dark room"
+            "text": "Kya aap ne socha hai ke 3 trillion dollar ki company kaisi dikhegi?",
+            "visual_search": "modern futuristic skyscraper city"
           },
           {
             "scene_num": 2,
-            "text": "Lekin ye AI agent hota kya hai? Ye aik aisi software technology hai jo khud se faisle leti hai aur bina insani madad ke bade tasks poore karti hai.",
-            "visual_search": "futuristic glowing artificial intelligence brain graphic"
+            "text": "Reports ke mutabiq, Elon Musk Tesla aur SpaceX ko aapas mein milane ki exploration kar rahe hain.",
+            "visual_search": "elon musk portrait office"
           },
           {
             "scene_num": 3,
-            "text": "Reportedly, hacker ne ishi autonomous AI agent ka use kiya jo itna tez aur sasta tha ke palak jhapte hi kaam ho gaya.",
-            "visual_search": "fast typing hands on glowing laptop keyboard"
+            "text": "Tesla electric cars banati hai aur SpaceX rockets aur space travel par kaam karti hai.",
+            "visual_search": "electric car charging station"
           },
           {
             "scene_num": 4,
-            "text": "Ab is baat par Microsoft aur doosri badi tech companies bohot fikrmand hain, aur wo aisi controls la rahi hain jo aisi risky AI agents ko detect aur restrict kar saken.",
-            "visual_search": "modern tech corporate office building exterior"
+            "text": "Agar yeh merger ho gaya, toh ek aisi technology giant ban sakti hai jis ki value 3 trillion dollars se bhi zyada hogi.",
+            "visual_search": "space rocket launching pad"
           },
           {
             "scene_num": 5,
-            "text": "Lekin sawal ye hai ke kya ye hamare liye bhi khatra hai? Aapke accounts, data aur passwords par iska kya asar pad sakta hai?",
-            "visual_search": "padlock security icon glowing digital screen"
+            "text": "Is ke ilawa, ek aur hairan kun baat samne aayi hai.",
+            "visual_search": "digital matrix code screen"
           },
           {
             "scene_num": 6,
-            "text": "Isse bachne ke liye do aasan tareeqay hain: aik toh hamesha two-factor authentication on rakhen, aur doosra har jagah unique password use karen.",
-            "visual_search": "mobile phone lock screen verification code"
+            "text": "Reports ke mutabiq, AI ab SpaceX ko satellite connectivity division se bhi zyada sales de raha hai.",
+            "visual_search": "artificial intelligence glowing brain"
           },
           {
             "scene_num": 7,
-            "text": "Ab sochiye aur batayiye, kya AI aage chal kar aur khatarnak ho jayega?",
-            "visual_search": "question mark glowing futuristic hologram"
+            "text": "Lekin sochiye, is tarah ka merger investors aur mukabla karne wali companies ke liye kya maikhne rakhta hai?",
+            "visual_search": "stock market trading graph"
+          },
+          {
+            "scene_num": 8,
+            "text": "Is ke kuch risks bhi hain aur abhi tak yeh sirf reports hain, koi confirm deal nahi hui.",
+            "visual_search": "question mark neon sign"
+          },
+          {
+            "scene_num": 9,
+            "text": "Toh aap batayein, kya Tesla aur SpaceX ka merger sahi faisla hoga?",
+            "visual_search": "comments section glowing phone"
           }
         ]
       },
       "short_script": {
-        "title": "Sirf $5000 Me 100 Websites Hack? #shorts",
-        "description": "Kya AI agent itna khatarnak ho gaya hai? Dekhiye ye short video.",
+        "title": "Tesla aur SpaceX ka $3 Trillion Merger? #shorts",
+        "description": "Shorts description about Tesla and SpaceX merger #shorts #tech",
         "tags": [
           "shorts",
-          "tech",
-          "hacker"
+          "tesla",
+          "spacex",
+          "elonmusk"
         ],
-        "narration": "Aik investigation ke mutabiq, hacker ne sirf paanch hazaar dollar me aik sau se zyada websites hack kar lin! Ye sab hua autonomous AI agents ki madad se jo bina insani madad ke kaam karte hain. Ab Microsoft isko rokne ki race me hai, lekin kya aapka data mehfooz hai?",
+        "narration": "Kya Tesla aur SpaceX milne ja rahe hain? Reports ke mutabiq, yeh 3 trillion dollar ki giant deal ho sakti hai! Lekin kya yeh sach hai?",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "Aik investigation ke mutabiq, hacker ne sirf paanch hazaar dollar me aik sau se zyada websites hack kar lin!",
-            "visual_search": "hacker typing glowing computer monitor"
+            "text": "Kya Tesla aur SpaceX milne ja rahe hain?",
+            "visual_search": "electric car driving highway"
           },
           {
             "scene_num": 2,
-            "text": "Ye sab hua autonomous AI agents ki madad se jo bina insani madad ke kaam karte hain.",
-            "visual_search": "artificial intelligence glowing code matrix"
+            "text": "Reports ke mutabiq, yeh 3 trillion dollar ki giant deal ho sakti hai!",
+            "visual_search": "money dollar bills falling"
           },
           {
             "scene_num": 3,
-            "text": "Ab Microsoft isko rokne ki race me hai, lekin kya aapka data mehfooz hai?",
-            "visual_search": "cyber security shield warning red"
+            "text": "Lekin kya yeh sach hai?",
+            "visual_search": "person thinking confused face"
           }
         ]
       },
       "status": "completed",
-      "uploaded_at": "2026-10-22T19:46:25.220929",
+      "uploaded_at": "2026-10-22T19:55:40.684211",
       "scheduled_at": "2026-10-23T18:00",
-      "main_video_id": "xivu-4IAZnU",
-      "short_video_id": "mDCa1Nn5lK0"
+      "main_video_id": "nkV6LXd1fzM",
+      "short_video_id": "zBQxJv38wBE"
     }
   ],
-  "created_at": "2026-10-22T19:44:29.940321",
+  "created_at": "2026-10-22T19:53:56.163268",
   "current_episode_index": 1
 }
