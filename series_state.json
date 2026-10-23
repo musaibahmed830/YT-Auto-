@@ -1,105 +1,98 @@
 {
-  "series_title": "Tesla aur SpaceX ka $3 Trillion Merger",
-  "series_synopsis": "Elon Musk ki do sab se bari companies ke merger aur AI ke barhte hue role ki kahani.",
+  "series_title": "The AI Robot Bodyguard: The Future of Humanoid Machines",
+  "series_synopsis": "Breakthroughs in humanoid robotics show machines performing martial arts and navigating complex obstacles. But can an artificial intelligence robot truly act as a reliable personal bodyguard, or are real-world safety limitations too steep to overcome? We examine cutting-edge robotic tech, split-second threat detection, and the future of automated personal protection.",
   "total_episodes": 1,
   "episodes": [
     {
       "episode_number": 1,
-      "episode_title": "Tesla aur SpaceX ka 3 Trillion Dollar Merger",
+      "episode_title": "This AI Robot Wants to Become Your Bodyguard!",
       "full_script": {
-        "title": "Tesla aur SpaceX ka $3 Trillion Merger?",
-        "description": "Kya Elon Musk ki Tesla aur SpaceX milne ja rahi hain? Janiye is reported 3 trillion dollar deal ki mukammal tafseelaat.",
+        "title": "This AI Robot Wants to Become Your Bodyguard! (Part 1)",
+        "description": "Humanoid robots are mastering martial arts and rapid balance recovery, raising a revolutionary question: could an AI machine become your personal bodyguard? Explore the engineering, computer vision, and real-world safety challenges. Subscribe for more deep dives into futuristic technology!",
         "tags": [
-          "tesla",
-          "spacex",
-          "elon musk",
-          "ai",
-          "business"
+          "humanoid robot",
+          "ai bodyguard",
+          "robotics",
+          "artificial intelligence",
+          "tech documentary",
+          "future technology",
+          "unitree"
         ],
-        "narration": "Kya aap ne socha hai ke 3 trillion dollar ki company kaisi dikhegi? Reports ke mutabiq, Elon Musk Tesla aur SpaceX ko aapas mein milane ki exploration kar rahe hain. Tesla electric cars banati hai aur SpaceX rockets aur space travel par kaam karti hai. Agar yeh merger ho gaya, toh ek aisi technology giant ban sakti hai jis ki value 3 trillion dollars se bhi zyada hogi. Is ke ilawa, ek aur hairan kun baat samne aayi hai. Reports ke mutabiq, AI ab SpaceX ko satellite connectivity division se bhi zyada sales de raha hai. Lekin sochiye, is tarah ka merger investors aur mukabla karne wali companies ke liye kya maikhne rakhta hai? Is ke kuch risks bhi hain aur abhi tak yeh sirf reports hain, koi confirm deal nahi hui. Toh aap batayein, kya Tesla aur SpaceX ka merger sahi faisla hoga?",
+        "narration": "Imagine having a machine that follows your footsteps, spots incoming threats, and physically shields you during a violent attack. Recent humanoid demonstrations reveal robots executing lightning-fast martial arts kicks and recovering balance in milliseconds. Beneath their sleek carbon fiber frames, high-torque joint actuators and neural motion planners calculate thousands of stability adjustments per second. In test environments, these autonomous machines can patrol building perimeters, identify suspicious movement, and stream critical telemetry to first responders. But real-world security is far more unpredictable than a pristine laboratory. Battery constraints, optical sensor blindness, and software glitches can turn a high-tech protector into an inert metal obstacle. More critically, an algorithm cannot understand human nuance, moral accountability, or de-escalate emotional panic under pressure. Before robots take a bullet for their owners, engineers must prove these machines can safely navigate human chaos. Would you trust an AI bodyguard with your family?",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "Kya aap ne socha hai ke 3 trillion dollar ki company kaisi dikhegi?",
-            "visual_search": "modern futuristic skyscraper city"
+            "text": "Imagine having a machine that follows your footsteps, spots incoming threats, and physically shields you during a violent attack.",
+            "visual_search": "humanoid robot laboratory walking"
           },
           {
             "scene_num": 2,
-            "text": "Reports ke mutabiq, Elon Musk Tesla aur SpaceX ko aapas mein milane ki exploration kar rahe hain.",
-            "visual_search": "elon musk portrait office"
+            "text": "Recent humanoid demonstrations reveal robots executing lightning-fast martial arts kicks and recovering balance in milliseconds.",
+            "visual_search": "humanoid robot testing facility kick"
           },
           {
             "scene_num": 3,
-            "text": "Tesla electric cars banati hai aur SpaceX rockets aur space travel par kaam karti hai.",
-            "visual_search": "electric car charging station"
+            "text": "Beneath their sleek carbon fiber frames, high-torque joint actuators and neural motion planners calculate thousands of stability adjustments per second.",
+            "visual_search": "robotic joint actuator close up"
           },
           {
             "scene_num": 4,
-            "text": "Agar yeh merger ho gaya, toh ek aisi technology giant ban sakti hai jis ki value 3 trillion dollars se bhi zyada hogi.",
-            "visual_search": "space rocket launching pad"
+            "text": "In test environments, these autonomous machines can patrol building perimeters, identify suspicious movement, and stream critical telemetry to first responders.",
+            "visual_search": "security camera control room monitors"
           },
           {
             "scene_num": 5,
-            "text": "Is ke ilawa, ek aur hairan kun baat samne aayi hai.",
-            "visual_search": "digital matrix code screen"
+            "text": "But real-world security is far more unpredictable than a pristine laboratory. Battery constraints, optical sensor blindness, and software glitches can turn a high-tech protector into an inert metal obstacle.",
+            "visual_search": "motherboard circuit spark failure"
           },
           {
             "scene_num": 6,
-            "text": "Reports ke mutabiq, AI ab SpaceX ko satellite connectivity division se bhi zyada sales de raha hai.",
-            "visual_search": "artificial intelligence glowing brain"
+            "text": "More critically, an algorithm cannot understand human nuance, moral accountability, or de-escalate emotional panic under pressure.",
+            "visual_search": "human security guard patrolling building"
           },
           {
             "scene_num": 7,
-            "text": "Lekin sochiye, is tarah ka merger investors aur mukabla karne wali companies ke liye kya maikhne rakhta hai?",
-            "visual_search": "stock market trading graph"
-          },
-          {
-            "scene_num": 8,
-            "text": "Is ke kuch risks bhi hain aur abhi tak yeh sirf reports hain, koi confirm deal nahi hui.",
-            "visual_search": "question mark neon sign"
-          },
-          {
-            "scene_num": 9,
-            "text": "Toh aap batayein, kya Tesla aur SpaceX ka merger sahi faisla hoga?",
-            "visual_search": "comments section glowing phone"
+            "text": "Before robots take a bullet for their owners, engineers must prove these machines can safely navigate human chaos. Would you trust an AI bodyguard with your family?",
+            "visual_search": "futuristic humanoid robot face close up"
           }
         ]
       },
       "short_script": {
-        "title": "Tesla aur SpaceX ka $3 Trillion Merger? #shorts",
-        "description": "Shorts description about Tesla and SpaceX merger #shorts #tech",
+        "title": "Could an AI Robot Be Your Bodyguard? #shorts",
+        "description": "Humanoid robots can now punch, kick, and balance instantly. But would you trust an AI bodyguard in a real street fight? #shorts #robotics #ai #tech",
         "tags": [
           "shorts",
-          "tesla",
-          "spacex",
-          "elonmusk"
+          "robotics",
+          "ai",
+          "futuretech",
+          "technology"
         ],
-        "narration": "Kya Tesla aur SpaceX milne ja rahe hain? Reports ke mutabiq, yeh 3 trillion dollar ki giant deal ho sakti hai! Lekin kya yeh sach hai?",
+        "narration": "Humanoid robots are now executing martial arts strikes, sparking one terrifying question: could an AI become your bodyguard? Powered by lidar sensors and microsecond reaction times, these machines can detect physical danger before you do. But in total chaos, will an algorithm protect your life, or make a fatal calculation?",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "Kya Tesla aur SpaceX milne ja rahe hain?",
-            "visual_search": "electric car driving highway"
+            "text": "Humanoid robots are now executing martial arts strikes, sparking one terrifying question: could an AI become your bodyguard?",
+            "visual_search": "humanoid robot punch martial arts"
           },
           {
             "scene_num": 2,
-            "text": "Reports ke mutabiq, yeh 3 trillion dollar ki giant deal ho sakti hai!",
-            "visual_search": "money dollar bills falling"
+            "text": "Powered by lidar sensors and microsecond reaction times, these machines can detect physical danger before you do.",
+            "visual_search": "lidar sensor scanning room"
           },
           {
             "scene_num": 3,
-            "text": "Lekin kya yeh sach hai?",
-            "visual_search": "person thinking confused face"
+            "text": "But in total chaos, will an algorithm protect your life, or make a fatal calculation?",
+            "visual_search": "humanoid robot standing dark hallway"
           }
         ]
       },
       "status": "completed",
-      "uploaded_at": "2026-10-22T19:55:40.684211",
-      "scheduled_at": "2026-10-23T18:00",
-      "main_video_id": "nkV6LXd1fzM",
-      "short_video_id": "zBQxJv38wBE"
+      "uploaded_at": "2026-10-23T20:26:13.224433",
+      "scheduled_at": "2026-10-24T18:00",
+      "main_video_id": "mcPSvHCYl1M",
+      "short_video_id": "n7869BynR1w"
     }
   ],
-  "created_at": "2026-10-22T19:53:56.163268",
+  "created_at": "2026-10-23T20:24:01.677422",
   "current_episode_index": 1
 }
