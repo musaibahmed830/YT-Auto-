@@ -1,98 +1,95 @@
 {
-  "series_title": "The AI Robot Bodyguard: The Future of Humanoid Machines",
-  "series_synopsis": "Breakthroughs in humanoid robotics show machines performing martial arts and navigating complex obstacles. But can an artificial intelligence robot truly act as a reliable personal bodyguard, or are real-world safety limitations too steep to overcome? We examine cutting-edge robotic tech, split-second threat detection, and the future of automated personal protection.",
+  "series_title": "The Code That Targeted Reality",
+  "series_synopsis": "In 2010, the world discovered the first digital weapon capable of physical destruction. This is the terrifying story of Stuxnet, a piece of code that silently breached an impenetrable offline bunker to sabotage an entire nation's nuclear program.",
   "total_episodes": 1,
   "episodes": [
     {
       "episode_number": 1,
-      "episode_title": "This AI Robot Wants to Become Your Bodyguard!",
+      "episode_title": "The Invisible Weapon",
       "full_script": {
-        "title": "This AI Robot Wants to Become Your Bodyguard! (Part 1)",
-        "description": "Humanoid robots are mastering martial arts and rapid balance recovery, raising a revolutionary question: could an AI machine become your personal bodyguard? Explore the engineering, computer vision, and real-world safety challenges. Subscribe for more deep dives into futuristic technology!",
+        "title": "The 500KB Code That Destroyed a Nuclear Bunker (Part 1)",
+        "description": "How did a computer virus physically destroy steel centrifuges inside an impenetrable underground facility? Discover the shocking true story of Stuxnet, the world's first digital weapon. Subscribe for more dark tech stories!",
         "tags": [
-          "humanoid robot",
-          "ai bodyguard",
-          "robotics",
-          "artificial intelligence",
-          "tech documentary",
-          "future technology",
-          "unitree"
+          "stuxnet",
+          "cyberwarfare",
+          "technology",
+          "hacker",
+          "history"
         ],
-        "narration": "Imagine having a machine that follows your footsteps, spots incoming threats, and physically shields you during a violent attack. Recent humanoid demonstrations reveal robots executing lightning-fast martial arts kicks and recovering balance in milliseconds. Beneath their sleek carbon fiber frames, high-torque joint actuators and neural motion planners calculate thousands of stability adjustments per second. In test environments, these autonomous machines can patrol building perimeters, identify suspicious movement, and stream critical telemetry to first responders. But real-world security is far more unpredictable than a pristine laboratory. Battery constraints, optical sensor blindness, and software glitches can turn a high-tech protector into an inert metal obstacle. More critically, an algorithm cannot understand human nuance, moral accountability, or de-escalate emotional panic under pressure. Before robots take a bullet for their owners, engineers must prove these machines can safely navigate human chaos. Would you trust an AI bodyguard with your family?",
+        "narration": "Deep underground in the Iranian desert, thousands of steel centrifuges were silently spinning at supersonic speeds inside an airtight nuclear bunker. The facility was completely cut off from the global internet, an impenetrable fortress guarded by concrete blast doors. But then, an innocent-looking metal USB flash drive was intentionally dropped in the facility parking lot. An unsuspecting engineer picked it up, walked inside, and plugged it directly into an offline computer terminal. The malicious code didn't crash the screens; instead, it secretly seized control of the industrial valves, spinning the centrifuges out of control until the metal ripped apart. For months, the physical machines shattered while the control screens falsely displayed that everything was operating normally. Stuxnet proved that software was no longer just digital data, but a physical missile capable of destroying the real world.",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "Imagine having a machine that follows your footsteps, spots incoming threats, and physically shields you during a violent attack.",
-            "visual_search": "humanoid robot laboratory walking"
+            "text": "Deep underground in the Iranian desert, thousands of steel centrifuges were silently spinning at supersonic speeds inside an airtight nuclear bunker.",
+            "visual_search": "industrial centrifuge spinning steel laboratory"
           },
           {
             "scene_num": 2,
-            "text": "Recent humanoid demonstrations reveal robots executing lightning-fast martial arts kicks and recovering balance in milliseconds.",
-            "visual_search": "humanoid robot testing facility kick"
+            "text": "The facility was completely cut off from the global internet, an impenetrable fortress guarded by concrete blast doors.",
+            "visual_search": "heavy concrete blast door vault entrance"
           },
           {
             "scene_num": 3,
-            "text": "Beneath their sleek carbon fiber frames, high-torque joint actuators and neural motion planners calculate thousands of stability adjustments per second.",
-            "visual_search": "robotic joint actuator close up"
+            "text": "But then, an innocent-looking metal USB flash drive was intentionally dropped in the facility parking lot.",
+            "visual_search": "usb flash drive asphalt ground close up"
           },
           {
             "scene_num": 4,
-            "text": "In test environments, these autonomous machines can patrol building perimeters, identify suspicious movement, and stream critical telemetry to first responders.",
-            "visual_search": "security camera control room monitors"
+            "text": "An unsuspecting engineer picked it up, walked inside, and plugged it directly into an offline computer terminal.",
+            "visual_search": "hand inserting usb flash drive into computer"
           },
           {
             "scene_num": 5,
-            "text": "But real-world security is far more unpredictable than a pristine laboratory. Battery constraints, optical sensor blindness, and software glitches can turn a high-tech protector into an inert metal obstacle.",
-            "visual_search": "motherboard circuit spark failure"
+            "text": "The malicious code didn't crash the screens; instead, it secretly seized control of the industrial valves, spinning the centrifuges out of control until the metal ripped apart.",
+            "visual_search": "metal industrial gears smoking sparking failure"
           },
           {
             "scene_num": 6,
-            "text": "More critically, an algorithm cannot understand human nuance, moral accountability, or de-escalate emotional panic under pressure.",
-            "visual_search": "human security guard patrolling building"
+            "text": "For months, the physical machines shattered while the control screens falsely displayed that everything was operating normally.",
+            "visual_search": "male computer engineer stressed looking at monitors"
           },
           {
             "scene_num": 7,
-            "text": "Before robots take a bullet for their owners, engineers must prove these machines can safely navigate human chaos. Would you trust an AI bodyguard with your family?",
-            "visual_search": "futuristic humanoid robot face close up"
+            "text": "Stuxnet proved that software was no longer just digital data, but a physical missile capable of destroying the real world.",
+            "visual_search": "motherboard microchip glowing digital pulse"
           }
         ]
       },
       "short_script": {
-        "title": "Could an AI Robot Be Your Bodyguard? #shorts",
-        "description": "Humanoid robots can now punch, kick, and balance instantly. But would you trust an AI bodyguard in a real street fight? #shorts #robotics #ai #tech",
+        "title": "The Code That Blew Up a Nuclear Bunker #shorts",
+        "description": "The terrifying true story of Stuxnet, the world's first physical cyber weapon. #shorts #technology #mystery #history",
         "tags": [
           "shorts",
-          "robotics",
-          "ai",
-          "futuretech",
-          "technology"
+          "technology",
+          "cybersecurity",
+          "mystery"
         ],
-        "narration": "Humanoid robots are now executing martial arts strikes, sparking one terrifying question: could an AI become your bodyguard? Powered by lidar sensors and microsecond reaction times, these machines can detect physical danger before you do. But in total chaos, will an algorithm protect your life, or make a fatal calculation?",
+        "narration": "In 2010, an impenetrable underground nuclear facility completely cut off from the internet began mysteriously exploding. The culprit wasn't a military bomb, but a single flash drive dropped in the parking lot. The code hijacked the physical machinery while showing operators fake normal screens, proving computer code can now physically kill.",
         "scenes": [
           {
             "scene_num": 1,
-            "text": "Humanoid robots are now executing martial arts strikes, sparking one terrifying question: could an AI become your bodyguard?",
-            "visual_search": "humanoid robot punch martial arts"
+            "text": "In 2010, an impenetrable underground nuclear facility completely cut off from the internet began mysteriously exploding.",
+            "visual_search": "industrial bunker concrete tunnel dark"
           },
           {
             "scene_num": 2,
-            "text": "Powered by lidar sensors and microsecond reaction times, these machines can detect physical danger before you do.",
-            "visual_search": "lidar sensor scanning room"
+            "text": "The culprit wasn't a military bomb, but a single flash drive dropped in the parking lot.",
+            "visual_search": "hand picking up usb flash drive floor"
           },
           {
             "scene_num": 3,
-            "text": "But in total chaos, will an algorithm protect your life, or make a fatal calculation?",
-            "visual_search": "humanoid robot standing dark hallway"
+            "text": "The code hijacked the physical machinery while showing operators fake normal screens, proving computer code can now physically kill.",
+            "visual_search": "computer server room blinking red warning lights"
           }
         ]
       },
       "status": "completed",
-      "uploaded_at": "2026-10-23T20:26:13.224433",
-      "scheduled_at": "2026-10-24T18:00",
-      "main_video_id": "mcPSvHCYl1M",
-      "short_video_id": "n7869BynR1w"
+      "uploaded_at": "2026-10-29T07:29:21.151423",
+      "scheduled_at": "2026-10-30T18:00",
+      "main_video_id": "CfVRI3BdWB8",
+      "short_video_id": "fQpilpXOXRE"
     }
   ],
-  "created_at": "2026-10-23T20:24:01.677422",
+  "created_at": "2026-10-29T07:27:07.472625",
   "current_episode_index": 1
 }
