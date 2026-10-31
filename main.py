@@ -67,11 +67,17 @@ def _process_video_package(package: dict, is_short: bool = False, episode_num: O
         max_duration=max_duration,
     )
 
-    # 2. Thumbnail (for main video)
-    thumb_path = None
-    if not is_short:
-        thumb_path = os.path.join(OUTPUT_DIR, f"thumb{suffix}.jpg")
-        generate_thumbnail(video_out, package["title"], thumb_path)
+    # 2. Attractive Thumbnail (generated for all videos, including Shorts)
+    thumb_path = os.path.join(OUTPUT_DIR, f"thumb{suffix}.jpg")
+    badge = f"EPISODE {episode_num:02d}" if episode_num else ("SHORTS" if is_short else None)
+    print(f"[pipeline] Generating attractive thumbnail: {thumb_path}...")
+    generate_thumbnail(
+        video_path=video_out,
+        title_text=package["title"],
+        out_path=thumb_path,
+        badge_text=badge,
+        vertical=is_short,
+    )
 
     # 5. YouTube Upload
     privacy = os.environ.get("YT_PRIVACY_STATUS", "public")

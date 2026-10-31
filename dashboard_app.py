@@ -192,6 +192,7 @@ def get_google_oauth_url(request: Request):
     scopes = [
         "https://www.googleapis.com/auth/youtube.upload",
         "https://www.googleapis.com/auth/youtube.readonly",
+        "https://www.googleapis.com/auth/youtube",
     ]
     scope_str = "%20".join(scopes)
 
@@ -344,9 +345,9 @@ def _execute_episode_task(channel_id: Optional[str] = None, episode_number: Opti
             orientation="horizontal",
             max_duration=90.0,
         )
-        update_episode_progress(45, "Main Video assembled. Generating thumbnail...", ep_num)
-        generate_thumbnail(vid_main_path, full_pkg["title"], thumb_path)
-        update_episode_progress(50, "Thumbnail generated successfully.", ep_num)
+        update_episode_progress(45, "Main Video assembled. Generating attractive thumbnail...", ep_num)
+        generate_thumbnail(vid_main_path, full_pkg["title"], thumb_path, badge_text=f"EPISODE {ep_num:02d}")
+        update_episode_progress(50, "Attractive thumbnail generated successfully.", ep_num)
 
         main_vid_id = None
         if target_ch and target_ch.get("refresh_token"):
@@ -384,20 +385,22 @@ def _execute_episode_task(channel_id: Optional[str] = None, episode_number: Opti
             orientation="vertical",
             max_duration=22.0,
         )
-        update_episode_progress(80, "YouTube Short assembled. Uploading...", ep_num)
+        thumb_short_path = os.path.join(OUTPUT_DIR, f"ep{ep_num}_short_thumb.jpg")
+        update_episode_progress(80, "Generating attractive thumbnail for Short...", ep_num)
+        short_title = short_pkg["title"]
+        if "#shorts" not in short_title.lower():
+            short_title = f"{short_title[:50]} #shorts"
+        generate_thumbnail(vid_short_path, short_title, thumb_short_path, badge_text=f"EPISODE {ep_num:02d}", vertical=True)
 
         short_vid_id = None
         if target_ch and target_ch.get("refresh_token"):
-            update_episode_progress(82, f"Uploading YouTube Short to '{ch_title}'...", ep_num)
-            short_title = short_pkg["title"]
-            if "#shorts" not in short_title.lower():
-                short_title = f"{short_title[:50]} #shorts"
-
+            update_episode_progress(82, f"Uploading YouTube Short with thumbnail to '{ch_title}'...", ep_num)
             short_vid_id = upload_video(
                 video_path=vid_short_path,
                 title=short_title,
                 description=short_pkg["description"],
                 tags=short_pkg.get("tags", []) + ["shorts"],
+                thumbnail_path=thumb_short_path,
                 privacy_status=target_ch.get("privacy_status", "public"),
                 channel_credentials=target_ch,
             )
@@ -465,8 +468,8 @@ def _execute_single_video_task(topic: str, format: str = "both", channel_id: Opt
                 orientation="horizontal",
                 max_duration=90.0,
             )
-            update_episode_progress(50, "Generating custom thumbnail...", "single")
-            generate_thumbnail(vid_main_path, pkg["title"], thumb_path)
+            update_episode_progress(50, "Generating attractive custom thumbnail...", "single")
+            generate_thumbnail(vid_main_path, pkg["title"], thumb_path, badge_text="SPECIAL")
 
             if target_ch and target_ch.get("refresh_token"):
                 update_episode_progress(55, f"Uploading 16:9 Video to '{ch_title}'...", "single")
@@ -503,13 +506,18 @@ def _execute_single_video_task(topic: str, format: str = "both", channel_id: Opt
                 orientation="vertical",
                 max_duration=22.0,
             )
+            thumb_short_path = os.path.join(OUTPUT_DIR, "single_short_thumb.jpg")
+            update_episode_progress(80, "Generating attractive thumbnail for Short...", "single")
+            generate_thumbnail(vid_short_path, short_title, thumb_short_path, badge_text="SHORTS", vertical=True)
+
             if target_ch and target_ch.get("refresh_token"):
-                update_episode_progress(85, f"Uploading Short to '{ch_title}'...", "single")
+                update_episode_progress(85, f"Uploading Short with thumbnail to '{ch_title}'...", "single")
                 short_vid_id = upload_video(
                     video_path=vid_short_path,
                     title=short_title,
                     description=pkg["description"],
                     tags=pkg.get("tags", []) + ["shorts"],
+                    thumbnail_path=thumb_short_path,
                     privacy_status=target_ch.get("privacy_status", "public"),
                     channel_credentials=target_ch,
                 )
