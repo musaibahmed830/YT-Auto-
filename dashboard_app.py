@@ -192,7 +192,6 @@ def get_google_oauth_url(request: Request):
     scopes = [
         "https://www.googleapis.com/auth/youtube.upload",
         "https://www.googleapis.com/auth/youtube.readonly",
-        "https://www.googleapis.com/auth/youtube",
     ]
     scope_str = "%20".join(scopes)
 

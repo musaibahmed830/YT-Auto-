@@ -13,10 +13,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-SCOPES = [
-    "https://www.googleapis.com/auth/youtube.upload",
-    "https://www.googleapis.com/auth/youtube",
-]
+SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
 
 def _clean_token(val: Optional[str]) -> str:
@@ -32,7 +29,7 @@ def _get_credentials():
         token_uri="https://oauth2.googleapis.com/token",
         client_id=_clean_token(os.environ.get("YT_CLIENT_ID", "")),
         client_secret=_clean_token(os.environ.get("YT_CLIENT_SECRET", "")),
-        scopes=SCOPES,
+        scopes=None,  # Allows refresh_token to automatically use its granted scopes without scope mismatch
     )
 
 
@@ -44,7 +41,7 @@ def _get_youtube_client(channel_credentials: Optional[Dict[str, Any]] = None):
             token_uri="https://oauth2.googleapis.com/token",
             client_id=_clean_token(channel_credentials.get("client_id", "")),
             client_secret=_clean_token(channel_credentials.get("client_secret", "")),
-            scopes=SCOPES,
+            scopes=None,
         )
     else:
         creds = _get_credentials()
